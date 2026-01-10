@@ -44,6 +44,12 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 const getBackendUrl = () => {
     // Check BACKEND_URL first, then VITE_API_URL
     let url = process.env.BACKEND_URL || process.env.VITE_API_URL;
+    if (url && (url.includes('postgres') || url.includes('@'))) {
+        console.error('❌ CRITICAL CONFIG ERROR: usage of Database Connection String detected in BACKEND_URL/VITE_API_URL!');
+        console.error('   You have pasted your DATABASE_URL into the Environment Variable meant for the BACKEND SERVICE URL.');
+        console.error('   Please set BACKEND_URL to the https://... address of your Backend Web Service on Render.');
+    }
+
     if (url && !url.startsWith('http')) {
         url = `https://${url}`;
     }
