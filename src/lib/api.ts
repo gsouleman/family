@@ -5,10 +5,15 @@ const getApiUrl = () => {
     if (url && !url.startsWith('http')) {
         url = `https://${url}`;
     }
+    // Ensure it ends with /api
+    if (!url.endsWith('/api')) {
+        url = `${url}/api`;
+    }
     return url;
 };
 
 const API_URL = getApiUrl();
+console.log('🔗 Connecting to Backend API:', API_URL);
 
 // Helper to get headers
 const getHeaders = () => {
