@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Asset, AssetCategory } from '../types';
 
 import { useData } from '@/contexts/DataContext';
+import { api } from '@/lib/api';
 
 interface AddAssetModalProps {
   onClose: () => void;
@@ -63,7 +64,7 @@ const AddAssetModal: React.FC<AddAssetModalProps> = ({ onClose, onSuccess }) => 
         onClose();
       } catch (error: any) {
         console.error('Error adding asset:', error);
-        alert(`Failed to add asset: ${error.message || 'Unknown error'}`);
+        alert(`Failed to add asset: ${error.message || 'Unknown error'}\nTarget API: ${api.getBaseUrl()}`);
       } finally {
         setIsSubmitting(false);
       }

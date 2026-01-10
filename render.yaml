@@ -12,9 +12,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        fromDatabase:
-          name: family-assets-db
-          property: connectionString
+        sync: false # User must set this to their Neon connection string in Render Dashboard
 
   # Frontend Web Service (serving static files)
   - type: web
@@ -31,8 +29,3 @@ services:
           type: web
           name: family-assets-backend
           property: host
-
-databases:
-  - name: family-assets-db
-    plan: free
-    region: oregon

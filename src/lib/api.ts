@@ -184,4 +184,6 @@ export const api = {
         });
         return handleResponse(res, 'Failed to mark notification as read');
     },
+
+    getBaseUrl: () => API_URL,
 };
