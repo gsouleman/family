@@ -1,8 +1,14 @@
 
 const getApiUrl = () => {
     // @ts-ignore
-    let url = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-    if (url && !url.startsWith('http')) {
+    let url = import.meta.env.VITE_API_URL;
+
+    // If no env var (prod build without baked env), use relative /api
+    if (!url) {
+        return '/api';
+    }
+
+    if (!url.startsWith('http')) {
         url = `https://${url}`;
     }
     // Ensure it ends with /api
