@@ -17,13 +17,14 @@ services:
           property: connectionString
 
   # Frontend Static Site
-  - type: site
+  - type: web
     name: family-assets-frontend
+    runtime: static
     repo: https://github.com/gsouleman/family
     branch: main
     rootDir: .
     buildCommand: npm install && npm run build
-    publishDir: dist
+    staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
         fromService:
