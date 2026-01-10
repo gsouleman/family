@@ -58,16 +58,29 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [fetchedAssets, fetchedHeirs] = await Promise.all([
+                const [
+                    fetchedAssets,
+                    fetchedHeirs,
+                    fetchedDocs,
+                    fetchedTxs,
+                    fetchedDists,
+                    fetchedNotifs
+                ] = await Promise.all([
                     api.getAssets(),
-                    api.getHeirs()
+                    api.getHeirs(),
+                    api.getDocuments(),
+                    api.getTransactions(),
+                    api.getDistributions(),
+                    api.getNotifications()
                 ]);
                 setAssets(fetchedAssets);
                 setHeirs(fetchedHeirs);
+                setDocuments(fetchedDocs);
+                setTransactions(fetchedTxs);
+                setDistributions(fetchedDists);
+                setNotifications(fetchedNotifs);
             } catch (error) {
                 console.error('Failed to fetch initial data:', error);
-                // Fallback to mock data or partial data could go here, 
-                // but for now we let it remain empty or show error toast
             }
         };
         fetchData();
@@ -79,14 +92,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const newAsset = await api.createAsset(assetData);
             setAssets(prev => [newAsset, ...prev]);
 
-            addTransaction({
-                id: `tx-${Date.now()}`,
+            // Create transaction via API
+            await addTransaction({
                 type: 'asset_added',
                 description: `${newAsset.name} added to portfolio`,
                 amount: newAsset.value,
-                date: new Date().toISOString().split('T')[0],
                 relatedAssetId: newAsset.id
-            });
+            } as Transaction);
         } catch (error) {
             console.error('Failed to add asset:', error);
         }
@@ -116,13 +128,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const newHeir = await api.createHeir(heirData);
             setHeirs(prev => [newHeir, ...prev]);
 
-            addTransaction({
-                id: `tx-heir-${Date.now()}`,
+            await addTransaction({
                 type: 'heir_added',
                 description: `${newHeir.name} added as heir`,
-                date: new Date().toISOString().split('T')[0],
                 relatedHeirId: newHeir.id
-            });
+            } as Transaction);
         } catch (error) {
             console.error('Failed to add heir:', error);
         }
@@ -146,38 +156,66 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
-    // Document Actions (Still Mocked for now)
-    const addDocument = (docData: Omit<Document, 'id'>) => {
-        const newDoc: Document = { ...docData, id: `doc-${Date.now()}` };
-        setDocuments(prev => [...prev, newDoc]);
-        addTransaction({
-            id: `tx-doc-${Date.now()}`,
-            type: 'document_uploaded',
-            description: `${newDoc.name} uploaded`,
-            date: new Date().toISOString().split('T')[0],
-            relatedAssetId: newDoc.relatedAssetId
-        });
+    // Document Actions
+    const addDocument = async (docData: Omit<Document, 'id'>) => {
+        try {
+            const newDoc = await api.createDocument(docData);
+            setDocuments(prev => [...prev, newDoc]);
+
+            await addTransaction({
+                type: 'document_uploaded',
+                description: `${newDoc.name} uploaded`,
+                relatedAssetId: newDoc.relatedAssetId
+            } as Transaction);
+        } catch (error) {
+            console.error('Failed to add document:', error);
+        }
     };
 
-    const deleteDocument = (id: string) => {
-        setDocuments(prev => prev.filter(doc => doc.id !== id));
+    const deleteDocument = async (id: string) => {
+        try {
+            await api.deleteDocument(id);
+            setDocuments(prev => prev.filter(doc => doc.id !== id));
+        } catch (error) {
+            console.error('Failed to delete document:', error);
+        }
     };
 
     // Other Actions
-    const addTransaction = (tx: Transaction) => {
-        setTransactions(prev => [tx, ...prev]);
+    const addTransaction = async (txData: Partial<Transaction>) => {
+        try {
+            const newTx = await api.createTransaction(txData);
+            setTransactions(prev => [newTx, ...prev]);
+        } catch (error) {
+            console.error('Failed to add transaction:', error);
+        }
     };
 
-    const addDistribution = (dist: Distribution) => {
-        setDistributions(prev => [...prev, dist]);
+    const addDistribution = async (distData: Distribution) => {
+        try {
+            const newDist = await api.createDistribution(distData);
+            setDistributions(prev => [...prev, newDist]);
+        } catch (error) {
+            console.error('Failed to add distribution:', error);
+        }
     };
 
-    const addNotification = (notif: Notification) => {
-        setNotifications(prev => [notif, ...prev]);
+    const addNotification = async (notifData: Notification) => {
+        try {
+            const newNotif = await api.createNotification(notifData);
+            setNotifications(prev => [newNotif, ...prev]);
+        } catch (error) {
+            console.error('Failed to add notification:', error);
+        }
     };
 
-    const markNotificationRead = (id: string) => {
-        setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+    const markNotificationRead = async (id: string) => {
+        try {
+            await api.markNotificationRead(id);
+            setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+        } catch (error) {
+            console.error('Failed to mark notification read:', error);
+        }
     };
 
     return (

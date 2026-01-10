@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 import assetRoutes from './routes/assets.routes';
 import heirRoutes from './routes/heirs.routes';
 import documentRoutes from './routes/documents.routes';
+import transactionRoutes from './routes/transactions.routes';
+import distributionRoutes from './routes/distributions.routes';
+import notificationRoutes from './routes/notifications.routes';
 
 dotenv.config();
 
@@ -22,6 +25,9 @@ app.use(userMiddleware);
 app.use('/api/assets', assetRoutes);
 app.use('/api/heirs', heirRoutes);
 app.use('/api/documents', documentRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/distributions', distributionRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.use(errorHandler);
 
