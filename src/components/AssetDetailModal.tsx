@@ -33,6 +33,7 @@ const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, onClose, onS
     description: asset.description,
     location: asset.location || '',
     purchaseDate: asset.purchaseDate,
+    isForSale: asset.isForSale !== undefined ? asset.isForSale : true,
   });
 
   const categoryLabel = asset.category.charAt(0).toUpperCase() + asset.category.slice(1);
@@ -45,6 +46,7 @@ const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, onClose, onS
       description: formData.description,
       location: formData.location || undefined,
       purchaseDate: formData.purchaseDate,
+      isForSale: formData.isForSale,
     });
     setIsEditing(false);
   };
@@ -81,10 +83,10 @@ const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, onClose, onS
           {/* Status & Category */}
           <div className="absolute top-4 left-4 flex gap-2">
             <span className={`px-3 py-1 rounded-full text-xs font-medium ${asset.status === 'active'
-                ? 'bg-green-500 text-white'
-                : asset.status === 'sold'
-                  ? 'bg-red-500 text-white'
-                  : 'bg-yellow-500 text-white'
+              ? 'bg-green-500 text-white'
+              : asset.status === 'sold'
+                ? 'bg-red-500 text-white'
+                : 'bg-yellow-500 text-white'
               }`}>
               {asset.status.charAt(0).toUpperCase() + asset.status.slice(1)}
             </span>
@@ -213,6 +215,37 @@ const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, onClose, onS
                 <span className="text-sm">Documents</span>
               </div>
               <p className="font-semibold text-gray-900">{asset.documents?.length || 0} files</p>
+            </div>
+
+            {/* Is For Sale Status */}
+            <div className="p-4 bg-gray-50 rounded-xl col-span-2">
+              <div className="flex items-center gap-2 text-gray-500 mb-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="text-sm">Inheritance Status</span>
+              </div>
+              {isEditing ? (
+                <div className="flex items-center gap-3 mt-2">
+                  <input
+                    type="checkbox"
+                    id="editIsForSale"
+                    checked={formData.isForSale}
+                    onChange={(e) => setFormData({ ...formData, isForSale: e.target.checked })}
+                    className="w-5 h-5 text-[#d4af37] border-gray-300 rounded focus:ring-[#d4af37]"
+                  />
+                  <label htmlFor="editIsForSale" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
+                    Asset is for sale (Include in Inheritance)
+                  </label>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span className={`w-3 h-3 rounded-full ${asset.isForSale ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                  <p className="font-semibold text-gray-900">
+                    {asset.isForSale ? 'Included in Inheritance (For Sale)' : 'Excluded from Inheritance (Not For Sale)'}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 

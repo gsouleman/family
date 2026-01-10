@@ -47,7 +47,9 @@ const AppLayout: React.FC = () => {
   const [authPromptMessage, setAuthPromptMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<{ message: string; amount?: number } | null>(null);
 
-  const activeAssets = useMemo(() => assets.filter(a => a.status === 'active'), [assets]);
+  // User request: "If asset is not for sale then it should not be included in the inheritance calculation"
+  // We assume "calculation" implies the Total Asset Value used for inheritance projections.
+  const activeAssets = useMemo(() => assets.filter(a => a.status === 'active' && a.isForSale), [assets]);
   const totalAssetValue = useMemo(() => activeAssets.reduce((sum, a) => sum + a.value, 0), [activeAssets]);
 
   const requireAuth = (action: () => void, message: string) => {

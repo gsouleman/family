@@ -29,7 +29,7 @@ export const createAsset = async (req: Request, res: Response) => {
             return res.status(401).json({ error: 'User authentication required' });
         }
 
-        const { name, category, value, description, location, purchaseDate, image, status } = req.body;
+        const { name, category, value, description, location, purchaseDate, image, status, isForSale } = req.body;
 
         // Validate Enum values
         if (category && !Object.values(AssetCategory).includes(category as AssetCategory)) {
@@ -46,6 +46,7 @@ export const createAsset = async (req: Request, res: Response) => {
                 purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
                 image,
                 status: (status as AssetStatus) || AssetStatus.active,
+                isForSale: isForSale !== undefined ? Boolean(isForSale) : true,
                 userId,
             },
         });
@@ -61,7 +62,7 @@ export const updateAsset = async (req: Request, res: Response) => {
         const { id } = req.params;
         const userId = req.userId;
 
-        const { name, category, value, description, location, purchaseDate, image, status } = req.body;
+        const { name, category, value, description, location, purchaseDate, image, status, isForSale } = req.body;
 
         const asset = await prisma.asset.update({
             where: { id, userId }, // Ensure user owns the asset
@@ -74,6 +75,7 @@ export const updateAsset = async (req: Request, res: Response) => {
                 purchaseDate: purchaseDate ? new Date(purchaseDate) : undefined,
                 image,
                 status: status as AssetStatus,
+                isForSale: isForSale !== undefined ? Boolean(isForSale) : undefined,
             },
         });
         res.json(asset);

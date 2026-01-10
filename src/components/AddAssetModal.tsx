@@ -36,6 +36,7 @@ const AddAssetModal: React.FC<AddAssetModalProps> = ({ onClose, onSuccess }) => 
     description: '',
     location: '',
     purchaseDate: new Date().toISOString().split('T')[0],
+    isForSale: true,
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,6 +56,7 @@ const AddAssetModal: React.FC<AddAssetModalProps> = ({ onClose, onSuccess }) => 
           purchaseDate: formData.purchaseDate,
           image: defaultImages[formData.category],
           status: 'active' as const,
+          isForSale: formData.isForSale,
         };
 
         await addAsset(newAsset);
@@ -187,6 +189,20 @@ const AddAssetModal: React.FC<AddAssetModalProps> = ({ onClose, onSuccess }) => 
                 onChange={(e) => setFormData({ ...formData, purchaseDate: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none"
               />
+            </div>
+
+            {/* Is For Sale Checkbox */}
+            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100">
+              <input
+                type="checkbox"
+                id="isForSale"
+                checked={formData.isForSale}
+                onChange={(e) => setFormData({ ...formData, isForSale: e.target.checked })}
+                className="w-5 h-5 text-[#d4af37] border-gray-300 rounded focus:ring-[#d4af37]"
+              />
+              <label htmlFor="isForSale" className="text-sm font-medium text-gray-700 cursor-pointer select-none">
+                Asset is for sale (include in inheritance calculation)
+              </label>
             </div>
           </div>
         </form>

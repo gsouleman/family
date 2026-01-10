@@ -11,6 +11,7 @@ export interface Asset {
   description: string;
   image: string;
   status: AssetStatus;
+  isForSale: boolean;
   location?: string;
   documents?: string[];
 }
