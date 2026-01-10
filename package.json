@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "node frontend-server.js",
+    "start": "node server.js",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
@@ -92,7 +92,7 @@
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"
   },
-  "main": "frontend-server.js",
+  "main": "server.js",
   "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
   "keywords": [],
   "author": "",
