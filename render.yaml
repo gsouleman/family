@@ -1,0 +1,38 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: family-assets-backend
+    runtime: node
+    repo: https://github.com/gsouleman/family
+    branch: main
+    rootDir: server
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: family-assets-db
+          property: connectionString
+
+  # Frontend Static Site
+  - type: static
+    name: family-assets-frontend
+    runtime: static
+    repo: https://github.com/gsouleman/family
+    branch: main
+    rootDir: .
+    buildCommand: npm install && npm run build
+    publishDir: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: family-assets-backend
+          property: url
+
+databases:
+  - name: family-assets-db
+    plan: free
+    region: oregon
