@@ -101,6 +101,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             } as Transaction);
         } catch (error) {
             console.error('Failed to add asset:', error);
+            throw error;
         }
     };
 
