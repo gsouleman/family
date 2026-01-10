@@ -42,7 +42,8 @@ app.use(express.static(path.join(__dirname, 'dist')));
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const getBackendUrl = () => {
-    let url = process.env.VITE_API_URL;
+    // Check BACKEND_URL first, then VITE_API_URL
+    let url = process.env.BACKEND_URL || process.env.VITE_API_URL;
     if (url && !url.startsWith('http')) {
         url = `https://${url}`;
     }
@@ -55,14 +56,16 @@ console.log(`Setting up API proxy to: ${backendUrl}`);
 // Debug: Log all available environment variable KEYS (not values) to avoid leaking secrets, but verify presence
 console.log('Available Env Vars:', Object.keys(process.env).sort());
 
-if (!process.env.VITE_API_URL) {
-    console.warn('⚠️  WARNING: VITE_API_URL is not defined! Proxy is defaulting to localhost. Ensure this is set in Render Dashboard!');
+if (!process.env.BACKEND_URL && !process.env.VITE_API_URL) {
+    console.warn('⚠️  WARNING: BACKEND_URL (or VITE_API_URL) is not defined! Proxy is defaulting to localhost. Ensure this is set in Render Dashboard!');
 }
 
 app.use('/api', createProxyMiddleware({
     target: backendUrl,
     changeOrigin: true,
-    // pathRewrite removed to preserve /api prefix as backend expects it
+    pathRewrite: {
+        '^/': '/api/', // Rewrite root (which is stripped by app.use) back to /api/ logic
+    },
     onProxyReq: (proxyReq, req, res) => {
         // console.log('Proxying:', req.method, req.url, '->', backendUrl + req.url);
     },
