@@ -52,6 +52,13 @@ const getBackendUrl = () => {
 const backendUrl = getBackendUrl();
 console.log(`Setting up API proxy to: ${backendUrl}`);
 
+// Debug: Log all available environment variable KEYS (not values) to avoid leaking secrets, but verify presence
+console.log('Available Env Vars:', Object.keys(process.env).sort());
+
+if (!process.env.VITE_API_URL) {
+    console.warn('⚠️  WARNING: VITE_API_URL is not defined! Proxy is defaulting to localhost. Ensure this is set in Render Dashboard!');
+}
+
 app.use('/api', createProxyMiddleware({
     target: backendUrl,
     changeOrigin: true,
