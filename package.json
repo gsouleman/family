@@ -92,6 +92,7 @@
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1"
   },
+  "main": "frontend-server.js",
   "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
   "keywords": [],
   "author": "",
