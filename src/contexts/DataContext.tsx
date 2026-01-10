@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Asset, Heir, Transaction, Document, Notification, Distribution } from '../types';
-import { initialAssets } from '../data/assets';
-import { initialHeirs, initialTransactions, initialDocuments, initialNotifications, initialDistributions } from '../data/family';
+import { api } from '../lib/api';
+import { initialTransactions, initialDocuments, initialNotifications, initialDistributions } from '../data/family';
 
 interface DataContextType {
     assets: Asset[];
@@ -47,57 +47,106 @@ export const useData = () => {
 };
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [assets, setAssets] = useState<Asset[]>(initialAssets);
-    const [heirs, setHeirs] = useState<Heir[]>(initialHeirs);
+    const [assets, setAssets] = useState<Asset[]>([]);
+    const [heirs, setHeirs] = useState<Heir[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
     const [documents, setDocuments] = useState<Document[]>(initialDocuments);
     const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
     const [distributions, setDistributions] = useState<Distribution[]>(initialDistributions);
 
+    // Initial Fetch
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [fetchedAssets, fetchedHeirs] = await Promise.all([
+                    api.getAssets(),
+                    api.getHeirs()
+                ]);
+                setAssets(fetchedAssets);
+                setHeirs(fetchedHeirs);
+            } catch (error) {
+                console.error('Failed to fetch initial data:', error);
+                // Fallback to mock data or partial data could go here, 
+                // but for now we let it remain empty or show error toast
+            }
+        };
+        fetchData();
+    }, []);
+
     // Asset Actions
-    const addAsset = (assetData: Omit<Asset, 'id'>) => {
-        const newAsset: Asset = { ...assetData, id: `asset-${Date.now()}` };
-        setAssets(prev => [...prev, newAsset]);
-        addTransaction({
-            id: `tx-${Date.now()}`,
-            type: 'asset_added',
-            description: `${newAsset.name} added to portfolio`,
-            amount: newAsset.value,
-            date: new Date().toISOString().split('T')[0],
-            relatedAssetId: newAsset.id
-        });
+    const addAsset = async (assetData: Omit<Asset, 'id'>) => {
+        try {
+            const newAsset = await api.createAsset(assetData);
+            setAssets(prev => [newAsset, ...prev]);
+
+            addTransaction({
+                id: `tx-${Date.now()}`,
+                type: 'asset_added',
+                description: `${newAsset.name} added to portfolio`,
+                amount: newAsset.value,
+                date: new Date().toISOString().split('T')[0],
+                relatedAssetId: newAsset.id
+            });
+        } catch (error) {
+            console.error('Failed to add asset:', error);
+        }
     };
 
-    const updateAsset = (id: string, updates: Partial<Asset>) => {
-        setAssets(prev => prev.map(asset => asset.id === id ? { ...asset, ...updates } : asset));
+    const updateAsset = async (id: string, updates: Partial<Asset>) => {
+        try {
+            const updatedAsset = await api.updateAsset(id, updates);
+            setAssets(prev => prev.map(asset => asset.id === id ? updatedAsset : asset));
+        } catch (error) {
+            console.error('Failed to update asset:', error);
+        }
     };
 
-    const deleteAsset = (id: string) => {
-        setAssets(prev => prev.filter(asset => asset.id !== id));
+    const deleteAsset = async (id: string) => {
+        try {
+            await api.deleteAsset(id);
+            setAssets(prev => prev.filter(asset => asset.id !== id));
+        } catch (error) {
+            console.error('Failed to delete asset:', error);
+        }
     };
 
     // Heir Actions
-    const addHeir = (heirData: Omit<Heir, 'id'>) => {
-        const newHeir: Heir = { ...heirData, id: `heir-${Date.now()}` };
-        setHeirs(prev => [...prev, newHeir]);
-        addTransaction({
-            id: `tx-heir-${Date.now()}`,
-            type: 'heir_added',
-            description: `${newHeir.name} added as heir`,
-            date: new Date().toISOString().split('T')[0],
-            relatedHeirId: newHeir.id
-        });
+    const addHeir = async (heirData: Omit<Heir, 'id'>) => {
+        try {
+            const newHeir = await api.createHeir(heirData);
+            setHeirs(prev => [newHeir, ...prev]);
+
+            addTransaction({
+                id: `tx-heir-${Date.now()}`,
+                type: 'heir_added',
+                description: `${newHeir.name} added as heir`,
+                date: new Date().toISOString().split('T')[0],
+                relatedHeirId: newHeir.id
+            });
+        } catch (error) {
+            console.error('Failed to add heir:', error);
+        }
     };
 
-    const updateHeir = (id: string, updates: Partial<Heir>) => {
-        setHeirs(prev => prev.map(heir => heir.id === id ? { ...heir, ...updates } : heir));
+    const updateHeir = async (id: string, updates: Partial<Heir>) => {
+        try {
+            const updatedHeir = await api.updateHeir(id, updates);
+            setHeirs(prev => prev.map(heir => heir.id === id ? updatedHeir : heir));
+        } catch (error) {
+            console.error('Failed to update heir:', error);
+        }
     };
 
-    const deleteHeir = (id: string) => {
-        setHeirs(prev => prev.filter(heir => heir.id !== id));
+    const deleteHeir = async (id: string) => {
+        try {
+            await api.deleteHeir(id);
+            setHeirs(prev => prev.filter(heir => heir.id !== id));
+        } catch (error) {
+            console.error('Failed to delete heir:', error);
+        }
     };
 
-    // Document Actions
+    // Document Actions (Still Mocked for now)
     const addDocument = (docData: Omit<Document, 'id'>) => {
         const newDoc: Document = { ...docData, id: `doc-${Date.now()}` };
         setDocuments(prev => [...prev, newDoc]);
