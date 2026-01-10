@@ -16,15 +16,15 @@ services:
           name: family-assets-db
           property: connectionString
 
-  # Frontend Static Site
+  # Frontend Web Service (serving static files)
   - type: web
     name: family-assets-frontend
-    runtime: static
+    runtime: node
     repo: https://github.com/gsouleman/family
     branch: main
     rootDir: .
     buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    startCommand: npx serve -s dist -p $PORT
     envVars:
       - key: VITE_API_URL
         fromService:
