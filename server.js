@@ -10,9 +10,22 @@ const PORT = process.env.PORT || 3000;
 
 // DEBUG: Log current directory structure
 import fs from 'fs';
+import { execSync } from 'child_process';
 console.log('Current directory:', __dirname);
 try {
     console.log('Root contents:', fs.readdirSync(__dirname));
+
+    if (!fs.existsSync(path.join(__dirname, 'dist'))) {
+        console.log('Dist directory DOES NOT EXIST. Attempting to build...');
+        try {
+            console.log('Running: npm run build');
+            execSync('npm run build', { stdio: 'inherit' });
+            console.log('Build complete.');
+        } catch (buildError) {
+            console.error('Build FAILED:', buildError);
+        }
+    }
+
     if (fs.existsSync(path.join(__dirname, 'dist'))) {
         console.log('Dist contents:', fs.readdirSync(path.join(__dirname, 'dist')));
     } else {
