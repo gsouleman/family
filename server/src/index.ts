@@ -35,6 +35,10 @@ app.get('/', (req, res) => {
     res.send('Family Assets Sharing API is running');
 });
 
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
