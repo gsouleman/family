@@ -13,11 +13,16 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+import { errorHandler } from './middleware/error.middleware';
+import { userMiddleware } from './middleware/user.middleware';
+
+// Apply user middleware essentially globally or to specific routes
+app.use(userMiddleware);
+
 app.use('/api/assets', assetRoutes);
 app.use('/api/heirs', heirRoutes);
 app.use('/api/documents', documentRoutes);
 
-import { errorHandler } from './middleware/error.middleware';
 app.use(errorHandler);
 
 app.get('/', (req, res) => {

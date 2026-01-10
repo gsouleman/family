@@ -1,12 +1,19 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, DocumentType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export const getDocuments = async (req: Request, res: Response) => {
     try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ error: 'User authentication required' });
+        }
+
         const documents = await prisma.document.findMany({
-            orderBy: { createdAt: 'desc' }
+            where: { userId },
+            orderBy: { createdAt: 'desc' },
+            include: { asset: { select: { name: true } } }
         });
         res.json(documents);
     } catch (error) {
@@ -17,13 +24,22 @@ export const getDocuments = async (req: Request, res: Response) => {
 
 export const createDocument = async (req: Request, res: Response) => {
     try {
-        const { name, type, url } = req.body;
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ error: 'User authentication required' });
+        }
+
+        const { name, type, url, fileSize, assetId } = req.body;
+
         const document = await prisma.document.create({
             data: {
                 name,
-                type,
+                type: type as DocumentType,
                 url,
+                fileSize,
                 uploadDate: new Date(),
+                userId,
+                assetId: assetId || undefined,
             },
         });
         res.json(document);
@@ -36,8 +52,10 @@ export const createDocument = async (req: Request, res: Response) => {
 export const deleteDocument = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+        const userId = req.userId;
+
         await prisma.document.delete({
-            where: { id },
+            where: { id, userId },
         });
         res.json({ message: 'Document deleted successfully' });
     } catch (error) {

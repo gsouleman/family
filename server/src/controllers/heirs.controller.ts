@@ -1,11 +1,17 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, HeirRelation } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export const getHeirs = async (req: Request, res: Response) => {
     try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ error: 'User authentication required' });
+        }
+
         const heirs = await prisma.heir.findMany({
+            where: { userId },
             orderBy: { createdAt: 'desc' }
         });
         res.json(heirs);
@@ -17,15 +23,22 @@ export const getHeirs = async (req: Request, res: Response) => {
 
 export const createHeir = async (req: Request, res: Response) => {
     try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ error: 'User authentication required' });
+        }
+
         const { name, relation, dateOfBirth, email, phone, avatar } = req.body;
+
         const heir = await prisma.heir.create({
             data: {
                 name,
-                relation,
-                dateOfBirth,
+                relation: relation as HeirRelation,
+                dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
                 email,
                 phone,
                 avatar,
+                userId,
             },
         });
         res.json(heir);
@@ -38,13 +51,15 @@ export const createHeir = async (req: Request, res: Response) => {
 export const updateHeir = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+        const userId = req.userId;
+
         const { name, relation, dateOfBirth, email, phone, avatar } = req.body;
         const heir = await prisma.heir.update({
-            where: { id },
+            where: { id, userId },
             data: {
                 name,
-                relation,
-                dateOfBirth,
+                relation: relation as HeirRelation,
+                dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
                 email,
                 phone,
                 avatar,
@@ -60,8 +75,10 @@ export const updateHeir = async (req: Request, res: Response) => {
 export const deleteHeir = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
+        const userId = req.userId;
+
         await prisma.heir.delete({
-            where: { id },
+            where: { id, userId },
         });
         res.json({ message: 'Heir deleted successfully' });
     } catch (error) {
