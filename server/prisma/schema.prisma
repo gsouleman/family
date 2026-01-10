@@ -1,0 +1,170 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Enums
+enum AssetCategory {
+  property
+  investment
+  vehicle
+  jewelry
+  cash
+  business
+}
+
+enum AssetStatus {
+  active
+  sold
+  pending
+}
+
+enum HeirRelation {
+  spouse_wife
+  spouse_husband
+  son
+  daughter
+  father
+  mother
+  brother
+  sister
+  grandfather
+  grandmother
+}
+
+enum TransactionType {
+  asset_added
+  asset_sold
+  distribution_completed
+  document_uploaded
+  heir_added
+}
+
+enum DocumentType {
+  will
+  deed
+  certificate
+  contract
+  other
+}
+
+enum NotificationType {
+  sale
+  distribution
+  document
+  general
+}
+
+enum DistributionStatus {
+  pending
+  distributed
+  completed
+}
+
+// Models
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  fullName      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  assets        Asset[]
+  heirs         Heir[]
+  documents     Document[]
+  notifications Notification[]
+}
+
+model Asset {
+  id            String         @id @default(uuid())
+  name          String
+  category      AssetCategory
+  value         Float
+  description   String?
+  location      String?
+  purchaseDate  DateTime?
+  image         String?
+  status        AssetStatus    @default(active)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  documents     Document[]
+  distributions Distribution[]
+}
+
+model Heir {
+  id          String             @id @default(uuid())
+  name        String
+  relation    HeirRelation
+  dateOfBirth DateTime?
+  email       String?
+  phone       String?
+  avatar      String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  userId      String
+  user        User               @relation(fields: [userId], references: [id])
+  shares      InheritanceShare[]
+}
+
+model Document {
+  id         String       @id @default(uuid())
+  name       String
+  type       DocumentType
+  url        String
+  fileSize   String?
+  uploadDate DateTime     @default(now())
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  userId     String
+  user       User         @relation(fields: [userId], references: [id])
+  assetId    String?
+  asset      Asset?       @relation(fields: [assetId], references: [id])
+}
+
+model Transaction {
+  id             String          @id @default(uuid())
+  type           TransactionType
+  description    String
+  amount         Float?
+  date           DateTime        @default(now())
+  relatedAssetId String?
+  relatedHeirId  String?
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  title     String
+  message   String
+  date      DateTime         @default(now())
+  read      Boolean          @default(false)
+  type      NotificationType
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+}
+
+model Distribution {
+  id          String             @id @default(uuid())
+  totalAmount Float
+  saleDate    DateTime
+  status      DistributionStatus @default(pending)
+  assetId     String
+  asset       Asset              @relation(fields: [assetId], references: [id])
+  shares      InheritanceShare[]
+}
+
+model InheritanceShare {
+  id              String       @id @default(uuid())
+  sharePercentage Float
+  shareAmount     Float
+  shareFraction   String
+  heirId          String
+  heir            Heir         @relation(fields: [heirId], references: [id])
+  distributionId  String
+  distribution    Distribution @relation(fields: [distributionId], references: [id])
+}
