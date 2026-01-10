@@ -55,16 +55,7 @@ console.log(`Setting up API proxy to: ${backendUrl}`);
 app.use('/api', createProxyMiddleware({
     target: backendUrl,
     changeOrigin: true,
-    pathRewrite: {
-        '^/api': '', // Remove /api prefix when forwarding if backend expects root, BUT backend likely expects /api. 
-        // Wait, backend routes are /api/assets.
-        // If frontend calls /api/assets, and we use /api proxy.
-        // If we don't rewrite, it sends /api/assets to target.
-        // If backend is https://backend.com and has routes /api/..., then target should be https://backend.com and we keep /api.
-        // If backend is https://backend.com/api, then we might duplicate.
-        // Render 'host' is just domain. So backendUrl is https://domain.com.
-        // So we keep /api.
-    },
+    // pathRewrite removed to preserve /api prefix as backend expects it
     onProxyReq: (proxyReq, req, res) => {
         // console.log('Proxying:', req.method, req.url, '->', backendUrl + req.url);
     },

@@ -37,14 +37,14 @@ const getHeaders = () => {
 // Helper to handle response
 const handleResponse = async (res: Response, errorMessage: string) => {
     if (!res.ok) {
-        let serverError = errorMessage;
+        let serverError = `${errorMessage} (${res.status} ${res.statusText})`;
         try {
             const data = await res.json();
             if (data && data.error) {
                 serverError = data.error;
             }
         } catch (e) {
-            // Ignore json parse error, use default message
+            // Ignore json parse error, use default message with status
         }
         throw new Error(serverError);
     }
