@@ -1,5 +1,13 @@
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const getApiUrl = () => {
+    let url = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+    if (url && !url.startsWith('http')) {
+        url = `https://${url}`;
+    }
+    return url;
+};
+
+const API_URL = getApiUrl();
 
 // Helper to get headers
 const getHeaders = () => {

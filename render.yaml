@@ -30,7 +30,7 @@ services:
         fromService:
           type: web
           name: family-assets-backend
-          property: url
+          property: host
 
 databases:
   - name: family-assets-db
