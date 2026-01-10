@@ -23,12 +23,28 @@ const getHeaders = () => {
     return headers;
 };
 
+// Helper to handle response
+const handleResponse = async (res: Response, errorMessage: string) => {
+    if (!res.ok) {
+        let serverError = errorMessage;
+        try {
+            const data = await res.json();
+            if (data && data.error) {
+                serverError = data.error;
+            }
+        } catch (e) {
+            // Ignore json parse error, use default message
+        }
+        throw new Error(serverError);
+    }
+    return res.json();
+};
+
 export const api = {
     // Assets
     getAssets: async () => {
         const res = await fetch(`${API_URL}/assets`, { headers: getHeaders() });
-        if (!res.ok) throw new Error('Failed to fetch assets');
-        return res.json();
+        return handleResponse(res, 'Failed to fetch assets');
     },
 
     createAsset: async (data: any) => {
@@ -37,8 +53,7 @@ export const api = {
             headers: getHeaders(),
             body: JSON.stringify(data),
         });
-        if (!res.ok) throw new Error('Failed to create asset');
-        return res.json();
+        return handleResponse(res, 'Failed to create asset');
     },
 
     updateAsset: async (id: string, data: any) => {
@@ -47,8 +62,7 @@ export const api = {
             headers: getHeaders(),
             body: JSON.stringify(data),
         });
-        if (!res.ok) throw new Error('Failed to update asset');
-        return res.json();
+        return handleResponse(res, 'Failed to update asset');
     },
 
     deleteAsset: async (id: string) => {
@@ -56,15 +70,13 @@ export const api = {
             method: 'DELETE',
             headers: getHeaders(),
         });
-        if (!res.ok) throw new Error('Failed to delete asset');
-        return res.json();
+        return handleResponse(res, 'Failed to delete asset');
     },
 
     // Heirs
     getHeirs: async () => {
         const res = await fetch(`${API_URL}/heirs`, { headers: getHeaders() });
-        if (!res.ok) throw new Error('Failed to fetch heirs');
-        return res.json();
+        return handleResponse(res, 'Failed to fetch heirs');
     },
 
     createHeir: async (data: any) => {
@@ -73,8 +85,7 @@ export const api = {
             headers: getHeaders(),
             body: JSON.stringify(data),
         });
-        if (!res.ok) throw new Error('Failed to create heir');
-        return res.json();
+        return handleResponse(res, 'Failed to create heir');
     },
 
     updateHeir: async (id: string, data: any) => {
@@ -83,8 +94,7 @@ export const api = {
             headers: getHeaders(),
             body: JSON.stringify(data),
         });
-        if (!res.ok) throw new Error('Failed to update heir');
-        return res.json();
+        return handleResponse(res, 'Failed to update heir');
     },
 
     deleteHeir: async (id: string) => {
@@ -92,14 +102,12 @@ export const api = {
             method: 'DELETE',
             headers: getHeaders(),
         });
-        if (!res.ok) throw new Error('Failed to delete heir');
-        return res.json();
+        return handleResponse(res, 'Failed to delete heir');
     },
     // Documents
     getDocuments: async () => {
         const res = await fetch(`${API_URL}/documents`, { headers: getHeaders() });
-        if (!res.ok) throw new Error('Failed to fetch documents');
-        return res.json();
+        return handleResponse(res, 'Failed to fetch documents');
     },
 
     createDocument: async (data: any) => {
@@ -108,8 +116,7 @@ export const api = {
             headers: getHeaders(),
             body: JSON.stringify(data),
         });
-        if (!res.ok) throw new Error('Failed to create document');
-        return res.json();
+        return handleResponse(res, 'Failed to create document');
     },
 
     deleteDocument: async (id: string) => {
@@ -117,15 +124,13 @@ export const api = {
             method: 'DELETE',
             headers: getHeaders(),
         });
-        if (!res.ok) throw new Error('Failed to delete document');
-        return res.json();
+        return handleResponse(res, 'Failed to delete document');
     },
 
     // Transactions
     getTransactions: async () => {
         const res = await fetch(`${API_URL}/transactions`, { headers: getHeaders() });
-        if (!res.ok) throw new Error('Failed to fetch transactions');
-        return res.json();
+        return handleResponse(res, 'Failed to fetch transactions');
     },
 
     createTransaction: async (data: any) => {
@@ -134,15 +139,13 @@ export const api = {
             headers: getHeaders(),
             body: JSON.stringify(data),
         });
-        if (!res.ok) throw new Error('Failed to create transaction');
-        return res.json();
+        return handleResponse(res, 'Failed to create transaction');
     },
 
     // Distributions (Calculator)
     getDistributions: async () => {
         const res = await fetch(`${API_URL}/distributions`, { headers: getHeaders() });
-        if (!res.ok) throw new Error('Failed to fetch distributions');
-        return res.json();
+        return handleResponse(res, 'Failed to fetch distributions');
     },
 
     createDistribution: async (data: any) => {
@@ -151,15 +154,13 @@ export const api = {
             headers: getHeaders(),
             body: JSON.stringify(data),
         });
-        if (!res.ok) throw new Error('Failed to create distribution');
-        return res.json();
+        return handleResponse(res, 'Failed to create distribution');
     },
 
     // Notifications
     getNotifications: async () => {
         const res = await fetch(`${API_URL}/notifications`, { headers: getHeaders() });
-        if (!res.ok) throw new Error('Failed to fetch notifications');
-        return res.json();
+        return handleResponse(res, 'Failed to fetch notifications');
     },
 
     createNotification: async (data: any) => {
@@ -168,8 +169,7 @@ export const api = {
             headers: getHeaders(),
             body: JSON.stringify(data),
         });
-        if (!res.ok) throw new Error('Failed to create notification');
-        return res.json();
+        return handleResponse(res, 'Failed to create notification');
     },
 
     markNotificationRead: async (id: string) => {
@@ -177,7 +177,6 @@ export const api = {
             method: 'PUT',
             headers: getHeaders(),
         });
-        if (!res.ok) throw new Error('Failed to mark notification as read');
-        return res.json();
+        return handleResponse(res, 'Failed to mark notification as read');
     },
 };

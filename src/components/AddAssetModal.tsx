@@ -61,9 +61,9 @@ const AddAssetModal: React.FC<AddAssetModalProps> = ({ onClose, onSuccess }) => 
           onSuccess(newAsset);
         }
         onClose();
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error adding asset:', error);
-        alert('Failed to add asset. Please try again.');
+        alert(`Failed to add asset: ${error.message || 'Unknown error'}`);
       } finally {
         setIsSubmitting(false);
       }
