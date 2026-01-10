@@ -8,6 +8,20 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// DEBUG: Log current directory structure
+import fs from 'fs';
+console.log('Current directory:', __dirname);
+try {
+    console.log('Root contents:', fs.readdirSync(__dirname));
+    if (fs.existsSync(path.join(__dirname, 'dist'))) {
+        console.log('Dist contents:', fs.readdirSync(path.join(__dirname, 'dist')));
+    } else {
+        console.log('Dist directory DOES NOT EXIST');
+    }
+} catch (e) {
+    console.error('Error referencing files:', e);
+}
+
 // Serve static files from the dist directory
 app.use(express.static(path.join(__dirname, 'dist')));
 
