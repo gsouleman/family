@@ -111,8 +111,8 @@ const AddAssetModal: React.FC<AddAssetModalProps> = ({ onClose, onSuccess }) => 
                     type="button"
                     onClick={() => setFormData({ ...formData, category: cat.value })}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${formData.category === cat.value
-                        ? 'bg-[#1a365d] text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      ? 'bg-[#1a365d] text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                       }`}
                   >
                     {cat.label}
@@ -124,15 +124,14 @@ const AddAssetModal: React.FC<AddAssetModalProps> = ({ onClose, onSuccess }) => 
             {/* Value */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Value (USD) <span className="text-red-500">*</span>
+                Value <span className="text-red-500">*</span>
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">$</span>
                 <input
                   type="number"
                   value={formData.value}
                   onChange={(e) => setFormData({ ...formData, value: e.target.value })}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none"
                   placeholder="0"
                   required
                 />
@@ -163,7 +162,6 @@ const AddAssetModal: React.FC<AddAssetModalProps> = ({ onClose, onSuccess }) => 
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none"
-                placeholder="e.g., Dubai, UAE"
               />
             </div>
 
