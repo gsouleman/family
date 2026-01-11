@@ -8,11 +8,21 @@ interface UserManagementModalProps {
 
 const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClose }) => {
     const { signUp } = useAuth();
-    // Use local state to mock a user database for this session
-    const [users, setUsers] = useState<any[]>([
-        { id: '1', full_name: 'John Doe', email: 'john@example.com', role: 'user', account_type: 'personal', status: 'active', created_at: new Date().toISOString() },
-        { id: '2', full_name: 'Jane Smith', email: 'jane@example.com', role: 'guest', account_type: 'family', status: 'disabled', created_at: new Date().toISOString() }
-    ]);
+    // Use local state backed by localStorage
+    const [users, setUsers] = useState<any[]>(() => {
+        const stored = localStorage.getItem('mockUsers');
+        if (stored) return JSON.parse(stored);
+        return [
+            { id: '1', full_name: 'John Doe', email: 'john@example.com', password: 'password123', role: 'user', account_type: 'personal', status: 'active', created_at: new Date().toISOString() },
+            { id: '2', full_name: 'Jane Smith', email: 'jane@example.com', password: 'password123', role: 'guest', account_type: 'family', status: 'disabled', created_at: new Date().toISOString() }
+        ];
+    });
+
+    // Save to localStorage whenever users change
+    const updateUsers = (newUsers: any[]) => {
+        setUsers(newUsers);
+        localStorage.setItem('mockUsers', JSON.stringify(newUsers));
+    };
 
     // Form States
     const [editingUser, setEditingUser] = useState<string | null>(null);
@@ -22,6 +32,7 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
     const [confirmPassword, setConfirmPassword] = useState('');
     const [accountType, setAccountType] = useState<'family' | 'personal'>('family');
     const [role, setRole] = useState<'guest' | 'user' | 'admin'>('user');
+    const [showResetPassword, setShowResetPassword] = useState(false);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -169,15 +180,18 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                                 />
                             </div>
 
-                            {!editingUser && (
+                            {!editingUser || showResetPassword ? (
                                 <div className="grid grid-cols-1 gap-2">
+                                    <label className="block text-xs font-medium text-gray-500 mb-1">
+                                        {showResetPassword ? 'New Password' : 'Password'}
+                                    </label>
                                     <input
                                         type="password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#1a365d] outline-none"
-                                        placeholder="Password"
-                                        required={!editingUser}
+                                        placeholder={showResetPassword ? "New Password" : "Password"}
+                                        required
                                     />
                                     <input
                                         type="password"
@@ -185,8 +199,27 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                                         onChange={(e) => setConfirmPassword(e.target.value)}
                                         className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#1a365d] outline-none"
                                         placeholder="Confirm"
-                                        required={!editingUser}
+                                        required
                                     />
+                                    {showResetPassword && (
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowResetPassword(false)}
+                                            className="text-xs text-gray-500 hover:text-gray-700 text-left underline"
+                                        >
+                                            Cancel Reset
+                                        </button>
+                                    )}
+                                </div>
+                            ) : (
+                                <div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowResetPassword(true)}
+                                        className="px-4 py-2 bg-yellow-50 text-yellow-700 border border-yellow-200 rounded-lg text-sm hover:bg-yellow-100 w-full"
+                                    >
+                                        Reset Password
+                                    </button>
                                 </div>
                             )}
 
@@ -271,8 +304,8 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                                             </td>
                                             <td className="p-3">
                                                 <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${u.role === 'admin' ? 'bg-red-50 text-red-600' :
-                                                        u.role === 'guest' ? 'bg-gray-100 text-gray-600' :
-                                                            'bg-blue-50 text-blue-600'
+                                                    u.role === 'guest' ? 'bg-gray-100 text-gray-600' :
+                                                        'bg-blue-50 text-blue-600'
                                                     }`}>
                                                     {u.role}
                                                 </span>

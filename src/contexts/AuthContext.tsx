@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (mockAdmin) {
       const adminUser = JSON.parse(mockAdmin);
       setUser(adminUser);
-      setIsAdmin(true);
+      checkUserRole(adminUser); // Use generic role checker
       setMustChangePassword(adminUser.user_metadata?.mustChangePassword || false);
       setLoading(false);
       return;
