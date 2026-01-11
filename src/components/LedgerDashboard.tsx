@@ -54,11 +54,26 @@ const LedgerDashboard: React.FC = () => {
 
     const handleOpenAddModal = () => {
         setEditingEntryId(null);
+
+        let initialType: LedgerType = 'INCOME';
+        let initialCategory: LedgerCategory = 'SALARY';
+
+        if (activeTab === 'creditor') {
+            initialType = 'CREDITOR';
+            initialCategory = 'LOAN';
+        } else if (activeTab === 'debtor') {
+            initialType = 'DEBTOR';
+            initialCategory = 'LOAN';
+        } else if (activeTab === 'expense') {
+            initialType = 'EXPENSE';
+            initialCategory = 'UTILITIES';
+        }
+
         setFormData({
             title: '',
             amount: '',
-            type: 'INCOME',
-            category: 'SALARY',
+            type: initialType,
+            category: initialCategory,
             date: new Date().toISOString().split('T')[0],
             description: ''
         });
@@ -113,16 +128,12 @@ const LedgerDashboard: React.FC = () => {
     const totalCreditors = creditors.reduce((sum, e) => sum + e.amount, 0);
     const totalDebtors = debtors.reduce((sum, e) => sum + e.amount, 0);
 
-    // Net Balance typically includes liquid cash (Income - Expense).
-    // Debts and Credits are usually balance sheet items, but for simple cash flow, 
-    // maybe we just show them separately? Or does "Debtor" (someone owes me) count as asset?
-    // Let's keep Net Balance as Cash Flow (Income - Expense) for now, as is typical for simple ledgers.
-    const balance = totalIncome - totalExpense;
-
     const displayedEntries = activeTab === 'overview' ? entries :
         activeTab === 'income' ? incomes :
             activeTab === 'expense' ? expenses :
                 activeTab === 'creditor' ? creditors : debtors;
+
+    const isSpecificTab = activeTab === 'creditor' || activeTab === 'debtor';
 
     return (
         <section id="ledger" className="py-16 bg-white border-t border-gray-100">
@@ -185,9 +196,14 @@ const LedgerDashboard: React.FC = () => {
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Title</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                                    {(activeTab === 'creditor' || activeTab === 'debtor') ? 'Name' : 'Title'}
+                                </th>
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Category</th>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Type</th>
+                                {!isSpecificTab && (
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Type</th>
+                                )}
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Description</th>
                                 <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Amount</th>
                                 <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase no-print">Actions</th>
                             </tr>
@@ -195,7 +211,7 @@ const LedgerDashboard: React.FC = () => {
                         <tbody className="divide-y divide-gray-100">
                             {displayedEntries.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-gray-400">
+                                    <td colSpan={isSpecificTab ? 6 : 7} className="px-6 py-8 text-center text-gray-400">
                                         No entries found.
                                     </td>
                                 </tr>
@@ -207,22 +223,26 @@ const LedgerDashboard: React.FC = () => {
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
                                             {entry.title}
-                                            {entry.description && <div className="text-xs text-gray-400 font-normal">{entry.description}</div>}
                                         </td>
                                         <td className="px-6 py-4 text-sm text-gray-500">
                                             <span className="px-2 py-1 bg-gray-100 rounded text-xs">
                                                 {entry.category.replace('_', ' ')}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-sm">
-                                            <span className={`px-2 py-1 rounded text-xs font-medium 
-                                                ${entry.type === 'INCOME' ? 'bg-green-100 text-green-700' :
-                                                    entry.type === 'EXPENSE' ? 'bg-red-100 text-red-700' :
-                                                        entry.type === 'CREDITOR' ? 'bg-orange-100 text-orange-700' :
-                                                            'bg-blue-100 text-blue-700'
-                                                }`}>
-                                                {entry.type === 'CREDITOR' ? 'CREDITOR' : entry.type === 'DEBTOR' ? 'DEBTOR' : entry.type}
-                                            </span>
+                                        {!isSpecificTab && (
+                                            <td className="px-6 py-4 text-sm">
+                                                <span className={`px-2 py-1 rounded text-xs font-medium 
+                                                    ${entry.type === 'INCOME' ? 'bg-green-100 text-green-700' :
+                                                        entry.type === 'EXPENSE' ? 'bg-red-100 text-red-700' :
+                                                            entry.type === 'CREDITOR' ? 'bg-orange-100 text-orange-700' :
+                                                                'bg-blue-100 text-blue-700'
+                                                    }`}>
+                                                    {entry.type === 'CREDITOR' ? 'CREDITOR' : entry.type === 'DEBTOR' ? 'DEBTOR' : entry.type}
+                                                </span>
+                                            </td>
+                                        )}
+                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                            {entry.description || '-'}
                                         </td>
                                         <td className={`px-6 py-4 text-sm font-bold text-right 
                                             ${entry.type === 'INCOME' ? 'text-green-600' :
@@ -264,7 +284,9 @@ const LedgerDashboard: React.FC = () => {
                         </h3>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    {(formData.type === 'CREDITOR' || formData.type === 'DEBTOR') ? 'Name' : 'Title'}
+                                </label>
                                 <input
                                     type="text"
                                     required
@@ -277,8 +299,10 @@ const LedgerDashboard: React.FC = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                                     <select
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4af37] outline-none"
+                                        className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4af37] outline-none ${(activeTab !== 'overview' && !editingEntryId) ? 'bg-gray-100 text-gray-500' : ''
+                                            }`}
                                         value={formData.type}
+                                        disabled={activeTab !== 'overview' && !editingEntryId}
                                         onChange={e => {
                                             const newType = e.target.value as LedgerType;
                                             setFormData({
