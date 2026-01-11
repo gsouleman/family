@@ -19,7 +19,19 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs, to
   const [customAmount, setCustomAmount] = useState<string>(totalAssetValue.toString());
   const [showBreakdown, setShowBreakdown] = useState(true);
 
-  // ... (rest of the logic)
+  const amount = parseFloat(customAmount) || 0;
+  const shares = useMemo(() => calculateIslamicInheritance(heirs, amount), [heirs, amount]);
+
+  const totalDistributed = shares.reduce((sum, s) => sum + s.shareAmount, 0);
+  const distributionPercentage = amount > 0 ? (totalDistributed / amount) * 100 : 0;
+
+  // Group shares by relation type for visualization
+  const sharesByType = shares.reduce((acc, share) => {
+    const type = share.relation;
+    if (!acc[type]) acc[type] = [];
+    acc[type].push(share);
+    return acc;
+  }, {} as Record<string, InheritanceShare[]>);
 
   return (
     <section id="calculator" className="py-16 bg-gradient-to-br from-[#1a365d] via-[#1e4976] to-[#0f2744]">
