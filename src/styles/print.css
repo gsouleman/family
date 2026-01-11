@@ -104,4 +104,34 @@
   body.print-mode-assets #assets .print\:block {
     display: block !important;
   }
+
+  /* PRINT MODE: FAMILY */
+  /* When body has class 'print-mode-family', hide everything else */
+  body.print-mode-family * {
+    visibility: hidden;
+  }
+
+  /* Make the family section visible and positioned at top */
+  body.print-mode-family #family,
+  body.print-mode-family #family * {
+    visibility: visible;
+  }
+
+  body.print-mode-family #family {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white;
+  }
+
+  body.print-mode-family #family .print\:hidden {
+    display: none !important;
+  }
+
+  body.print-mode-family #family .print\:block {
+    display: block !important;
+  }
 }
