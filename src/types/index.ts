@@ -93,7 +93,7 @@ export interface Transaction {
 export interface Document {
   id: string;
   name: string;
-  type: 'will' | 'deed' | 'certificate' | 'contract' | 'other';
+  type: 'will' | 'deed' | 'certificate' | 'contract' | 'other' | 'creditor_certificate' | 'debtor_certificate';
   uploadDate: string;
   fileSize: string;
   relatedAssetId?: string;

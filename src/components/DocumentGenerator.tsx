@@ -12,30 +12,42 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
     const { formatCurrency } = useCurrency();
     const [activeModal, setActiveModal] = useState<Document['type'] | null>(null);
     const [showDropdown, setShowDropdown] = useState(false);
-    const [ledgerLiabilities, setLedgerLiabilities] = useState<{ id: string; title: string; amount: number }[]>([]);
+    const [selectedPerson, setSelectedPerson] = useState<{ id: string; title: string; amount: number; date: string; category: string; description?: string } | null>(null);
+    const [ledgerData, setLedgerData] = useState<{ id: string; title: string; amount: number; date: string; category: string; description?: string }[]>([]);
 
     useEffect(() => {
         if (activeModal === 'will') {
-            fetchLiabilities();
+            fetchLedgerData('CREDITOR');
+        } else if (activeModal === 'creditor_certificate') {
+            fetchLedgerData('CREDITOR');
+        } else if (activeModal === 'debtor_certificate') {
+            fetchLedgerData('DEBTOR');
         }
     }, [activeModal]);
 
-    const fetchLiabilities = async () => {
+    const fetchLedgerData = async (type: 'CREDITOR' | 'DEBTOR') => {
         try {
             const entries = await api.getLedgerEntries();
-            // Filter for liabilities (CREDITOR means I owe them)
-            const debts = entries
-                .filter(e => e.type === 'CREDITOR')
-                .map(e => ({ id: e.id, title: e.title, amount: e.amount }));
-            setLedgerLiabilities(debts);
+            const filtered = entries
+                .filter(e => e.type === type)
+                .map(e => ({
+                    id: e.id,
+                    title: e.title,
+                    amount: e.amount,
+                    date: e.date,
+                    category: e.category,
+                    description: e.description
+                }));
+            setLedgerData(filtered);
         } catch (error) {
-            console.error('Failed to fetch liabilities:', error);
+            console.error('Failed to fetch ledger:', error);
         }
     };
 
     // Calculations
     const totalAssets = activeAssets.reduce((acc, curr) => acc + curr.value, 0);
-    const totalLiabilities = ledgerLiabilities.reduce((acc, curr) => acc + curr.amount, 0);
+    // For Will only (liabilities)
+    const totalLiabilities = (activeModal === 'will' ? ledgerData : []).reduce((acc, curr) => acc + curr.amount, 0);
     const netEstate = totalAssets - totalLiabilities;
 
     const handlePrint = () => {
@@ -45,13 +57,15 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
     const documentTypes: { type: Document['type']; label: string }[] = [
         { type: 'will', label: 'Islamic Will' },
         { type: 'deed', label: 'Property Deed' },
-        { type: 'certificate', label: 'Certificate' },
+        { type: 'creditor_certificate', label: 'Creditor Certificate' },
+        { type: 'debtor_certificate', label: 'Debtor Certificate' },
         { type: 'contract', label: 'Contract' },
     ];
 
     const handleSelectType = (type: Document['type']) => {
         setActiveModal(type);
         setShowDropdown(false);
+        setSelectedPerson(null); // Reset selection
     };
 
     return (
@@ -106,8 +120,6 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                 </button>
                             </div>
 
-                            {/* Data Entry Section - Print Hidden - Removed Manual Liabilities Input - Now Fetched from Ledger */}
-
                             {/* Will Content */}
                             <div className="prose max-w-none font-serif text-gray-900 border-[6px] border-[#d4af37]/20 p-12 print:border-none print:p-0">
                                 <div className="text-center mb-12">
@@ -148,9 +160,9 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                         </div>
                                         <div>
                                             <h4 className="font-bold underline mb-2">Liabilities (Debts)</h4>
-                                            {ledgerLiabilities.length > 0 ? (
+                                            {ledgerData.length > 0 ? (
                                                 <ul className="list-disc ml-6">
-                                                    {ledgerLiabilities.map(l => (
+                                                    {ledgerData.map(l => (
                                                         <li key={l.id}>{l.title} ({formatCurrency(l.amount)})</li>
                                                     ))}
                                                 </ul>
@@ -166,9 +178,9 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                         I direct my Executor(s) to pay all my legal debts and funeral expenses as soon as possible after my death, before any distribution of my estate to my heirs.
                                         Specifically, the following debts should be prioritized:
                                     </p>
-                                    {ledgerLiabilities.length > 0 ? (
+                                    {ledgerData.length > 0 ? (
                                         <ul className="list-disc ml-6 mt-2">
-                                            {ledgerLiabilities.map(l => (
+                                            {ledgerData.map(l => (
                                                 <li key={l.id}>
                                                     Amount of <strong>{formatCurrency(l.amount)}</strong> owed to <strong>{l.title}</strong>.
                                                 </li>
@@ -235,8 +247,181 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                 </div>
             )}
 
+            {/* Certificate Modal (Combined for Creditor/Debtor) */}
+            {(activeModal === 'creditor_certificate' || activeModal === 'debtor_certificate') && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:static print:bg-white print:p-0">
+                    {!selectedPerson ? (
+                        /* SELECTION VIEW */
+                        <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 text-center print:hidden">
+                            <h3 className="text-xl font-bold text-[#1a365d] mb-2">
+                                Select {activeModal === 'creditor_certificate' ? 'Creditor' : 'Debtor'}
+                            </h3>
+                            <p className="text-gray-500 mb-6">
+                                Choose a person to generate the certificate for.
+                            </p>
+                            <div className="space-y-2 max-h-60 overflow-y-auto mb-6 text-left">
+                                {ledgerData.length > 0 ? (
+                                    ledgerData.map(person => (
+                                        <button
+                                            key={person.id}
+                                            onClick={() => setSelectedPerson(person)}
+                                            className="w-full p-3 rounded-xl border border-gray-200 hover:border-[#d4af37] hover:bg-[#d4af37]/5 transition-all text-left flex justify-between items-center group"
+                                        >
+                                            <span className="font-semibold text-gray-900 group-hover:text-[#1a365d]">{person.title}</span>
+                                            <span className="text-sm font-bold text-[#d4af37]">{formatCurrency(person.amount)}</span>
+                                        </button>
+                                    ))
+                                ) : (
+                                    <p className="text-center text-gray-400 py-4">No records found.</p>
+                                )}
+                            </div>
+                            <button
+                                onClick={() => setActiveModal(null)}
+                                className="w-full px-6 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    ) : (
+                        /* CERTIFICATE VIEW */
+                        <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto print:max-w-none print:max-h-none print:shadow-none print:w-full">
+                            <div className="p-8 print:p-0">
+                                {/* Header Buttons */}
+                                <div className="flex justify-between items-start mb-8 print:hidden">
+                                    <h2 className="text-2xl font-bold text-[#1a365d]">Document Preview</h2>
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={() => setSelectedPerson(null)}
+                                            className="text-gray-500 hover:text-[#1a365d] px-3 py-1 rounded hover:bg-gray-100 text-sm"
+                                        >
+                                            Back
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveModal(null)}
+                                            className="text-gray-500 hover:text-gray-700"
+                                        >
+                                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Certificate Content */}
+                                <div className="border-[10px] border-double border-[#1a365d] p-12 print:border-[10px] print:border-[#1a365d] print:p-12 relative overflow-hidden bg-white">
+                                    {/* Watermark / Background Decoration */}
+                                    <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none flex items-center justify-center">
+                                        <svg className="w-[500px] h-[500px]" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M12 2L1 21h22L12 2zm0 3.516L20.297 19H3.703L12 5.516z" />
+                                        </svg>
+                                    </div>
+
+                                    <div className="text-center relative z-10">
+                                        <div className="mb-4">
+                                            <h1 className="text-4xl font-serif font-bold text-[#1a365d] uppercase tracking-widest mb-1">
+                                                Certificate
+                                            </h1>
+                                            <p className="text-[#d4af37] font-serif italic text-xl">
+                                                of {activeModal === 'creditor_certificate' ? 'Indebtedness' : 'Receivable Credit'}
+                                            </p>
+                                        </div>
+
+                                        <div className="w-full h-px bg-gradient-to-r from-transparent via-[#d4af37] to-transparent my-8"></div>
+
+                                        <div className="font-serif text-gray-800 space-y-8 max-w-2xl mx-auto">
+                                            <p className="text-lg italic text-gray-500">This is to certify that</p>
+
+                                            <h2 className="text-3xl font-bold text-[#1a365d] border-b-2 border-gray-200 inline-block pb-2 px-8">
+                                                {selectedPerson.title}
+                                            </h2>
+
+                                            <p className="text-lg leading-relaxed">
+                                                {activeModal === 'creditor_certificate' ? (
+                                                    <>
+                                                        is a recognized <strong>Creditor</strong> of the Family Estate.
+                                                        The Estate acknowledges a debt obligation in the amount of:
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        is a recognized <strong>Debtor</strong> to the Family Estate.
+                                                        The Estate holds a receivable credit claim in the amount of:
+                                                    </>
+                                                )}
+                                            </p>
+
+                                            <div className="text-4xl font-bold text-[#d4af37] py-4">
+                                                {formatCurrency(selectedPerson.amount)}
+                                            </div>
+
+                                            <div className="text-left bg-gray-50 p-6 rounded-lg border border-gray-100 text-sm mt-8">
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div>
+                                                        <span className="text-gray-500 block">Reference ID</span>
+                                                        <span className="font-mono text-gray-900">{selectedPerson.id.slice(0, 8).toUpperCase()}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-gray-500 block">Date of Entry</span>
+                                                        <span className="text-gray-900">{new Date(selectedPerson.date).toLocaleDateString()}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-gray-500 block">Category</span>
+                                                        <span className="text-gray-900 capitalize">{selectedPerson.category.replace('_', ' ').toLowerCase()}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span className="text-gray-500 block">Description</span>
+                                                        <span className="text-gray-900">{selectedPerson.description || 'N/A'}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <p className="text-sm text-gray-500 italic mt-8">
+                                                This certificate serves as an official record of the financial relationship documented in the Family Ledger.
+                                            </p>
+                                        </div>
+
+                                        <div className="flex justify-between items-end mt-24">
+                                            <div className="text-center w-64">
+                                                <div className="border-b border-gray-400 pb-2 mb-2 font-dancing-script text-2xl text-[#1a365d]">
+                                                    Authorized Signatory
+                                                </div>
+                                                <p className="text-xs text-gray-500 uppercase tracking-wider">Family Estate Administrator</p>
+                                            </div>
+
+                                            <div className="text-center">
+                                                <div className="w-16 h-16 border-2 border-[#d4af37] rounded-full flex items-center justify-center mx-auto mb-2 opacity-80">
+                                                    <span className="text-[#d4af37] font-bold text-xs uppercase">Official<br />Seal</span>
+                                                </div>
+                                                <p className="text-xs text-gray-400">{new Date().toLocaleDateString()}</p>
+                                            </div>
+
+                                            <div className="text-center w-64">
+                                                <div className="border-b border-gray-400 pb-2 mb-2 h-10"></div>
+                                                <p className="text-xs text-gray-500 uppercase tracking-wider">Recipient Signature</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="mt-8 flex justify-end gap-4 print:hidden">
+                                    <button
+                                        onClick={handlePrint}
+                                        className="px-6 py-2 bg-[#1a365d] text-white rounded-lg hover:bg-[#0f2744] font-medium flex items-center gap-2"
+                                    >
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                        </svg>
+                                        Print Certificate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+
             {/* Placeholders for other document types */}
-            {activeModal && activeModal !== 'will' && (
+            {activeModal && activeModal !== 'will' && activeModal !== 'creditor_certificate' && activeModal !== 'debtor_certificate' && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
                     <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 text-center">
                         <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
