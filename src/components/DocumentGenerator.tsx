@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Heir, Asset, Document } from '../types';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { api } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface DocumentGeneratorProps {
     heirs: Heir[];
@@ -10,6 +11,7 @@ interface DocumentGeneratorProps {
 
 const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAssets }) => {
     const { formatCurrency } = useCurrency();
+    const { branding } = useAuth();
     const [activeModal, setActiveModal] = useState<Document['type'] | null>(null);
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedPerson, setSelectedPerson] = useState<{ id: string; title: string; amount: number; date: string; category: string; description?: string } | null>(null);
@@ -338,12 +340,12 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                             <p className="text-lg leading-relaxed">
                                                 {activeModal === 'creditor_certificate' ? (
                                                     <>
-                                                        is a recognized <strong>Creditor</strong> of the Family Estate.
+                                                        is a recognized <strong>Creditor</strong> of the {branding}.
                                                         The Estate acknowledges a debt obligation in the amount of:
                                                     </>
                                                 ) : (
                                                     <>
-                                                        is a recognized <strong>Debtor</strong> to the Family Estate.
+                                                        is a recognized <strong>Debtor</strong> to the {branding}.
                                                         The Estate holds a receivable credit claim in the amount of:
                                                     </>
                                                 )}
@@ -384,7 +386,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                                 <div className="border-b border-gray-400 pb-2 mb-2 font-dancing-script text-2xl text-[#1a365d]">
                                                     Authorized Signatory
                                                 </div>
-                                                <p className="text-xs text-gray-500 uppercase tracking-wider">Family Estate Administrator</p>
+                                                <p className="text-xs text-gray-500 uppercase tracking-wider">{branding} Administrator</p>
                                             </div>
 
                                             <div className="text-center">

@@ -2,25 +2,33 @@ import React, { useState } from 'react';
 import { Notification } from '../types';
 import { useAuth } from '@/contexts/AuthContext';
 import CountrySelector from './CountrySelector';
+
 interface NavbarProps {
   notifications: Notification[];
   onMarkNotificationRead: (id: string) => void;
   onOpenAuthModal: () => void;
+  onOpenAdminModal: () => void;
 }
+
 const Navbar: React.FC<NavbarProps> = ({
   notifications,
   onMarkNotificationRead,
-  onOpenAuthModal
+  onOpenAuthModal,
+  onOpenAdminModal
 }) => {
   const {
     user,
     signOut,
-    loading
+    loading,
+    isAdmin,
+    branding
   } = useAuth();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   const unreadCount = notifications.filter(n => !n.read).length;
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -30,6 +38,7 @@ const Navbar: React.FC<NavbarProps> = ({
     }
     setMobileMenuOpen(false);
   };
+
   const handleSignOut = async () => {
     await signOut();
     setShowUserMenu(false);
@@ -38,12 +47,14 @@ const Navbar: React.FC<NavbarProps> = ({
   // Get user display name from metadata or email
   const getUserDisplayName = () => {
     if (!user) return '';
-    return user.user_metadata?.full_name || user.email?.split('@')[0] || 'User';
+    return user.user_metadata?.full_name || user.email?.split('@')[0] || '';
   };
+
   const getUserInitials = () => {
     const name = getUserDisplayName();
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    return name ? name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U';
   };
+
   return <nav className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-gray-100">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between h-16">
@@ -56,7 +67,7 @@ const Navbar: React.FC<NavbarProps> = ({
           </div>
           <div>
             <h1 className="text-lg font-bold text-[#1a365d]">Njikam</h1>
-            <p className="text-xs text-gray-500 -mt-0.5">Family Legacy</p>
+            <p className="text-xs text-gray-500 -mt-0.5">{branding}</p>
           </div>
         </div>
 
@@ -83,6 +94,19 @@ const Navbar: React.FC<NavbarProps> = ({
           }].map(item => <button key={item.id} onClick={() => scrollToSection(item.id)} className="px-4 py-2 text-gray-600 hover:text-[#1a365d] hover:bg-gray-50 rounded-lg transition-colors font-medium">
             {item.label}
           </button>)}
+
+          {/* Admin Panel Button */}
+          {isAdmin && (
+            <button
+              onClick={onOpenAdminModal}
+              className="ml-2 px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg transition-colors font-medium flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              Admin Panel
+            </button>
+          )}
         </div>
 
         {/* Right Side */}
@@ -143,6 +167,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 <div className="p-4 border-b border-gray-100 bg-gray-50">
                   <p className="font-semibold text-gray-900 truncate">{getUserDisplayName()}</p>
                   <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                  {isAdmin && <span className="text-xs text-red-600 font-bold uppercase mt-1 block">Administrator</span>}
                 </div>
                 <div className="p-2">
                   <button onClick={() => {
@@ -180,7 +205,7 @@ const Navbar: React.FC<NavbarProps> = ({
               Sign In
             </button>)}
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Button - unchanged logic mostly */}
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors">
             <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {mobileMenuOpen ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /> : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />}
@@ -213,6 +238,19 @@ const Navbar: React.FC<NavbarProps> = ({
           {item.label}
         </button>)}
 
+        {/* Admin Mobile Link */}
+        {isAdmin && (
+          <button onClick={() => {
+            setMobileMenuOpen(false);
+            onOpenAdminModal();
+          }} className="block w-full text-left px-4 py-3 text-red-600 hover:bg-red-50/50 rounded-lg transition-colors font-medium flex items-center gap-2">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            Admin Panel
+          </button>
+        )}
+
         {/* Mobile Country Selector */}
         <div className="px-4 py-3 border-t border-gray-100 mt-2">
           <p className="text-sm font-medium text-gray-500 mb-2">Country / Currency</p>
@@ -224,7 +262,7 @@ const Navbar: React.FC<NavbarProps> = ({
           setMobileMenuOpen(false);
           onOpenAuthModal();
         }} className="block w-full text-left px-4 py-3 text-[#d4af37] hover:bg-[#d4af37]/10 rounded-lg transition-colors font-medium mt-2">
-          Sign In / Sign Up
+          Sign In
         </button>}
 
         {user && <button onClick={() => {

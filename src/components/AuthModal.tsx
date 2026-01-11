@@ -42,7 +42,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     setError(null);
 
     const { error } = await signIn(email, password);
-    
+
     if (error) {
       setError(error.message);
       setLoading(false);
@@ -70,7 +70,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     }
 
     const { error } = await signUp(email, password, fullName);
-    
+
     if (error) {
       setError(error.message);
       setLoading(false);
@@ -89,7 +89,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     setError(null);
 
     const { error } = await resetPassword(email);
-    
+
     if (error) {
       setError(error.message);
     } else {
@@ -158,14 +158,14 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
             <form onSubmit={handleSignIn} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
+                  Username or Email
                 </label>
                 <input
-                  type="email"
+                  type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none transition-all"
-                  placeholder="you@example.com"
+                  placeholder="admin or user@example.com"
                   required
                 />
               </div>
@@ -206,83 +206,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                   </>
                 ) : (
                   'Sign In'
-                )}
-              </button>
-            </form>
-          )}
-
-          {/* Sign Up Form */}
-          {mode === 'signup' && (
-            <form onSubmit={handleSignUp} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none transition-all"
-                  placeholder="Enter your full name"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none transition-all"
-                  placeholder="you@example.com"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none transition-all"
-                  placeholder="Create a password (min. 6 characters)"
-                  required
-                  minLength={6}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none transition-all"
-                  placeholder="Confirm your password"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full px-6 py-3 bg-[#d4af37] hover:bg-[#c9a432] text-[#1a365d] rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-[#1a365d] border-t-transparent rounded-full animate-spin"></div>
-                    Creating account...
-                  </>
-                ) : (
-                  'Create Account'
                 )}
               </button>
             </form>
@@ -333,7 +256,8 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
           {/* Mode Switch */}
           {mode !== 'reset' && (
             <div className="mt-6 pt-6 border-t border-gray-100 text-center">
-              <p className="text-gray-600 text-sm">
+              {/* Signup removed as per requirements */}
+              {/* <p className="text-gray-600 text-sm">
                 {mode === 'signin' ? "Don't have an account?" : 'Already have an account?'}
                 <button
                   type="button"
@@ -342,7 +266,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 >
                   {mode === 'signin' ? 'Sign Up' : 'Sign In'}
                 </button>
-              </p>
+              </p> */}
             </div>
           )}
         </div>
