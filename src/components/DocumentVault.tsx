@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
-import { Document } from '../types';
+import { Document, Heir, Asset } from '../types';
 import { useData } from '@/contexts/DataContext';
 import { useAuth } from '@/contexts/AuthContext';
+import WillGenerator from './WillGenerator';
 
-const DocumentVault: React.FC = () => {
+interface DocumentVaultProps {
+  heirs?: Heir[];
+  activeAssets?: Asset[];
+}
+
+const DocumentVault: React.FC<DocumentVaultProps> = ({ heirs = [], activeAssets = [] }) => {
   const { documents, addDocument, deleteDocument } = useData();
   const { user } = useAuth();
 
@@ -95,15 +101,18 @@ const DocumentVault: React.FC = () => {
             </p>
           </div>
           {user && (
-            <button
-              onClick={() => setShowUploadModal(true)}
-              className="px-6 py-3 bg-[#1a365d] hover:bg-[#0f2744] text-white font-semibold rounded-xl transition-colors flex items-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-              </svg>
-              Upload Document
-            </button>
+            <div className="flex flex-wrap gap-3">
+              <WillGenerator heirs={heirs} activeAssets={activeAssets} />
+              <button
+                onClick={() => setShowUploadModal(true)}
+                className="px-6 py-2 bg-[#1a365d] hover:bg-[#0f2744] text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                Upload Document
+              </button>
+            </div>
           )}
         </div>
 
@@ -114,8 +123,8 @@ const DocumentVault: React.FC = () => {
               key={type}
               onClick={() => setFilter(type)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === type
-                  ? 'bg-[#1a365d] text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-[#1a365d] text-white'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
             >
               {type.charAt(0).toUpperCase() + type.slice(1)}

@@ -158,7 +158,7 @@ const AppLayout: React.FC = () => {
 
       <LedgerDashboard />
 
-      <DocumentVault />
+      <DocumentVault heirs={heirs} activeAssets={assets.filter(a => a.status === 'active')} />
       <TransactionHistory transactions={transactions} distributions={distributions} />
       <Footer />
 

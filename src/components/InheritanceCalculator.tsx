@@ -5,7 +5,6 @@ import { getRelationColor } from '../data/family';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
 import PrintButton from './PrintButton';
-import WillGenerator from './WillGenerator';
 import { Asset } from '../types';
 
 interface InheritanceCalculatorProps {
@@ -40,7 +39,6 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
         <div className="text-center mb-12 relative">
           <div className="absolute right-0 top-0 flex gap-2">
             <PrintButton title="Print Calculation" />
-            <WillGenerator heirs={heirs} activeAssets={activeAssets} />
           </div>
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#d4af37]/20 rounded-full border border-[#d4af37]/30 mb-6">
             <svg className="w-5 h-5 text-[#d4af37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
