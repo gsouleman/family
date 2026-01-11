@@ -7,7 +7,7 @@ import PrintButton from './PrintButton';
 const LedgerDashboard: React.FC = () => {
     const { formatCurrency } = useCurrency();
     const [entries, setEntries] = useState<LedgerEntry[]>([]);
-    const [activeTab, setActiveTab] = useState<'overview' | 'income' | 'expense'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'income' | 'expense' | 'creditor' | 'debtor'>('overview');
     const [showModal, setShowModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -105,11 +105,24 @@ const LedgerDashboard: React.FC = () => {
     // Filter Logic
     const incomes = entries.filter(e => e.type === 'INCOME');
     const expenses = entries.filter(e => e.type === 'EXPENSE');
+    const creditors = entries.filter(e => e.type === 'CREDITOR');
+    const debtors = entries.filter(e => e.type === 'DEBTOR');
+
     const totalIncome = incomes.reduce((sum, e) => sum + e.amount, 0);
     const totalExpense = expenses.reduce((sum, e) => sum + e.amount, 0);
+    const totalCreditors = creditors.reduce((sum, e) => sum + e.amount, 0);
+    const totalDebtors = debtors.reduce((sum, e) => sum + e.amount, 0);
+
+    // Net Balance typically includes liquid cash (Income - Expense).
+    // Debts and Credits are usually balance sheet items, but for simple cash flow, 
+    // maybe we just show them separately? Or does "Debtor" (someone owes me) count as asset?
+    // Let's keep Net Balance as Cash Flow (Income - Expense) for now, as is typical for simple ledgers.
     const balance = totalIncome - totalExpense;
 
-    const displayedEntries = activeTab === 'overview' ? entries : activeTab === 'income' ? incomes : expenses;
+    const displayedEntries = activeTab === 'overview' ? entries :
+        activeTab === 'income' ? incomes :
+            activeTab === 'expense' ? expenses :
+                activeTab === 'creditor' ? creditors : debtors;
 
     return (
         <section id="ledger" className="py-16 bg-white border-t border-gray-100">
@@ -117,7 +130,7 @@ const LedgerDashboard: React.FC = () => {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h2 className="text-3xl font-bold text-[#1a365d]">Financial Ledger</h2>
-                        <p className="text-gray-500">Track incomes, expenses, and general balance.</p>
+                        <p className="text-gray-500">Track incomes, expenses, debts, and receivables.</p>
                     </div>
                     <div className="flex gap-3">
                         <PrintButton title="Print Ledger" />
@@ -131,35 +144,37 @@ const LedgerDashboard: React.FC = () => {
                 </div>
 
                 {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                     <div className="bg-green-50 p-6 rounded-2xl border border-green-100">
                         <p className="text-green-600 font-medium text-sm uppercase">Total Income</p>
-                        <p className="text-3xl font-bold text-green-700 mt-2">{formatCurrency(totalIncome)}</p>
+                        <p className="text-2xl font-bold text-green-700 mt-2">{formatCurrency(totalIncome)}</p>
                     </div>
                     <div className="bg-red-50 p-6 rounded-2xl border border-red-100">
                         <p className="text-red-600 font-medium text-sm uppercase">Total Expenses</p>
-                        <p className="text-3xl font-bold text-red-700 mt-2">{formatCurrency(totalExpense)}</p>
+                        <p className="text-2xl font-bold text-red-700 mt-2">{formatCurrency(totalExpense)}</p>
                     </div>
-                    <div className="bg-[#1a365d]/5 p-6 rounded-2xl border border-[#1a365d]/10">
-                        <p className="text-[#1a365d] font-medium text-sm uppercase">Net Balance</p>
-                        <p className={`text-3xl font-bold mt-2 ${balance >= 0 ? 'text-[#1a365d]' : 'text-red-600'}`}>
-                            {formatCurrency(balance)}
-                        </p>
+                    <div className="bg-orange-50 p-6 rounded-2xl border border-orange-100">
+                        <p className="text-orange-600 font-medium text-sm uppercase">Debts (Creditors)</p>
+                        <p className="text-2xl font-bold text-orange-700 mt-2">{formatCurrency(totalCreditors)}</p>
+                    </div>
+                    <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                        <p className="text-blue-600 font-medium text-sm uppercase">Receivables (Debtors)</p>
+                        <p className="text-2xl font-bold text-blue-700 mt-2">{formatCurrency(totalDebtors)}</p>
                     </div>
                 </div>
 
                 {/* Tabs */}
-                <div className="flex border-b border-gray-200 mb-6 no-print">
-                    {(['overview', 'income', 'expense'] as const).map(tab => (
+                <div className="flex border-b border-gray-200 mb-6 no-print overflow-x-auto">
+                    {(['overview', 'income', 'expense', 'creditor', 'debtor'] as const).map(tab => (
                         <button
                             key={tab}
                             onClick={() => setActiveTab(tab)}
-                            className={`px-6 py-3 font-medium text-sm capitalize border-b-2 transition-colors ${activeTab === tab
+                            className={`px-6 py-3 font-medium text-sm capitalize border-b-2 transition-colors whitespace-nowrap ${activeTab === tab
                                 ? 'border-[#d4af37] text-[#1a365d]'
                                 : 'border-transparent text-gray-500 hover:text-gray-700'
                                 }`}
                         >
-                            {tab}
+                            {tab === 'creditor' ? 'Creditors (I Owe)' : tab === 'debtor' ? 'Debtors (Owe Me)' : tab}
                         </button>
                     ))}
                 </div>
@@ -200,14 +215,21 @@ const LedgerDashboard: React.FC = () => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-sm">
-                                            <span className={`px-2 py-1 rounded text-xs font-medium ${entry.type === 'INCOME' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                            <span className={`px-2 py-1 rounded text-xs font-medium 
+                                                ${entry.type === 'INCOME' ? 'bg-green-100 text-green-700' :
+                                                    entry.type === 'EXPENSE' ? 'bg-red-100 text-red-700' :
+                                                        entry.type === 'CREDITOR' ? 'bg-orange-100 text-orange-700' :
+                                                            'bg-blue-100 text-blue-700'
                                                 }`}>
-                                                {entry.type}
+                                                {entry.type === 'CREDITOR' ? 'CREDITOR' : entry.type === 'DEBTOR' ? 'DEBTOR' : entry.type}
                                             </span>
                                         </td>
-                                        <td className={`px-6 py-4 text-sm font-bold text-right ${entry.type === 'INCOME' ? 'text-green-600' : 'text-red-600'
+                                        <td className={`px-6 py-4 text-sm font-bold text-right 
+                                            ${entry.type === 'INCOME' ? 'text-green-600' :
+                                                entry.type === 'EXPENSE' ? 'text-red-600' :
+                                                    entry.type === 'CREDITOR' ? 'text-orange-600' : 'text-blue-600'
                                             }`}>
-                                            {entry.type === 'INCOME' ? '+' : '-'}{formatCurrency(entry.amount)}
+                                            {entry.type === 'INCOME' || entry.type === 'DEBTOR' ? '+' : '-'}{formatCurrency(entry.amount)}
                                         </td>
                                         <td className="px-6 py-4 text-right no-print">
                                             <div className="flex items-center justify-end gap-2">
@@ -262,12 +284,16 @@ const LedgerDashboard: React.FC = () => {
                                             setFormData({
                                                 ...formData,
                                                 type: newType,
-                                                category: newType === 'INCOME' ? 'SALARY' : 'UTILITIES'
+                                                category: newType === 'INCOME' ? 'SALARY' :
+                                                    newType === 'EXPENSE' ? 'UTILITIES' :
+                                                        newType === 'CREDITOR' ? 'LOAN' : 'PERSONAL_LOAN' as any || 'LOAN'
                                             });
                                         }}
                                     >
                                         <option value="INCOME">Income</option>
                                         <option value="EXPENSE">Expense</option>
+                                        <option value="CREDITOR">Creditor (I Owe)</option>
+                                        <option value="DEBTOR">Debtor (Owes Me)</option>
                                     </select>
                                 </div>
                                 <div>
@@ -288,7 +314,7 @@ const LedgerDashboard: React.FC = () => {
                                     value={formData.category}
                                     onChange={e => setFormData({ ...formData, category: e.target.value as LedgerCategory })}
                                 >
-                                    {formData.type === 'INCOME' ? (
+                                    {formData.type === 'INCOME' && (
                                         <>
                                             <option value="SALARY">Salary</option>
                                             <option value="BUSINESS">Business</option>
@@ -296,12 +322,22 @@ const LedgerDashboard: React.FC = () => {
                                             <option value="DIVIDEND">Dividend</option>
                                             <option value="OTHER_INCOME">Other</option>
                                         </>
-                                    ) : (
+                                    )}
+                                    {formData.type === 'EXPENSE' && (
                                         <>
                                             <option value="UTILITIES">Utilities</option>
                                             <option value="MAINTENANCE">Maintenance</option>
                                             <option value="TAX">Tax</option>
-                                            <option value="DEBT">Debt</option>
+                                            <option value="DEBT">Debt Payment</option>
+                                            <option value="PERSONAL">Personal</option>
+                                            <option value="OTHER_EXPENSE">Other</option>
+                                        </>
+                                    )}
+                                    {(formData.type === 'CREDITOR' || formData.type === 'DEBTOR') && (
+                                        <>
+                                            <option value="LOAN">Loan</option>
+                                            <option value="MORTGAGE">Mortgage</option>
+                                            <option value="BUSINESS">Business</option>
                                             <option value="PERSONAL">Personal</option>
                                             <option value="OTHER_EXPENSE">Other</option>
                                         </>

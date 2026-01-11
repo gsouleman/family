@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heir, Asset, Document } from '../types';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { api } from '@/lib/api';
 
 interface DocumentGeneratorProps {
     heirs: Heir[];
@@ -11,30 +12,34 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
     const { formatCurrency } = useCurrency();
     const [activeModal, setActiveModal] = useState<Document['type'] | null>(null);
     const [showDropdown, setShowDropdown] = useState(false);
-    const [liabilities, setLiabilities] = useState<{ id: string; creditor: string; amount: number }[]>([]);
-    const [newLiability, setNewLiability] = useState({ creditor: '', amount: '' });
+    const [ledgerLiabilities, setLedgerLiabilities] = useState<{ id: string; title: string; amount: number }[]>([]);
+
+    useEffect(() => {
+        if (activeModal === 'will') {
+            fetchLiabilities();
+        }
+    }, [activeModal]);
+
+    const fetchLiabilities = async () => {
+        try {
+            const entries = await api.getLedgerEntries();
+            // Filter for liabilities (CREDITOR means I owe them)
+            const debts = entries
+                .filter(e => e.type === 'CREDITOR')
+                .map(e => ({ id: e.id, title: e.title, amount: e.amount }));
+            setLedgerLiabilities(debts);
+        } catch (error) {
+            console.error('Failed to fetch liabilities:', error);
+        }
+    };
 
     // Calculations
     const totalAssets = activeAssets.reduce((acc, curr) => acc + curr.value, 0);
-    const totalLiabilities = liabilities.reduce((acc, curr) => acc + curr.amount, 0);
+    const totalLiabilities = ledgerLiabilities.reduce((acc, curr) => acc + curr.amount, 0);
     const netEstate = totalAssets - totalLiabilities;
 
     const handlePrint = () => {
         window.print();
-    };
-
-    const addLiability = () => {
-        if (!newLiability.creditor || !newLiability.amount) return;
-        setLiabilities([...liabilities, {
-            id: Math.random().toString(36).substr(2, 9),
-            creditor: newLiability.creditor,
-            amount: parseFloat(newLiability.amount)
-        }]);
-        setNewLiability({ creditor: '', amount: '' });
-    };
-
-    const removeLiability = (id: string) => {
-        setLiabilities(liabilities.filter(l => l.id !== id));
     };
 
     const documentTypes: { type: Document['type']; label: string }[] = [
@@ -101,43 +106,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                 </button>
                             </div>
 
-                            {/* Data Entry Section - Print Hidden */}
-                            <div className="mb-8 p-4 bg-gray-50 rounded-xl border border-gray-200 print:hidden">
-                                <h3 className="text-lg font-bold text-[#1a365d] mb-4">Add Liabilities / Debts</h3>
-                                <div className="flex gap-4 mb-4">
-                                    <input
-                                        type="text"
-                                        placeholder="Creditor Name"
-                                        className="flex-1 px-3 py-2 border rounded-lg"
-                                        value={newLiability.creditor}
-                                        onChange={e => setNewLiability({ ...newLiability, creditor: e.target.value })}
-                                    />
-                                    <input
-                                        type="number"
-                                        placeholder="Amount"
-                                        className="w-32 px-3 py-2 border rounded-lg"
-                                        value={newLiability.amount}
-                                        onChange={e => setNewLiability({ ...newLiability, amount: e.target.value })}
-                                        onKeyDown={e => e.key === 'Enter' && addLiability()}
-                                    />
-                                    <button
-                                        onClick={addLiability}
-                                        className="px-4 py-2 bg-[#d4af37] text-[#1a365d] font-bold rounded-lg"
-                                    >
-                                        Add
-                                    </button>
-                                </div>
-                                {liabilities.length > 0 && (
-                                    <ul className="space-y-2">
-                                        {liabilities.map(l => (
-                                            <li key={l.id} className="flex justify-between items-center bg-white p-2 rounded border border-gray-100">
-                                                <span>{l.creditor} - {formatCurrency(l.amount)}</span>
-                                                <button onClick={() => removeLiability(l.id)} className="text-red-500 hover:text-red-700">Remove</button>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </div>
+                            {/* Data Entry Section - Print Hidden - Removed Manual Liabilities Input - Now Fetched from Ledger */}
 
                             {/* Will Content */}
                             <div className="prose max-w-none font-serif text-gray-900 border-[6px] border-[#d4af37]/20 p-12 print:border-none print:p-0">
@@ -179,10 +148,10 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                         </div>
                                         <div>
                                             <h4 className="font-bold underline mb-2">Liabilities (Debts)</h4>
-                                            {liabilities.length > 0 ? (
+                                            {ledgerLiabilities.length > 0 ? (
                                                 <ul className="list-disc ml-6">
-                                                    {liabilities.map(l => (
-                                                        <li key={l.id}>{l.creditor} ({formatCurrency(l.amount)})</li>
+                                                    {ledgerLiabilities.map(l => (
+                                                        <li key={l.id}>{l.title} ({formatCurrency(l.amount)})</li>
                                                     ))}
                                                 </ul>
                                             ) : (
@@ -197,11 +166,11 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                         I direct my Executor(s) to pay all my legal debts and funeral expenses as soon as possible after my death, before any distribution of my estate to my heirs.
                                         Specifically, the following debts should be prioritized:
                                     </p>
-                                    {liabilities.length > 0 ? (
+                                    {ledgerLiabilities.length > 0 ? (
                                         <ul className="list-disc ml-6 mt-2">
-                                            {liabilities.map(l => (
+                                            {ledgerLiabilities.map(l => (
                                                 <li key={l.id}>
-                                                    Amount of <strong>{formatCurrency(l.amount)}</strong> owed to <strong>{l.creditor}</strong>.
+                                                    Amount of <strong>{formatCurrency(l.amount)}</strong> owed to <strong>{l.title}</strong>.
                                                 </li>
                                             ))}
                                         </ul>

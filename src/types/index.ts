@@ -18,8 +18,8 @@ export interface Asset {
 }
 
 // Ledger Types
-export type LedgerType = 'INCOME' | 'EXPENSE';
-export type LedgerCategory = 'SALARY' | 'BUSINESS' | 'RENTAL' | 'DIVIDEND' | 'OTHER_INCOME' | 'UTILITIES' | 'MAINTENANCE' | 'TAX' | 'DEBT' | 'PERSONAL' | 'OTHER_EXPENSE';
+export type LedgerType = 'INCOME' | 'EXPENSE' | 'CREDITOR' | 'DEBTOR';
+export type LedgerCategory = 'SALARY' | 'BUSINESS' | 'RENTAL' | 'DIVIDEND' | 'OTHER_INCOME' | 'UTILITIES' | 'MAINTENANCE' | 'TAX' | 'DEBT' | 'PERSONAL' | 'OTHER_EXPENSE' | 'LOAN' | 'MORTGAGE';
 
 export interface LedgerEntry {
   id: string;

@@ -72,6 +72,8 @@ enum DistributionStatus {
 enum LedgerType {
   INCOME
   EXPENSE
+  CREDITOR
+  DEBTOR
 }
 
 enum LedgerCategory {
@@ -86,6 +88,8 @@ enum LedgerCategory {
   DEBT
   PERSONAL
   OTHER_EXPENSE
+  LOAN
+  MORTGAGE
 }
 
 // Models
