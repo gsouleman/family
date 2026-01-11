@@ -7,7 +7,24 @@ interface PrintButtonProps {
 
 const PrintButton: React.FC<PrintButtonProps> = ({ sectionId, title = "Print Report" }) => {
     const handlePrint = () => {
+        if (sectionId) {
+            document.body.classList.add(`print-mode-${sectionId}`);
+        }
         window.print();
+        // The class removal happens immediately after print dialog opens (browsers block JS until closed)
+        // or we can use onafterprint for safety, but typically the render happens before print.
+        // For better safety with async print dialogs:
+        const cleanup = () => {
+            if (sectionId) {
+                document.body.classList.remove(`print-mode-${sectionId}`);
+            }
+            window.removeEventListener('afterprint', cleanup);
+        };
+        window.addEventListener('afterprint', cleanup);
+        // Fallback for browsers that don't block or if events fail
+        setTimeout(() => {
+            if (sectionId) document.body.classList.remove(`print-mode-${sectionId}`);
+        }, 5000);
     };
 
     return (

@@ -91,7 +91,7 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSel
           {/* Section Header */}
           <div className="text-center mb-12 relative">
             <div className="absolute right-0 top-0 hidden md:block">
-              <PrintButton title="Print Assets" />
+              <PrintButton title="Print Assets" sectionId="assets" />
             </div>
             <h2 className="text-3xl lg:text-4xl font-bold text-[#1a365d] mb-4">
               Family Asset Portfolio
@@ -245,7 +245,7 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSel
                           <td className="py-2 px-3 text-gray-600">{asset.documents?.length || 0} Docs</td>
                           <td className="py-2 px-3">
                             <span className={`px-2 py-0.5 rounded text-xs border ${asset.status === 'active' ? 'bg-green-50 text-green-700 border-green-200' :
-                                asset.status === 'sold' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-gray-50 text-gray-700 border-gray-200'
+                              asset.status === 'sold' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-gray-50 text-gray-700 border-gray-200'
                               }`}>
                               {asset.status.toUpperCase()}
                             </span>
