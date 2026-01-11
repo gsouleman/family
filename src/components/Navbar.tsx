@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Notification } from '../types';
 import { useAuth } from '@/contexts/AuthContext';
 import CountrySelector from './CountrySelector';
@@ -23,6 +24,7 @@ const Navbar: React.FC<NavbarProps> = ({
     isAdmin,
     branding
   } = useAuth();
+  const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,6 +37,12 @@ const Navbar: React.FC<NavbarProps> = ({
       element.scrollIntoView({
         behavior: 'smooth'
       });
+    } else if (window.location.pathname !== '/') {
+      // Navigate home then scroll
+      navigate('/');
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     }
     setMobileMenuOpen(false);
   };
@@ -42,6 +50,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const handleSignOut = async () => {
     await signOut();
     setShowUserMenu(false);
+    navigate('/');
   };
 
   // Get user display name from metadata or email
@@ -59,7 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between h-16">
         {/* Logo */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
           <div className="w-10 h-10 bg-gradient-to-br from-[#1a365d] to-[#0f2744] rounded-xl flex items-center justify-center">
             <svg className="w-6 h-6 text-[#d4af37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -98,13 +107,13 @@ const Navbar: React.FC<NavbarProps> = ({
           {/* Admin Panel Button */}
           {isAdmin && (
             <button
-              onClick={onOpenAdminModal}
+              onClick={() => navigate('/admin')}
               className="ml-2 px-4 py-2 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg transition-colors font-medium flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
               </svg>
-              Admin Panel
+              Admin Dashboard
             </button>
           )}
         </div>
@@ -242,12 +251,12 @@ const Navbar: React.FC<NavbarProps> = ({
         {isAdmin && (
           <button onClick={() => {
             setMobileMenuOpen(false);
-            onOpenAdminModal();
+            navigate('/admin');
           }} className="block w-full text-left px-4 py-3 text-red-600 hover:bg-red-50/50 rounded-lg transition-colors font-medium flex items-center gap-2">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
             </svg>
-            Admin Panel
+            Admin Dashboard
           </button>
         )}
 
