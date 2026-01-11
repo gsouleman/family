@@ -52,8 +52,9 @@ const LedgerDashboard: React.FC = () => {
                 date: new Date().toISOString().split('T')[0],
                 description: ''
             });
-        } catch (error) {
-            alert('Failed to save entry');
+        } catch (error: any) {
+            console.error('Save Error:', error);
+            alert(`Failed to save entry: ${error.message || 'Unknown error'}`);
         }
     };
 
@@ -121,8 +122,8 @@ const LedgerDashboard: React.FC = () => {
                             key={tab}
                             onClick={() => setActiveTab(tab)}
                             className={`px-6 py-3 font-medium text-sm capitalize border-b-2 transition-colors ${activeTab === tab
-                                    ? 'border-[#d4af37] text-[#1a365d]'
-                                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                                ? 'border-[#d4af37] text-[#1a365d]'
+                                : 'border-transparent text-gray-500 hover:text-gray-700'
                                 }`}
                         >
                             {tab}

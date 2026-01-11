@@ -191,5 +191,69 @@ export const api = {
         return handleResponse(res, 'Failed to mark notification as read');
     },
 
+    // Ledger
+    getLedgerEntries: async () => {
+        const res = await fetch(`${API_URL}/ledger`, { headers: getHeaders() });
+        return handleResponse(res, 'Failed to fetch ledger entries');
+    },
+
+    createLedgerEntry: async (data: any) => {
+        const res = await fetch(`${API_URL}/ledger`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(data),
+        });
+        return handleResponse(res, 'Failed to create ledger entry');
+    },
+
+    updateLedgerEntry: async (id: string, data: any) => {
+        const res = await fetch(`${API_URL}/ledger/${id}`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify(data),
+        });
+        return handleResponse(res, 'Failed to update ledger entry');
+    },
+
+    deleteLedgerEntry: async (id: string) => {
+        const res = await fetch(`${API_URL}/ledger/${id}`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+        });
+        return handleResponse(res, 'Failed to delete ledger entry');
+    },
+
+    // Generic methods for flexibility
+    get: async (endpoint: string) => {
+        const res = await fetch(`${API_URL}${endpoint}`, { headers: getHeaders() });
+        return handleResponse(res, `Failed to GET ${endpoint}`);
+    },
+
+    post: async (endpoint: string, data: any) => {
+        const res = await fetch(`${API_URL}${endpoint}`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(data),
+        });
+        return handleResponse(res, `Failed to POST ${endpoint}`);
+    },
+
+    put: async (endpoint: string, data: any) => {
+        const res = await fetch(`${API_URL}${endpoint}`, {
+            method: 'PUT',
+            headers: getHeaders(),
+            body: JSON.stringify(data),
+        });
+        return handleResponse(res, `Failed to PUT ${endpoint}`);
+    },
+
+    delete: async (endpoint: string) => {
+        const res = await fetch(`${API_URL}${endpoint}`, {
+            method: 'DELETE',
+            headers: getHeaders(),
+        });
+        return handleResponse(res, `Failed to DELETE ${endpoint}`);
+    },
+
     getBaseUrl: () => API_URL,
 };
