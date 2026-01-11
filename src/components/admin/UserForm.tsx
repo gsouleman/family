@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { supabase, supabaseUrl, supabaseKey } from '@/lib/supabase';
+import { api } from '@/lib/api';
 
 interface UserFormProps {
     isOpen: boolean;
@@ -63,20 +64,20 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
         try {
             if (editingUser) {
                 // UPDATE USER
-                const { error } = await supabase.from('profiles').update({
+                // Update Neon Data
+                await api.updateUser(editingUser.id, {
                     full_name: fullName,
-                    // role: role,              // Column visible in DB but NOT in Cache. Disabled to prevent crash.
-                    // account_type: accountType // Column visible in DB but NOT in Cache. Disabled to prevent crash.
-                    // Note: Email and Password cannot be seemingly updated easily via profiles table alone for Auth. Always complex.
-                }).eq('id', editingUser.id);
+                    role: role,
+                    account_type: accountType
+                });
 
-                if (error) throw error;
+                // Note: We don't update Email/Password here as that requires Auth API/Client handling
             } else {
                 // CREATE USER
                 if (password.length < 6) throw new Error("Password must be at least 6 characters");
 
+                // 1. Create Auth User in Supabase (DatabasePad)
                 // Hack: Create a temporary client that DOES NOT persist session
-                // This prevents logging out the current Admin
                 const tempClient = createClient(supabaseUrl, supabaseKey, {
                     auth: {
                         persistSession: false,
@@ -100,22 +101,15 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                 if (signUpError) throw signUpError;
 
                 if (data.user) {
-                    // Manually ensure profile is correct (in case trigger fails or we want to enforce Admin/Role)
-                    // We use the MAIN admin client for this (RBAC)
-                    const { error: profileError } = await supabase.from('profiles').upsert({
+                    // 2. Create Profile in Neon (via Backend)
+                    await api.createUser({
                         id: data.user.id,
                         email: email,
                         full_name: fullName,
-                        // role: role,              // Column visible in DB but NOT in Cache. Disabled to prevent crash.
-                        // account_type: accountType, // Column visible in DB but NOT in Cache. Disabled to prevent crash.
-                        // status: 'active',         // Column visible in DB but NOT in Cache. Disabled to prevent crash.
-                        created_at: new Date().toISOString()
+                        role: role,
+                        account_type: accountType,
+                        status: 'active'
                     });
-
-                    if (profileError) {
-                        console.warn("Profile creation warn:", profileError);
-                        // Don't fail the whole thing if auth worked
-                    }
                 }
             }
 
@@ -123,14 +117,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
             onClose();
         } catch (err: any) {
             console.error("User Form Error:", err);
-
-            // Smart Error Handling for Stale Cache
-            if (err.message && (err.message.includes("column") || err.message.includes("does not exist"))) {
-                alert(`DATABASE ERROR: Supabase Schema Cache is stale.\n\nPlease run this command in your SQL Editor to fix it:\n\nNOTIFY pgrst, 'reload config';`);
-                setError("Database needs a refresh. See alert for instructions.");
-            } else {
-                setError(err.message || "An error occurred");
-            }
+            setError(err.message || "An error occurred");
         } finally {
             setLoading(false);
         }

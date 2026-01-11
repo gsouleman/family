@@ -231,6 +231,35 @@ export const api = {
         return handleResponse(res, 'Failed to delete ledger entry');
     },
 
+    // User Management (Admin)
+    getUsers: async () => {
+        const res = await request('/users');
+        return handleResponse(res, 'Failed to fetch users');
+    },
+
+    createUser: async (data: any) => {
+        const res = await request('/users', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+        return handleResponse(res, 'Failed to create user');
+    },
+
+    updateUser: async (id: string, data: any) => {
+        const res = await request(`/users/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+        return handleResponse(res, 'Failed to update user');
+    },
+
+    deleteUser: async (id: string) => {
+        const res = await request(`/users/${id}`, {
+            method: 'DELETE',
+        });
+        return handleResponse(res, 'Failed to delete user');
+    },
+
     // Generic methods for flexibility
     get: async (endpoint: string) => {
         const res = await request(endpoint);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
+// import { supabase } from '@/lib/supabase'; // Legacy
 import { useAuth } from '@/contexts/AuthContext';
 
 interface User {
@@ -26,12 +27,8 @@ const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
         setLoading(true);
         setError(null);
         try {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
+            const data = await api.getUsers();
+            // Backend returns array of profiles
             setUsers(data || []);
         } catch (err: any) {
             console.error('Error fetching users:', err);
@@ -46,18 +43,23 @@ const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
     }, []);
 
     const handleToggleStatus = async (userId: string, currentStatus: string) => {
-        // const newStatus = currentStatus === 'active' ? 'disabled' : 'active';
-        // const { error } = await supabase.from('profiles').update({ status: newStatus }).eq('id', userId);
-        // if (!error) fetchUsers();
-        // else alert('Error updating status (Possible Cache Issue): ' + error.message);
-        alert("Status toggling is temporarily disabled. You are likely connected to the wrong database (see Console logs).");
+        const newStatus = currentStatus === 'active' ? 'disabled' : 'active';
+        try {
+            await api.updateUser(userId, { status: newStatus });
+            fetchUsers();
+        } catch (err: any) {
+            alert('Error updating status: ' + err.message);
+        }
     };
 
     const handleDelete = async (userId: string) => {
         if (confirm('Are you sure you want to delete this user? This will delete their profile data.')) {
-            const { error } = await supabase.from('profiles').delete().eq('id', userId);
-            if (!error) fetchUsers();
-            else alert('Error deleting user: ' + error.message);
+            try {
+                await api.deleteUser(userId);
+                fetchUsers();
+            } catch (err: any) {
+                alert('Error deleting user: ' + err.message);
+            }
         }
     };
 
@@ -86,13 +88,7 @@ const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                        {users.length > 0 && users.every(u => !u.role || u.role === 'user') && users.some(u => u.email.includes('admin')) && (
-                            <tr>
-                                <td colSpan={6} className="bg-yellow-50 p-2 text-xs text-yellow-800 text-center">
-                                    ⚠️ Warning: Admin shown as User? Database Cache might be stale. Run: <code>NOTIFY pgrst, 'reload config';</code>
-                                </td>
-                            </tr>
-                        )}
+
                         {users.map(u => (
                             <tr key={u.id} className="hover:bg-gray-50/50 transition-colors">
                                 <td className="p-3">
