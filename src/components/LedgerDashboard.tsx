@@ -11,6 +11,8 @@ const LedgerDashboard: React.FC = () => {
     const [showModal, setShowModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+    const [editingEntryId, setEditingEntryId] = useState<string | null>(null);
+
     // Form State
     const [formData, setFormData] = useState({
         title: '',
@@ -28,7 +30,7 @@ const LedgerDashboard: React.FC = () => {
     const fetchEntries = async () => {
         setIsLoading(true);
         try {
-            const data = await api.get('/ledger');
+            const data = await api.getLedgerEntries();
             setEntries(data);
         } catch (error) {
             console.error('Failed to fetch ledger:', error);
@@ -37,13 +39,44 @@ const LedgerDashboard: React.FC = () => {
         }
     };
 
+    const handleEdit = (entry: LedgerEntry) => {
+        setEditingEntryId(entry.id);
+        setFormData({
+            title: entry.title,
+            amount: entry.amount.toString(),
+            type: entry.type,
+            category: entry.category,
+            date: new Date(entry.date).toISOString().split('T')[0],
+            description: entry.description || ''
+        });
+        setShowModal(true);
+    };
+
+    const handleOpenAddModal = () => {
+        setEditingEntryId(null);
+        setFormData({
+            title: '',
+            amount: '',
+            type: 'INCOME',
+            category: 'SALARY',
+            date: new Date().toISOString().split('T')[0],
+            description: ''
+        });
+        setShowModal(true);
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await api.post('/ledger', formData);
+            if (editingEntryId) {
+                await api.updateLedgerEntry(editingEntryId, formData);
+            } else {
+                await api.createLedgerEntry(formData);
+            }
             setShowModal(false);
             fetchEntries();
             // Reset form
+            setEditingEntryId(null);
             setFormData({
                 title: '',
                 amount: '',
@@ -61,7 +94,7 @@ const LedgerDashboard: React.FC = () => {
     const handleDelete = async (id: string) => {
         if (confirm('Delete this entry?')) {
             try {
-                await api.delete(`/ledger/${id}`);
+                await api.deleteLedgerEntry(id);
                 fetchEntries();
             } catch (error) {
                 alert('Failed to delete');
@@ -89,7 +122,7 @@ const LedgerDashboard: React.FC = () => {
                     <div className="flex gap-3">
                         <PrintButton title="Print Ledger" />
                         <button
-                            onClick={() => setShowModal(true)}
+                            onClick={handleOpenAddModal}
                             className="px-4 py-2 bg-[#d4af37] text-[#1a365d] rounded-lg font-semibold hover:bg-[#c9a432] transition-colors"
                         >
                             + Add Entry
@@ -177,12 +210,20 @@ const LedgerDashboard: React.FC = () => {
                                             {entry.type === 'INCOME' ? '+' : '-'}{formatCurrency(entry.amount)}
                                         </td>
                                         <td className="px-6 py-4 text-right no-print">
-                                            <button
-                                                onClick={() => handleDelete(entry.id)}
-                                                className="text-red-400 hover:text-red-600 text-sm"
-                                            >
-                                                Delete
-                                            </button>
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button
+                                                    onClick={() => handleEdit(entry)}
+                                                    className="text-blue-400 hover:text-blue-600 text-sm"
+                                                >
+                                                    Edit
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(entry.id)}
+                                                    className="text-red-400 hover:text-red-600 text-sm"
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -192,11 +233,13 @@ const LedgerDashboard: React.FC = () => {
                 </div>
             </div>
 
-            {/* Add Entry Modal */}
+            {/* Add/Edit Entry Modal */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
                     <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
-                        <h3 className="text-xl font-bold text-[#1a365d] mb-4">Add Ledger Entry</h3>
+                        <h3 className="text-xl font-bold text-[#1a365d] mb-4">
+                            {editingEntryId ? 'Edit Ledger Entry' : 'Add Ledger Entry'}
+                        </h3>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
@@ -280,7 +323,7 @@ const LedgerDashboard: React.FC = () => {
                                     type="submit"
                                     className="flex-1 px-4 py-2 bg-[#1a365d] text-white rounded-lg font-medium hover:bg-[#0f2744]"
                                 >
-                                    Save Entry
+                                    {editingEntryId ? 'Update Entry' : 'Save Entry'}
                                 </button>
                             </div>
                         </form>
