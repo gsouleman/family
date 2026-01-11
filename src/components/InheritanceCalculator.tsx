@@ -35,10 +35,10 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
   return (
     <section id="calculator" className="py-16 bg-gradient-to-br from-[#1a365d] via-[#1e4976] to-[#0f2744]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-12 relative">
+        {/* Screen Header */}
+        <div className="text-center mb-12 relative print:hidden">
           <div className="absolute right-0 top-0 flex gap-2">
-            <PrintButton title="Print Calculation" />
+            <PrintButton title="Print Calculation" sectionId="calculator" />
           </div>
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#d4af37]/20 rounded-full border border-[#d4af37]/30 mb-6">
             <svg className="w-5 h-5 text-[#d4af37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

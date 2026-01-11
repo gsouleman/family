@@ -134,4 +134,60 @@
   body.print-mode-family #family .print\:block {
     display: block !important;
   }
+
+  /* PRINT MODE: LEDGER */
+  body.print-mode-ledger * {
+    visibility: hidden;
+  }
+
+  body.print-mode-ledger #ledger,
+  body.print-mode-ledger #ledger * {
+    visibility: visible;
+  }
+
+  body.print-mode-ledger #ledger {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white;
+  }
+
+  body.print-mode-ledger #ledger .print\:hidden {
+    display: none !important;
+  }
+
+  body.print-mode-ledger #ledger .print\:block {
+    display: block !important;
+  }
+
+  /* PRINT MODE: CALCULATOR */
+  body.print-mode-calculator * {
+    visibility: hidden;
+  }
+
+  body.print-mode-calculator #calculator,
+  body.print-mode-calculator #calculator * {
+    visibility: visible;
+  }
+
+  body.print-mode-calculator #calculator {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white;
+  }
+
+  body.print-mode-calculator #calculator .print\:hidden {
+    display: none !important;
+  }
+
+  body.print-mode-calculator #calculator .print\:block {
+    display: block !important;
+  }
 }

@@ -138,39 +138,142 @@ const LedgerDashboard: React.FC = () => {
     return (
         <section id="ledger" className="py-16 bg-white border-t border-gray-100">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h2 className="text-3xl font-bold text-[#1a365d]">Financial Ledger</h2>
-                        <p className="text-gray-500">Track incomes, expenses, debts, and receivables.</p>
+                {/* Screen View - Hidden on Print */}
+                <div className="print:hidden">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 className="text-3xl font-bold text-[#1a365d]">Financial Ledger</h2>
+                            <p className="text-gray-500">Track incomes, expenses, debts, and receivables.</p>
+                        </div>
+                        <div className="flex gap-3">
+                            <PrintButton title="Print Ledger" sectionId="ledger" />
+                            <button
+                                onClick={handleOpenAddModal}
+                                className="px-4 py-2 bg-[#d4af37] text-[#1a365d] rounded-lg font-semibold hover:bg-[#c9a432] transition-colors"
+                            >
+                                + Add Entry
+                            </button>
+                        </div>
                     </div>
-                    <div className="flex gap-3">
-                        <PrintButton title="Print Ledger" />
-                        <button
-                            onClick={handleOpenAddModal}
-                            className="px-4 py-2 bg-[#d4af37] text-[#1a365d] rounded-lg font-semibold hover:bg-[#c9a432] transition-colors"
-                        >
-                            + Add Entry
-                        </button>
-                    </div>
-                </div>
 
-                {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 print:hidden">
-                    <div className="bg-green-50 p-6 rounded-2xl border border-green-100">
-                        <p className="text-green-600 font-medium text-sm uppercase">Total Income</p>
-                        <p className="text-2xl font-bold text-green-700 mt-2">{formatCurrency(totalIncome)}</p>
+                    {/* Summary Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div className="bg-green-50 p-6 rounded-2xl border border-green-100">
+                            <p className="text-green-600 font-medium text-sm uppercase">Total Income</p>
+                            <p className="text-2xl font-bold text-green-700 mt-2">{formatCurrency(totalIncome)}</p>
+                        </div>
+                        <div className="bg-red-50 p-6 rounded-2xl border border-red-100">
+                            <p className="text-red-600 font-medium text-sm uppercase">Total Expenses</p>
+                            <p className="text-2xl font-bold text-red-700 mt-2">{formatCurrency(totalExpense)}</p>
+                        </div>
+                        <div className="bg-orange-50 p-6 rounded-2xl border border-orange-100">
+                            <p className="text-orange-600 font-medium text-sm uppercase">Debts (Creditors)</p>
+                            <p className="text-2xl font-bold text-orange-700 mt-2">{formatCurrency(totalCreditors)}</p>
+                        </div>
+                        <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                            <p className="text-blue-600 font-medium text-sm uppercase">Receivables (Debtors)</p>
+                            <p className="text-2xl font-bold text-blue-700 mt-2">{formatCurrency(totalDebtors)}</p>
+                        </div>
                     </div>
-                    <div className="bg-red-50 p-6 rounded-2xl border border-red-100">
-                        <p className="text-red-600 font-medium text-sm uppercase">Total Expenses</p>
-                        <p className="text-2xl font-bold text-red-700 mt-2">{formatCurrency(totalExpense)}</p>
+
+                    {/* Tabs */}
+                    <div className="flex border-b border-gray-200 mb-6 overflow-x-auto">
+                        {(['overview', 'income', 'expense', 'creditor', 'debtor'] as const).map(tab => (
+                            <button
+                                key={tab}
+                                onClick={() => setActiveTab(tab)}
+                                className={`px-6 py-3 font-medium text-sm capitalize border-b-2 transition-colors whitespace-nowrap ${activeTab === tab
+                                    ? 'border-[#d4af37] text-[#1a365d]'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                                    }`}
+                            >
+                                {tab === 'creditor' ? 'Creditors (I Owe)' : tab === 'debtor' ? 'Debtors (Owe Me)' : tab}
+                            </button>
+                        ))}
                     </div>
-                    <div className="bg-orange-50 p-6 rounded-2xl border border-orange-100">
-                        <p className="text-orange-600 font-medium text-sm uppercase">Debts (Creditors)</p>
-                        <p className="text-2xl font-bold text-orange-700 mt-2">{formatCurrency(totalCreditors)}</p>
-                    </div>
-                    <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
-                        <p className="text-blue-600 font-medium text-sm uppercase">Receivables (Debtors)</p>
-                        <p className="text-2xl font-bold text-blue-700 mt-2">{formatCurrency(totalDebtors)}</p>
+
+                    {/* Table - Screen Only */}
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-left">
+                            <thead className="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                                        {(activeTab === 'creditor' || activeTab === 'debtor') ? 'Name' : 'Title'}
+                                    </th>
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Category</th>
+                                    {!isSpecificTab && (
+                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Type</th>
+                                    )}
+                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Description</th>
+                                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Amount</th>
+                                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                                {displayedEntries.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={isSpecificTab ? 6 : 7} className="px-6 py-8 text-center text-gray-400">
+                                            No entries found.
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    displayedEntries.map(entry => (
+                                        <tr key={entry.id} className="hover:bg-gray-50/50">
+                                            <td className="px-6 py-4 text-sm text-gray-600">
+                                                {new Date(entry.date).toLocaleDateString()}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                                {entry.title}
+                                            </td>
+                                            <td className="px-6 py-4 text-sm text-gray-500">
+                                                <span className="px-2 py-1 bg-gray-100 rounded text-xs">
+                                                    {entry.category.replace('_', ' ')}
+                                                </span>
+                                            </td>
+                                            {!isSpecificTab && (
+                                                <td className="px-6 py-4 text-sm">
+                                                    <span className={`px-2 py-1 rounded text-xs font-medium 
+                                                    ${entry.type === 'INCOME' ? 'bg-green-100 text-green-700' :
+                                                            entry.type === 'EXPENSE' ? 'bg-red-100 text-red-700' :
+                                                                entry.type === 'CREDITOR' ? 'bg-orange-100 text-orange-700' :
+                                                                    'bg-blue-100 text-blue-700'
+                                                        }`}>
+                                                        {entry.type === 'CREDITOR' ? 'CREDITOR' : entry.type === 'DEBTOR' ? 'DEBTOR' : entry.type}
+                                                    </span>
+                                                </td>
+                                            )}
+                                            <td className="px-6 py-4 text-sm text-gray-500">
+                                                {entry.description || '-'}
+                                            </td>
+                                            <td className={`px-6 py-4 text-sm font-bold text-right 
+                                            ${entry.type === 'INCOME' ? 'text-green-600' :
+                                                    entry.type === 'EXPENSE' ? 'text-red-600' :
+                                                        entry.type === 'CREDITOR' ? 'text-orange-600' : 'text-blue-600'
+                                                }`}>
+                                                {entry.type === 'INCOME' || entry.type === 'DEBTOR' ? '+' : '-'}{formatCurrency(entry.amount)}
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <button
+                                                        onClick={() => handleEdit(entry)}
+                                                        className="text-blue-400 hover:text-blue-600 text-sm"
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(entry.id)}
+                                                        className="text-red-400 hover:text-red-600 text-sm"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -235,111 +338,6 @@ const LedgerDashboard: React.FC = () => {
                     <div className="mt-8 pt-8 border-t border-gray-300 text-center text-xs text-gray-400">
                         <p>Confidential Family Archive - {new Date().getFullYear()}</p>
                     </div>
-                </div>
-
-                {/* Tabs */}
-                <div className="flex border-b border-gray-200 mb-6 print:hidden overflow-x-auto">
-                    {(['overview', 'income', 'expense', 'creditor', 'debtor'] as const).map(tab => (
-                        <button
-                            key={tab}
-                            onClick={() => setActiveTab(tab)}
-                            className={`px-6 py-3 font-medium text-sm capitalize border-b-2 transition-colors whitespace-nowrap ${activeTab === tab
-                                ? 'border-[#d4af37] text-[#1a365d]'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
-                                }`}
-                        >
-                            {tab === 'creditor' ? 'Creditors (I Owe)' : tab === 'debtor' ? 'Debtors (Owe Me)' : tab}
-                        </button>
-                    ))}
-                </div>
-
-                {/* Table - Screen Only */}
-                <div className="overflow-x-auto print:hidden">
-                    <table className="w-full text-sm text-left">
-                        <thead className="bg-gray-50 border-b border-gray-200">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
-                                    {(activeTab === 'creditor' || activeTab === 'debtor') ? 'Name' : 'Title'}
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Category</th>
-                                {!isSpecificTab && (
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Type</th>
-                                )}
-                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Description</th>
-                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Amount</th>
-                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {displayedEntries.length === 0 ? (
-                                <tr>
-                                    <td colSpan={isSpecificTab ? 6 : 7} className="px-6 py-8 text-center text-gray-400">
-                                        No entries found.
-                                    </td>
-                                </tr>
-                            ) : (
-                                displayedEntries.map(entry => (
-                                    <tr key={entry.id} className="hover:bg-gray-50/50">
-                                        <td className="px-6 py-4 text-sm text-gray-600">
-                                            {new Date(entry.date).toLocaleDateString()}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                            {entry.title}
-                                        </td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">
-                                            <span className="px-2 py-1 bg-gray-100 rounded text-xs">
-                                                {entry.category.replace('_', ' ')}
-                                            </span>
-                                        </td>
-                                        {!isSpecificTab && (
-                                            <td className="px-6 py-4 text-sm">
-                                                <span className={`px-2 py-1 rounded text-xs font-medium 
-                                                    ${entry.type === 'INCOME' ? 'bg-green-100 text-green-700' :
-                                                        entry.type === 'EXPENSE' ? 'bg-red-100 text-red-700' :
-                                                            entry.type === 'CREDITOR' ? 'bg-orange-100 text-orange-700' :
-                                                                'bg-blue-100 text-blue-700'
-                                                    }`}>
-                                                    {entry.type === 'CREDITOR' ? 'CREDITOR' : entry.type === 'DEBTOR' ? 'DEBTOR' : entry.type}
-                                                </span>
-                                            </td>
-                                        )}
-                                        <td className="px-6 py-4 text-sm text-gray-500">
-                                            {entry.description || '-'}
-                                        </td>
-                                        <td className={`px-6 py-4 text-sm font-bold text-right 
-                                            ${entry.type === 'INCOME' ? 'text-green-600' :
-                                                entry.type === 'EXPENSE' ? 'text-red-600' :
-                                                    entry.type === 'CREDITOR' ? 'text-orange-600' : 'text-blue-600'
-                                            }`}>
-                                            {entry.type === 'INCOME' || entry.type === 'DEBTOR' ? '+' : '-'}{formatCurrency(entry.amount)}
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <button
-                                                    onClick={() => handleEdit(entry)}
-                                                    className="text-blue-400 hover:text-blue-600 text-sm"
-                                                >
-                                                    Edit
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(entry.id)}
-                                                    className="text-red-400 hover:text-red-600 text-sm"
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-
-                {/* Print View Footer */}
-                <div className="hidden print:block mt-8 pt-8 border-t border-gray-300 text-center text-xs text-gray-400">
-                    <p>Confidential Family Archive - {new Date().getFullYear()}</p>
                 </div>
             </div>
 
