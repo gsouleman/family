@@ -11,12 +11,30 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
     const { formatCurrency } = useCurrency();
     const [activeModal, setActiveModal] = useState<Document['type'] | null>(null);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [liabilities, setLiabilities] = useState<{ id: string; creditor: string; amount: number }[]>([]);
+    const [newLiability, setNewLiability] = useState({ creditor: '', amount: '' });
 
-    // Simple calculation for demonstration
-    const totalValue = activeAssets.reduce((acc, curr) => acc + curr.value, 0);
+    // Calculations
+    const totalAssets = activeAssets.reduce((acc, curr) => acc + curr.value, 0);
+    const totalLiabilities = liabilities.reduce((acc, curr) => acc + curr.amount, 0);
+    const netEstate = totalAssets - totalLiabilities;
 
     const handlePrint = () => {
         window.print();
+    };
+
+    const addLiability = () => {
+        if (!newLiability.creditor || !newLiability.amount) return;
+        setLiabilities([...liabilities, {
+            id: Math.random().toString(36).substr(2, 9),
+            creditor: newLiability.creditor,
+            amount: parseFloat(newLiability.amount)
+        }]);
+        setNewLiability({ creditor: '', amount: '' });
+    };
+
+    const removeLiability = (id: string) => {
+        setLiabilities(liabilities.filter(l => l.id !== id));
     };
 
     const documentTypes: { type: Document['type']; label: string }[] = [
@@ -70,6 +88,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:static print:bg-white print:p-0">
                     <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto print:max-w-none print:max-h-none print:shadow-none print:w-full">
                         <div className="p-8 print:p-0">
+                            {/* Header Buttons */}
                             <div className="flex justify-between items-start mb-8 print:hidden">
                                 <h2 className="text-2xl font-bold text-[#1a365d]">Last Will and Testament</h2>
                                 <button
@@ -80,6 +99,44 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
+                            </div>
+
+                            {/* Data Entry Section - Print Hidden */}
+                            <div className="mb-8 p-4 bg-gray-50 rounded-xl border border-gray-200 print:hidden">
+                                <h3 className="text-lg font-bold text-[#1a365d] mb-4">Add Liabilities / Debts</h3>
+                                <div className="flex gap-4 mb-4">
+                                    <input
+                                        type="text"
+                                        placeholder="Creditor Name"
+                                        className="flex-1 px-3 py-2 border rounded-lg"
+                                        value={newLiability.creditor}
+                                        onChange={e => setNewLiability({ ...newLiability, creditor: e.target.value })}
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Amount"
+                                        className="w-32 px-3 py-2 border rounded-lg"
+                                        value={newLiability.amount}
+                                        onChange={e => setNewLiability({ ...newLiability, amount: e.target.value })}
+                                        onKeyDown={e => e.key === 'Enter' && addLiability()}
+                                    />
+                                    <button
+                                        onClick={addLiability}
+                                        className="px-4 py-2 bg-[#d4af37] text-[#1a365d] font-bold rounded-lg"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                                {liabilities.length > 0 && (
+                                    <ul className="space-y-2">
+                                        {liabilities.map(l => (
+                                            <li key={l.id} className="flex justify-between items-center bg-white p-2 rounded border border-gray-100">
+                                                <span>{l.creditor} - {formatCurrency(l.amount)}</span>
+                                                <button onClick={() => removeLiability(l.id)} className="text-red-500 hover:text-red-700">Remove</button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
 
                             {/* Will Content */}
@@ -108,17 +165,53 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                     </p>
 
                                     <h3 className="text-xl font-bold border-b border-gray-200 pb-2 mt-8">Article III: Assets and Liabilities</h3>
-                                    <p>My Total Portfolio Value as of {new Date().toLocaleDateString()} is approximately <strong>{formatCurrency(totalValue)}</strong>.</p>
-                                    <p>My assets include:</p>
-                                    <ul className="list-disc ml-6">
-                                        {activeAssets.map(asset => (
-                                            <li key={asset.id}>{asset.name} ({formatCurrency(asset.value)})</li>
-                                        ))}
-                                    </ul>
+                                    <p>My Net Estate Value as of {new Date().toLocaleDateString()} is approximately <strong>{formatCurrency(netEstate)}</strong>.</p>
 
-                                    <h3 className="text-xl font-bold border-b border-gray-200 pb-2 mt-8">Article IV: Distribution of Estate</h3>
+                                    <div className="grid grid-cols-2 gap-8 mt-4">
+                                        <div>
+                                            <h4 className="font-bold underline mb-2">Assets</h4>
+                                            <ul className="list-disc ml-6">
+                                                {activeAssets.map(asset => (
+                                                    <li key={asset.id}>{asset.name} ({formatCurrency(asset.value)})</li>
+                                                ))}
+                                            </ul>
+                                            <p className="mt-2 text-sm font-bold border-t pt-1">Total Assets: {formatCurrency(totalAssets)}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold underline mb-2">Liabilities (Debts)</h4>
+                                            {liabilities.length > 0 ? (
+                                                <ul className="list-disc ml-6">
+                                                    {liabilities.map(l => (
+                                                        <li key={l.id}>{l.creditor} ({formatCurrency(l.amount)})</li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p className="italic text-gray-500">None declared.</p>
+                                            )}
+                                            <p className="mt-2 text-sm font-bold border-t pt-1">Total Liabilities: {formatCurrency(totalLiabilities)}</p>
+                                        </div>
+                                    </div>
+
+                                    <h3 className="text-xl font-bold border-b border-gray-200 pb-2 mt-8">Article IV: Settlement of Debts</h3>
                                     <p className="text-justify">
-                                        I direct that my estate be distributed in accordance with the Islamic Law of Inheritance (Faraid) as prescribed in the Holy Quran (Surah An-Nisa).
+                                        I direct my Executor(s) to pay all my legal debts and funeral expenses as soon as possible after my death, before any distribution of my estate to my heirs.
+                                        Specifically, the following debts should be prioritized:
+                                    </p>
+                                    {liabilities.length > 0 ? (
+                                        <ul className="list-disc ml-6 mt-2">
+                                            {liabilities.map(l => (
+                                                <li key={l.id}>
+                                                    Amount of <strong>{formatCurrency(l.amount)}</strong> owed to <strong>{l.creditor}</strong>.
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p className="mt-2 italic">I have no known outstanding debts at this time.</p>
+                                    )}
+
+                                    <h3 className="text-xl font-bold border-b border-gray-200 pb-2 mt-8">Article V: Distribution of Estate</h3>
+                                    <p className="text-justify">
+                                        I direct that the residue of my estate (after payment of debts and expenses) be distributed in accordance with the Islamic Law of Inheritance (Faraid) as prescribed in the Holy Quran (Surah An-Nisa).
                                     </p>
                                     <p className="mt-4 font-semibold">My legal heirs at the time of this writing are:</p>
                                     <ul className="grid grid-cols-2 gap-2 mt-2">
