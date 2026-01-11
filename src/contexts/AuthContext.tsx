@@ -83,7 +83,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           setBranding('Family Estate');
         }
 
-        setIsAdmin(profile.role === 'admin');
+        if (profile.role) {
+          setIsAdmin(profile.role === 'admin');
+        } else {
+          // Fallback to metadata if role is missing in profile (e.g. migration lag)
+          setIsAdmin(user.user_metadata?.role === 'admin');
+        }
         return;
       }
     } catch (err) {
