@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
 
 interface UserManagementModalProps {
     isOpen: boolean;
@@ -8,21 +9,21 @@ interface UserManagementModalProps {
 
 const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClose }) => {
     const { signUp } = useAuth();
-    // Use local state backed by localStorage
-    const [users, setUsers] = useState<any[]>(() => {
-        const stored = localStorage.getItem('mockUsers');
-        if (stored) return JSON.parse(stored);
-        return [
-            { id: '1', full_name: 'John Doe', email: 'john@example.com', password: 'password123', role: 'user', account_type: 'personal', status: 'active', created_at: new Date().toISOString() },
-            { id: '2', full_name: 'Jane Smith', email: 'jane@example.com', password: 'password123', role: 'guest', account_type: 'family', status: 'disabled', created_at: new Date().toISOString() }
-        ];
-    });
 
-    // Save to localStorage whenever users change
-    const updateUsers = (newUsers: any[]) => {
-        setUsers(newUsers);
-        localStorage.setItem('mockUsers', JSON.stringify(newUsers));
+    // Real Supabase Data
+    const [users, setUsers] = useState<any[]>([]);
+
+    const fetchUsers = async () => {
+        const { data, error } = await supabase.from('profiles').select('*');
+        if (data) setUsers(data);
+        if (error) console.error("Error fetching users:", error);
     };
+
+    useEffect(() => {
+        if (isOpen) {
+            fetchUsers();
+        }
+    }, [isOpen]);
 
     // Form States
     const [editingUser, setEditingUser] = useState<string | null>(null);
@@ -46,6 +47,7 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
         setConfirmPassword('');
         setAccountType('family');
         setRole('user');
+        setShowResetPassword(false);
         setError(null);
         setSuccess(null);
     };
@@ -58,8 +60,8 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
         setError(null);
         setSuccess(null);
 
-        if (!editingUser) {
-            // Validate Password for new users
+        // Validation
+        if (!editingUser || showResetPassword) {
             if (password !== confirmPassword) {
                 setError('Passwords do not match');
                 setLoading(false);
@@ -70,35 +72,51 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                 setLoading(false);
                 return;
             }
+        }
 
-            // Mock Create Logic
-            const newUser = {
-                id: `user-${Date.now()}`,
+        if (!editingUser) {
+            // Create Real User
+            // Note: signUp automatically signs in the new user in client-side Auth.
+            // This is a known limitation without Admin API.
+            const { error: signUpError } = await signUp(email, password, fullName, accountType);
+
+            if (signUpError) {
+                setError(signUpError.message);
+            } else {
+                // Try to set role
+                const { data: userData } = await supabase.from('profiles').select('id').eq('email', email).single();
+                if (userData && role !== 'user') {
+                    await supabase.from('profiles').update({ role }).eq('id', userData.id);
+                }
+
+                setSuccess('User created successfully. (You might be logged in as the new user)');
+                fetchUsers();
+                resetForm();
+            }
+        } else {
+            // Update Real User Profile
+            const updates: any = {
                 full_name: fullName,
-                email,
                 role,
-                account_type: accountType,
-                status: 'active',
-                created_at: new Date().toISOString()
+                account_type: accountType
             };
 
-            // Try actual signup if it's a real backend (skipped here for pure mock demo of UI)
-            // const { error } = await signUp(email, password, fullName, accountType);
+            const { error: updateError } = await supabase
+                .from('profiles')
+                .update(updates)
+                .eq('id', editingUser);
 
-            setUsers([...users, newUser]);
-            setSuccess('User created successfully.');
-            resetForm();
-        } else {
-            // Update Logic
-            const updatedUsers = users.map(u => {
-                if (u.id === editingUser) {
-                    return { ...u, full_name: fullName, email, role, account_type: accountType };
+            if (updateError) {
+                setError(updateError.message);
+            } else {
+                if (showResetPassword) {
+                    setError("Password reset requires Admin Backend API. Profile updated only.");
+                } else {
+                    setSuccess('User profile updated successfully.');
                 }
-                return u;
-            });
-            setUsers(updatedUsers);
-            setSuccess('User updated successfully.');
-            resetForm();
+                fetchUsers();
+                resetForm();
+            }
         }
 
         setLoading(false);
@@ -110,23 +128,26 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
         setEmail(user.email);
         setRole(user.role);
         setAccountType(user.account_type);
-        setPassword(''); // Don't show password
+        setPassword('');
         setConfirmPassword('');
+        setShowResetPassword(false);
         setError(null);
     };
 
-    const handleToggleStatus = (userId: string) => {
-        setUsers(users.map(u => {
-            if (u.id === userId) {
-                return { ...u, status: u.status === 'active' ? 'disabled' : 'active' };
-            }
-            return u;
-        }));
+    const handleToggleStatus = async (userId: string) => {
+        const user = users.find(u => u.id === userId);
+        if (!user) return;
+
+        const newStatus = user.status === 'active' ? 'disabled' : 'active';
+        const { error } = await supabase.from('profiles').update({ status: newStatus }).eq('id', userId);
+        if (!error) fetchUsers();
     };
 
-    const handleDelete = (userId: string) => {
-        if (confirm('Are you sure you want to delete this user?')) {
-            setUsers(users.filter(u => u.id !== userId));
+    const handleDelete = async (userId: string) => {
+        if (confirm('Are you sure you want to delete this user? This will delete their profile data.')) {
+            const { error } = await supabase.from('profiles').delete().eq('id', userId);
+            if (!error) fetchUsers();
+            else alert('Error deleting user: ' + error.message);
         }
     };
 
@@ -177,6 +198,7 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#1a365d] outline-none"
                                     required
+                                    disabled={!!editingUser}
                                 />
                             </div>
 
@@ -281,7 +303,10 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                     <div className="w-2/3 p-6 overflow-y-auto">
                         <div className="flex justify-between items-center mb-4">
                             <h3 className="font-bold text-gray-800">Existing Users</h3>
-                            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{users.length} Users</span>
+                            <button onClick={fetchUsers} className="text-xs text-[#1a365d] hover:underline flex items-center gap-1">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                Refresh
+                            </button>
                         </div>
 
                         <div className="bg-white border border-gray-100 rounded-xl overflow-hidden">
@@ -304,20 +329,20 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                                             </td>
                                             <td className="p-3">
                                                 <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${u.role === 'admin' ? 'bg-red-50 text-red-600' :
-                                                    u.role === 'guest' ? 'bg-gray-100 text-gray-600' :
-                                                        'bg-blue-50 text-blue-600'
+                                                        u.role === 'guest' ? 'bg-gray-100 text-gray-600' :
+                                                            'bg-blue-50 text-blue-600'
                                                     }`}>
-                                                    {u.role}
+                                                    {u.role || 'user'}
                                                 </span>
                                             </td>
                                             <td className="p-3">
-                                                <span className="capitalize text-gray-600 text-xs">{u.account_type}</span>
+                                                <span className="capitalize text-gray-600 text-xs">{u.account_type || '-'}</span>
                                             </td>
                                             <td className="p-3">
-                                                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${u.status === 'active' ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'
+                                                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${u.status === 'active' || !u.status ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'
                                                     }`}>
-                                                    <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'active' ? 'bg-green-500' : 'bg-gray-400'}`}></span>
-                                                    {u.status === 'active' ? 'Active' : 'Disabled'}
+                                                    <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'active' || !u.status ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                                                    {u.status === 'active' || !u.status ? 'Active' : 'Disabled'}
                                                 </span>
                                             </td>
                                             <td className="p-3 text-right">
@@ -325,7 +350,7 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                                                     <button onClick={() => handleEditClick(u)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                                     </button>
-                                                    <button onClick={() => handleToggleStatus(u.id)} className={`p-1.5 rounded-lg transition-colors ${u.status === 'active' ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'}`} title={u.status === 'active' ? 'Disable' : 'Enable'}>
+                                                    <button onClick={() => handleToggleStatus(u.id)} className={`p-1.5 rounded-lg transition-colors ${u.status === 'active' || !u.status ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'}`} title={u.status === 'active' || !u.status ? 'Disable' : 'Enable'}>
                                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
                                                     </button>
                                                     <button onClick={() => handleDelete(u.id)} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">

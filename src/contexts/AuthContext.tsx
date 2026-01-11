@@ -36,17 +36,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [branding, setBranding] = useState('Family Estate');
 
   useEffect(() => {
-    // Check for mock admin session in local storage
-    const mockAdmin = localStorage.getItem('mockAdminSession');
-    if (mockAdmin) {
-      const adminUser = JSON.parse(mockAdmin);
-      setUser(adminUser);
-      checkUserRole(adminUser); // Use generic role checker
-      setMustChangePassword(adminUser.user_metadata?.mustChangePassword || false);
-      setLoading(false);
-      return;
-    }
-
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -165,7 +154,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
-    localStorage.removeItem('mockAdminSession');
     setIsAdmin(false);
     setMustChangePassword(false);
     await supabase.auth.signOut();
