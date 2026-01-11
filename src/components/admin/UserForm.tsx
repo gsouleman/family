@@ -65,9 +65,8 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                 // UPDATE USER
                 const { error } = await supabase.from('profiles').update({
                     full_name: fullName,
-                    // role: role,              // Column visible in DB but NOT in Cache. Disabled to prevent crash.
-                    // account_type: accountType // Column visible in DB but NOT in Cache. Disabled to prevent crash.
-                    // Note: Email and Password cannot be seemingly updated easily via profiles table alone for Auth. Always complex.
+                    role: role,
+                    account_type: accountType
                 }).eq('id', editingUser.id);
 
                 if (error) throw error;
@@ -106,9 +105,9 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                         id: data.user.id,
                         email: email,
                         full_name: fullName,
-                        // role: role,              // Column visible in DB but NOT in Cache. Disabled to prevent crash.
-                        // account_type: accountType, // Column visible in DB but NOT in Cache. Disabled to prevent crash.
-                        // status: 'active',         // Column visible in DB but NOT in Cache. Disabled to prevent crash.
+                        role: role,
+                        account_type: accountType,
+                        status: 'active',
                         created_at: new Date().toISOString()
                     });
 
@@ -123,7 +122,14 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
             onClose();
         } catch (err: any) {
             console.error("User Form Error:", err);
-            setError(err.message || "An error occurred");
+
+            // Smart Error Handling for Stale Cache
+            if (err.message && (err.message.includes("column") || err.message.includes("does not exist"))) {
+                alert(`DATABASE ERROR: Supabase Schema Cache is stale.\n\nPlease run this command in your SQL Editor to fix it:\n\nNOTIFY pgrst, 'reload config';`);
+                setError("Database needs a refresh. See alert for instructions.");
+            } else {
+                setError(err.message || "An error occurred");
+            }
         } finally {
             setLoading(false);
         }

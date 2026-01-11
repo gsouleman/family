@@ -46,11 +46,10 @@ const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
     }, []);
 
     const handleToggleStatus = async (userId: string, currentStatus: string) => {
-        // const newStatus = currentStatus === 'active' ? 'disabled' : 'active';
-        // const { error } = await supabase.from('profiles').update({ status: newStatus }).eq('id', userId);
-        // if (!error) fetchUsers();
-        // else alert('Error updating status: ' + error.message);
-        alert("Status toggling is temporarily disabled. Please run NOTIFY pgrst, 'reload config' in SQL Editor to fix DB Cache.");
+        const newStatus = currentStatus === 'active' ? 'disabled' : 'active';
+        const { error } = await supabase.from('profiles').update({ status: newStatus }).eq('id', userId);
+        if (!error) fetchUsers();
+        else alert('Error updating status (Possible Cache Issue): ' + error.message);
     };
 
     const handleDelete = async (userId: string) => {
@@ -86,6 +85,13 @@ const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
+                        {users.length > 0 && users.every(u => !u.role || u.role === 'user') && users.some(u => u.email.includes('admin')) && (
+                            <tr>
+                                <td colSpan={6} className="bg-yellow-50 p-2 text-xs text-yellow-800 text-center">
+                                    ⚠️ Warning: Admin shown as User? Database Cache might be stale. Run: <code>NOTIFY pgrst, 'reload config';</code>
+                                </td>
+                            </tr>
+                        )}
                         {users.map(u => (
                             <tr key={u.id} className="hover:bg-gray-50/50 transition-colors">
                                 <td className="p-3">
