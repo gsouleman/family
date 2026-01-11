@@ -55,6 +55,7 @@
     text-align: left;
     font-weight: bold;
     -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   .print-table td {
@@ -73,14 +74,29 @@
 
   /* PRINT MODE: ASSETS */
   /* When body has class 'print-mode-assets', hide everything EXEPT #assets */
-  body.print-mode-assets>*>* {
-    display: none !important;
+  /* PRINT MODE: ASSETS */
+  /* When body has class 'print-mode-assets', hide everything else */
+  body.print-mode-assets * {
+    visibility: hidden;
   }
 
-  body.print-mode-assets>*>#assets {
-    display: block !important;
+  /* Make the assets section visible and positioned at top */
+  body.print-mode-assets #assets,
+  body.print-mode-assets #assets * {
+    visibility: visible;
   }
 
+  body.print-mode-assets #assets {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white;
+  }
+
+  /* Ensure print utilities work within the section */
   body.print-mode-assets #assets .print\:hidden {
     display: none !important;
   }
