@@ -65,6 +65,11 @@ const Navbar: React.FC<NavbarProps> = ({
   };
 
   return <nav className="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-gray-100">
+    {/* TEMPORARY DEBUG STRIP */}
+    <div className="bg-yellow-200 text-xs p-1 text-center font-mono text-black">
+      DEBUG INFO: Admin={isAdmin ? 'TRUE' : 'FALSE'} | Email={user?.email || 'No User'} | ID={user?.id}
+    </div>
+
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex items-center justify-between h-16">
         {/* Logo */}
