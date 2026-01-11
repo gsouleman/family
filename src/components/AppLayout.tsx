@@ -19,6 +19,7 @@ import SaleWorkflow from './SaleWorkflow';
 import AddAssetModal from './AddAssetModal';
 import SuccessNotification from './SuccessNotification';
 import AuthModal from './AuthModal';
+import LedgerDashboard from './LedgerDashboard';
 
 const AppLayout: React.FC = () => {
   const { user } = useAuth();
@@ -144,18 +145,18 @@ const AppLayout: React.FC = () => {
       <FamilyTree heirs={heirs} onSelectHeir={setSelectedHeir} />
 
       {user ? (
-        <InheritanceCalculator heirs={heirs} totalAssetValue={totalAssetValue} />
+        <InheritanceCalculator heirs={heirs} totalAssetValue={totalAssetValue} activeAssets={assets.filter(a => a.status === 'active')} />
       ) : (
         <section id="calculator" className="py-16 bg-gradient-to-br from-[#1a365d] to-[#0f2744]">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold text-white mb-4">Islamic Inheritance Calculator</h2>
             <p className="text-gray-300 mb-8">Sign in to access the Faraid calculator.</p>
             <button onClick={() => setShowAuthModal(true)} className="px-8 py-4 bg-[#d4af37] text-[#1a365d] font-semibold rounded-xl">Sign In to Access</button>
-            {/* Documents Section */}
-            {/* Documents Section */}
           </div>
         </section>
       )}
+
+      <LedgerDashboard />
 
       <DocumentVault />
       <TransactionHistory transactions={transactions} distributions={distributions} />
