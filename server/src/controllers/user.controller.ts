@@ -34,7 +34,7 @@ export const createUserProfile = async (req: Request, res: Response) => {
                 email,
                 full_name,
                 role: role || 'user',
-                account_type: accountType || 'family',
+                account_type: account_type || 'family',
                 status: status || 'active'
             }
         });
