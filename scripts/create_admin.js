@@ -36,7 +36,7 @@ async function createAdmin() {
             });
 
             if (signInResult.error) {
-                console.error('Could not sign in with existing user. Password might be different?', signInResult.error.message);
+                console.error('Could not sign in with existing user:', signInResult.error.message);
                 return;
             }
 
@@ -47,10 +47,25 @@ async function createAdmin() {
         }
     }
 
-    // 2. Ensure Profile Exists
+    // 2. Update User Metadata (Crucial if user already existed without metadata)
     if (data.user) {
         console.log(`User ID: ${data.user.id}`);
 
+        const { error: updateError } = await supabase.auth.updateUser({
+            data: {
+                full_name: fullName,
+                role: 'admin',
+                account_type: 'family'
+            }
+        });
+
+        if (updateError) {
+            console.error('Failed to update user metadata:', updateError.message);
+        } else {
+            console.log('User metadata updated successfully.');
+        }
+
+        // 3. Ensure Profile Exists
         // Check if we have a session to respect RLS (if enabled)
         if (data.session) {
             await supabase.auth.setSession(data.session);
@@ -68,10 +83,9 @@ async function createAdmin() {
 
         if (profileError) {
             console.error('Failed to create/update profile:', profileError.message);
-            console.log('Check if "profiles" table exists and has the correct columns (id, email, full_name, role, account_type, status).');
+            console.log('Check if "profiles" table exists and has the correct columns.');
         } else {
             console.log('SUCCESS: Admin profile created/updated with role "admin".');
-            console.log(`Credentials -> Email: ${email}, Password: ${password}`);
         }
 
     } else {
