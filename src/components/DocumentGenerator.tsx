@@ -1,43 +1,79 @@
 import React, { useState } from 'react';
-import { Heir, Asset, Distribution } from '../types';
+import { Heir, Asset, Document } from '../types';
 import { useCurrency } from '@/contexts/CurrencyContext';
 
-interface WillGeneratorProps {
+interface DocumentGeneratorProps {
     heirs: Heir[];
     activeAssets: Asset[];
 }
 
-const WillGenerator: React.FC<WillGeneratorProps> = ({ heirs, activeAssets }) => {
+const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAssets }) => {
     const { formatCurrency } = useCurrency();
-    const [showPreview, setShowPreview] = useState(false);
+    const [activeModal, setActiveModal] = useState<Document['type'] | null>(null);
+    const [showDropdown, setShowDropdown] = useState(false);
 
-    // Simple calculation for demonstration (usually requires the complex calculator)
+    // Simple calculation for demonstration
     const totalValue = activeAssets.reduce((acc, curr) => acc + curr.value, 0);
 
     const handlePrint = () => {
         window.print();
     };
 
+    const documentTypes: { type: Document['type']; label: string }[] = [
+        { type: 'will', label: 'Islamic Will' },
+        { type: 'deed', label: 'Property Deed' },
+        { type: 'certificate', label: 'Certificate' },
+        { type: 'contract', label: 'Contract' },
+    ];
+
+    const handleSelectType = (type: Document['type']) => {
+        setActiveModal(type);
+        setShowDropdown(false);
+    };
+
     return (
-        <>
+        <div className="relative">
             <button
-                onClick={() => setShowPreview(true)}
+                onClick={() => setShowDropdown(!showDropdown)}
                 className="px-6 py-2 bg-[#d4af37] text-[#1a365d] font-semibold rounded-lg hover:bg-[#c9a432] transition-colors flex items-center gap-2"
             >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
-                Generate Islamic Will
+                Generate Document
+                <svg className={`w-4 h-4 ml-1 transition-transform ${showDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
             </button>
 
-            {showPreview && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:absolute print:inset-0 print:bg-white print:p-0">
-                    <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto print:max-w-none print:max-h-none print:shadow-none">
+            {showDropdown && (
+                <>
+                    <div
+                        className="fixed inset-0 z-10"
+                        onClick={() => setShowDropdown(false)}
+                    ></div>
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-20">
+                        {documentTypes.map((doc) => (
+                            <button
+                                key={doc.type}
+                                onClick={() => handleSelectType(doc.type)}
+                                className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-[#1a365d] transition-colors"
+                            >
+                                {doc.label}
+                            </button>
+                        ))}
+                    </div>
+                </>
+            )}
+
+            {activeModal === 'will' && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:static print:bg-white print:p-0">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto print:max-w-none print:max-h-none print:shadow-none print:w-full">
                         <div className="p-8 print:p-0">
                             <div className="flex justify-between items-start mb-8 print:hidden">
                                 <h2 className="text-2xl font-bold text-[#1a365d]">Last Will and Testament</h2>
                                 <button
-                                    onClick={() => setShowPreview(false)}
+                                    onClick={() => setActiveModal(null)}
                                     className="text-gray-500 hover:text-gray-700"
                                 >
                                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,7 +131,7 @@ const WillGenerator: React.FC<WillGeneratorProps> = ({ heirs, activeAssets }) =>
                                     </ul>
 
                                     <div className="mt-12 pt-8 border-t border-gray-200">
-                                        <div className="flex justify-between mt-16">
+                                        <div className="flex justify-between mt-16 print:mt-32">
                                             <div className="text-center">
                                                 <div className="w-64 border-t border-black mb-2"></div>
                                                 <p>Signature of Testator</p>
@@ -106,7 +142,7 @@ const WillGenerator: React.FC<WillGeneratorProps> = ({ heirs, activeAssets }) =>
                                             </div>
                                         </div>
 
-                                        <div className="flex justify-between mt-16">
+                                        <div className="flex justify-between mt-16 print:mt-32">
                                             <div className="text-center">
                                                 <div className="w-64 border-t border-black mb-2"></div>
                                                 <p>Witness 1</p>
@@ -136,8 +172,33 @@ const WillGenerator: React.FC<WillGeneratorProps> = ({ heirs, activeAssets }) =>
                     </div>
                 </div>
             )}
-        </>
+
+            {/* Placeholders for other document types */}
+            {activeModal && activeModal !== 'will' && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 text-center">
+                        <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-2">
+                            {documentTypes.find(d => d.type === activeModal)?.label}
+                        </h3>
+                        <p className="text-gray-500 mb-6">
+                            This document template is coming soon.
+                        </p>
+                        <button
+                            onClick={() => setActiveModal(null)}
+                            className="px-6 py-2 bg-[#1a365d] text-white rounded-lg hover:bg-[#0f2744]"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 
-export default WillGenerator;
+export default DocumentGenerator;

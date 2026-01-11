@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Document, Heir, Asset } from '../types';
 import { useData } from '@/contexts/DataContext';
 import { useAuth } from '@/contexts/AuthContext';
-import WillGenerator from './WillGenerator';
+import DocumentGenerator from './DocumentGenerator';
 
 interface DocumentVaultProps {
   heirs?: Heir[];
@@ -102,7 +102,7 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ heirs = [], activeAssets 
           </div>
           {user && (
             <div className="flex flex-wrap gap-3">
-              <WillGenerator heirs={heirs} activeAssets={activeAssets} />
+              <DocumentGenerator heirs={heirs} activeAssets={activeAssets} />
               <button
                 onClick={() => setShowUploadModal(true)}
                 className="px-6 py-2 bg-[#1a365d] hover:bg-[#0f2744] text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
