@@ -1,11 +1,9 @@
 import { Router } from 'express';
 import { getLedgerEntries, createLedgerEntry, updateLedgerEntry, deleteLedgerEntry } from '../controllers/ledger.controller';
-import { verifyToken } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.use(verifyToken);
-
+// Middleware is applied globally in index.ts
 router.get('/', getLedgerEntries);
 router.post('/', createLedgerEntry);
 router.put('/:id', updateLedgerEntry);

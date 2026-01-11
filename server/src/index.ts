@@ -7,6 +7,7 @@ import documentRoutes from './routes/documents.routes';
 import transactionRoutes from './routes/transactions.routes';
 import distributionRoutes from './routes/distributions.routes';
 import notificationRoutes from './routes/notifications.routes';
+import ledgerRoutes from './routes/ledger.routes';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/distributions', distributionRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/ledger', ledgerRoutes);
 
 app.use(errorHandler);
 
