@@ -64,6 +64,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const checkUserRole = async (user: User) => {
+    try {
+      // 1. Try to fetch fresh profile data
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role, account_type, full_name')
+        .eq('id', user.id)
+        .single();
+
+      if (profile) {
+        // Use Profile Data
+        const type = profile.account_type;
+        const name = profile.full_name;
+
+        if (type === 'personal' && name) {
+          setBranding(`${name}`);
+        } else {
+          setBranding('Family Estate');
+        }
+
+        setIsAdmin(profile.role === 'admin');
+        return;
+      }
+    } catch (err) {
+      console.error('Error fetching profile role:', err);
+    }
+
+    // 2. Fallback to Metadata (if profile query fails or no profile yet)
     // Check branding
     const type = user.user_metadata?.account_type;
     const name = user.user_metadata?.full_name;
