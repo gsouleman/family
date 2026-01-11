@@ -107,6 +107,20 @@ model User {
   ledgerEntries LedgerEntry[]
 }
 
+model Profile {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  full_name    String?
+  avatar_url   String?
+  role         String   @default("user")
+  account_type String   @default("family")
+  status       String   @default("active")
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@map("profiles")
+}
+
 model LedgerEntry {
   id          String   @id @default(uuid())
   title       String
