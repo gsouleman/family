@@ -257,7 +257,14 @@ const LedgerDashboard: React.FC = () => {
                                     <select
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4af37] outline-none"
                                         value={formData.type}
-                                        onChange={e => setFormData({ ...formData, type: e.target.value as LedgerType })}
+                                        onChange={e => {
+                                            const newType = e.target.value as LedgerType;
+                                            setFormData({
+                                                ...formData,
+                                                type: newType,
+                                                category: newType === 'INCOME' ? 'SALARY' : 'UTILITIES'
+                                            });
+                                        }}
                                     >
                                         <option value="INCOME">Income</option>
                                         <option value="EXPENSE">Expense</option>
