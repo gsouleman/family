@@ -64,13 +64,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const checkUserRole = async (user: User) => {
+    console.log("Checking User Role for:", user.email);
+    console.log("Metadata:", user.user_metadata);
+
     try {
       // 1. Try to fetch fresh profile data
-      const { data: profile } = await supabase
+      const { data: profile, error } = await supabase
         .from('profiles')
         .select('role, account_type, full_name')
         .eq('id', user.id)
         .single();
+
+      if (error) {
+        console.warn("Profile fetch error:", error);
+      }
+
+      console.log("Profile Data:", profile);
 
       if (profile) {
         // Use Profile Data
@@ -84,9 +93,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         if (profile.role) {
+          console.log("Using Profile Role:", profile.role);
           setIsAdmin(profile.role === 'admin');
         } else {
           // Fallback to metadata if role is missing in profile (e.g. migration lag)
+          console.log("Profile role missing. Using Metadata Role:", user.user_metadata?.role);
           setIsAdmin(user.user_metadata?.role === 'admin');
         }
         return;
@@ -96,6 +107,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // 2. Fallback to Metadata (if profile query fails or no profile yet)
+    console.log("Profile not found or error. Fallback to Metadata Role:", user.user_metadata?.role);
     // Check branding
     const type = user.user_metadata?.account_type;
     const name = user.user_metadata?.full_name;
