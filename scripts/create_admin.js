@@ -71,6 +71,7 @@ async function createAdmin() {
             await supabase.auth.setSession(data.session);
         }
 
+        console.log('Attempting full profile upsert (role, status, etc.)...');
         const { error: profileError } = await supabase.from('profiles').upsert({
             id: data.user.id,
             email: email,
@@ -82,8 +83,22 @@ async function createAdmin() {
         });
 
         if (profileError) {
-            console.error('Failed to create/update profile:', profileError.message);
-            console.log('Check if "profiles" table exists and has the correct columns.');
+            console.warn('Full profile update failed:', profileError.message);
+
+            // Fallback: Try basic profile creation (ignoring missing columns)
+            console.log('Fallback: Attempting basic profile upsert (id, email, name only)...');
+            const { error: basicError } = await supabase.from('profiles').upsert({
+                id: data.user.id,
+                email: email,
+                full_name: fullName,
+                created_at: new Date().toISOString(),
+            });
+
+            if (basicError) {
+                console.error('Basic profile creation also failed:', basicError.message);
+            } else {
+                console.log('SUCCESS: Basic admin profile created. (Role applied via Metadata)');
+            }
         } else {
             console.log('SUCCESS: Admin profile created/updated with role "admin".');
         }
