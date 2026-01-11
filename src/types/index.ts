@@ -1,5 +1,6 @@
 // Asset Types
-export type AssetCategory = 'property' | 'investment' | 'vehicle' | 'jewelry' | 'cash' | 'business';
+// Asset Types
+export type AssetCategory = 'property' | 'investment' | 'vehicle' | 'cash' | 'business' | 'other';
 export type AssetStatus = 'active' | 'sold' | 'pending';
 
 export interface Asset {
@@ -14,6 +15,21 @@ export interface Asset {
   isForSale: boolean;
   location?: string;
   documents?: string[];
+}
+
+// Ledger Types
+export type LedgerType = 'INCOME' | 'EXPENSE';
+export type LedgerCategory = 'SALARY' | 'BUSINESS' | 'RENTAL' | 'DIVIDEND' | 'OTHER_INCOME' | 'UTILITIES' | 'MAINTENANCE' | 'TAX' | 'DEBT' | 'PERSONAL' | 'OTHER_EXPENSE';
+
+export interface LedgerEntry {
+  id: string;
+  title: string;
+  amount: number;
+  type: LedgerType;
+  category: LedgerCategory;
+  date: string;
+  description?: string;
+  createdAt: string;
 }
 
 // Family/Heir Types
@@ -61,7 +77,7 @@ export interface Distribution {
 }
 
 // Transaction Types
-export type TransactionType = 'asset_added' | 'asset_sold' | 'distribution_completed' | 'document_uploaded' | 'heir_added';
+export type TransactionType = 'asset_added' | 'asset_sold' | 'distribution_completed' | 'document_uploaded' | 'heir_added' | 'income_added' | 'expense_added';
 
 export interface Transaction {
   id: string;
@@ -90,5 +106,5 @@ export interface Notification {
   message: string;
   date: string;
   read: boolean;
-  type: 'sale' | 'distribution' | 'document' | 'general';
+  type: 'sale' | 'distribution' | 'document' | 'general' | 'ledger';
 }

@@ -86,33 +86,36 @@ export const initialAssets: Asset[] = [
   },
   {
     id: 'asset-9',
-    name: 'Diamond Necklace Set',
-    category: 'jewelry',
+    name: 'Antique Diamond Necklace',
+    category: 'other',
     value: 275000,
     purchaseDate: '2016-12-25',
     description: '18K white gold necklace with 15-carat diamond centerpiece.',
     image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80',
     status: 'active',
+    isForSale: true,
   },
   {
     id: 'asset-10',
     name: 'Emerald & Gold Collection',
-    category: 'jewelry',
+    category: 'other',
     value: 185000,
     purchaseDate: '2019-05-20',
     description: 'Antique emerald jewelry set including ring, earrings, and bracelet.',
     image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80',
     status: 'active',
+    isForSale: true,
   },
   {
     id: 'asset-11',
     name: 'Rolex Collection',
-    category: 'jewelry',
+    category: 'other',
     value: 420000,
     purchaseDate: '2014-09-18',
     description: 'Collection of 5 vintage Rolex watches including Daytona and Submariner.',
     image: 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=800&q=80',
     status: 'active',
+    isForSale: true,
   },
   {
     id: 'asset-12',
@@ -194,11 +197,11 @@ export const getCategoryIcon = (category: string): string => {
     property: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
     investment: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6',
     vehicle: 'M8 17h8M8 17v-4m8 4v-4m-8 0h8m-8 0V9a4 4 0 014-4h0a4 4 0 014 4v4',
-    jewelry: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
     cash: 'M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z',
     business: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
+    other: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
   };
-  return icons[category] || icons.investment;
+  return icons[category] || icons.other;
 };
 
 export const getCategoryColor = (category: string): string => {
@@ -206,9 +209,9 @@ export const getCategoryColor = (category: string): string => {
     property: 'bg-blue-100 text-blue-700',
     investment: 'bg-green-100 text-green-700',
     vehicle: 'bg-purple-100 text-purple-700',
-    jewelry: 'bg-amber-100 text-amber-700',
     cash: 'bg-emerald-100 text-emerald-700',
     business: 'bg-indigo-100 text-indigo-700',
+    other: 'bg-gray-100 text-gray-700',
   };
   return colors[category] || 'bg-gray-100 text-gray-700';
 };

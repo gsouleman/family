@@ -1,5 +1,5 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@400;500;600;700&display=swap');
+@import './styles/print.css';
 
 
 @tailwind base;
@@ -97,7 +97,8 @@
     @apply bg-background text-foreground font-sans dark:bg-background dark:text-foreground;
   }
 
-  pre, code {
+  pre,
+  code {
     @apply font-mono;
   }
 }

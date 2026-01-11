@@ -10,74 +10,19 @@ interface FamilyTreeProps {
   onSelectHeir: (heir: Heir) => void;
 }
 
+import PrintButton from './PrintButton';
+
 const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs, onSelectHeir }) => {
-  const { user } = useAuth();
-  const [showAddHeir, setShowAddHeir] = useState(false);
-
-  // Group heirs by generation/category
-  const parents = heirs.filter(h => h.relation === 'father' || h.relation === 'mother');
-  const spouses = heirs.filter(h => h.relation === 'spouse_wife' || h.relation === 'spouse_husband');
-  const children = heirs.filter(h => h.relation === 'son' || h.relation === 'daughter');
-  const siblings = heirs.filter(h => h.relation === 'brother' || h.relation === 'sister');
-  const grandparents = heirs.filter(h => h.relation === 'grandfather' || h.relation === 'grandmother');
-
-  const HeirCard: React.FC<{ heir: Heir }> = ({ heir }) => (
-    <div
-      onClick={() => onSelectHeir(heir)}
-      className="group bg-white rounded-2xl p-4 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-100 hover:border-[#d4af37]/30"
-    >
-      <div className="flex items-center gap-4">
-        <div className="relative">
-          <img
-            src={heir.avatar}
-            alt={heir.name}
-            className="w-16 h-16 rounded-full object-cover ring-2 ring-gray-100 group-hover:ring-[#d4af37] transition-all"
-          />
-          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>
-        </div>
-        <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-gray-900 truncate group-hover:text-[#1a365d]">
-            {heir.name}
-          </h4>
-          <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${getRelationColor(heir.relation)}`}>
-            {getRelationLabel(heir.relation)}
-          </span>
-        </div>
-        <svg className="w-5 h-5 text-gray-400 group-hover:text-[#d4af37] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </div>
-    </div>
-  );
-
-  const HeirSection: React.FC<{ title: string; icon: React.ReactNode; members: Heir[] }> = ({ title, icon, members }) => {
-    if (members.length === 0) return null;
-
-    return (
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-[#1a365d]/10 rounded-lg">
-            {icon}
-          </div>
-          <h3 className="text-lg font-semibold text-[#1a365d]">{title}</h3>
-          <span className="px-2 py-0.5 bg-gray-100 rounded-full text-sm text-gray-600">
-            {members.length}
-          </span>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {members.map(heir => (
-            <HeirCard key={heir.id} heir={heir} />
-          ))}
-        </div>
-      </div>
-    );
-  };
+  // ... existing code
 
   return (
     <section id="family" className="py-16 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 relative">
+          <div className="absolute right-0 top-0 hidden md:block">
+            <PrintButton title="Print Family Tree" />
+          </div>
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a365d] mb-4">
             Family Heirs
           </h2>

@@ -1,0 +1,143 @@
+import React, { useState } from 'react';
+import { Heir, Asset, Distribution } from '../types';
+import { useCurrency } from '@/contexts/CurrencyContext';
+
+interface WillGeneratorProps {
+    heirs: Heir[];
+    activeAssets: Asset[];
+}
+
+const WillGenerator: React.FC<WillGeneratorProps> = ({ heirs, activeAssets }) => {
+    const { formatCurrency } = useCurrency();
+    const [showPreview, setShowPreview] = useState(false);
+
+    // Simple calculation for demonstration (usually requires the complex calculator)
+    const totalValue = activeAssets.reduce((acc, curr) => acc + curr.value, 0);
+
+    const handlePrint = () => {
+        window.print();
+    };
+
+    return (
+        <>
+            <button
+                onClick={() => setShowPreview(true)}
+                className="px-6 py-2 bg-[#d4af37] text-[#1a365d] font-semibold rounded-lg hover:bg-[#c9a432] transition-colors flex items-center gap-2"
+            >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Generate Islamic Will
+            </button>
+
+            {showPreview && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:absolute print:inset-0 print:bg-white print:p-0">
+                    <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto print:max-w-none print:max-h-none print:shadow-none">
+                        <div className="p-8 print:p-0">
+                            <div className="flex justify-between items-start mb-8 print:hidden">
+                                <h2 className="text-2xl font-bold text-[#1a365d]">Last Will and Testament</h2>
+                                <button
+                                    onClick={() => setShowPreview(false)}
+                                    className="text-gray-500 hover:text-gray-700"
+                                >
+                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            {/* Will Content */}
+                            <div className="prose max-w-none font-serif text-gray-900 border-[6px] border-[#d4af37]/20 p-12 print:border-none print:p-0">
+                                <div className="text-center mb-12">
+                                    <div className="text-[#d4af37] text-4xl mb-4">﷽</div>
+                                    <h1 className="text-3xl font-bold uppercase tracking-widest mb-2">Islamic Will</h1>
+                                    <p className="text-sm text-gray-500">(Al-Wasiyya)</p>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <p className="indent-8 text-justify">
+                                        I, the undersigned, being of sound mind and memory, do hereby declare this to be my Last Will and Testament, revoking all former wills and codicils made by me.
+                                    </p>
+
+                                    <h3 className="text-xl font-bold border-b border-gray-200 pb-2 mt-8">Article I: Declaration of Faith</h3>
+                                    <p className="text-justify">
+                                        I bear witness that there is no deity arising to worship except Allah, and that Muhammad (peace be upon him) is His Servant and Messenger. I ask my relatives and friends to be patient with the decree of Allah, and to pray for me for mercy and forgiveness.
+                                    </p>
+
+                                    <h3 className="text-xl font-bold border-b border-gray-200 pb-2 mt-8">Article II: Executors and Guardians</h3>
+                                    <p>
+                                        I hereby appoint the following person(s) as Executor(s) of this Will to settle my estate in accordance with Islamic Law (Shariah):
+                                        <br /><br />
+                                        <span className="inline-block w-full border-b border-gray-300 h-6"></span>
+                                    </p>
+
+                                    <h3 className="text-xl font-bold border-b border-gray-200 pb-2 mt-8">Article III: Assets and Liabilities</h3>
+                                    <p>My Total Portfolio Value as of {new Date().toLocaleDateString()} is approximately <strong>{formatCurrency(totalValue)}</strong>.</p>
+                                    <p>My assets include:</p>
+                                    <ul className="list-disc ml-6">
+                                        {activeAssets.map(asset => (
+                                            <li key={asset.id}>{asset.name} ({formatCurrency(asset.value)})</li>
+                                        ))}
+                                    </ul>
+
+                                    <h3 className="text-xl font-bold border-b border-gray-200 pb-2 mt-8">Article IV: Distribution of Estate</h3>
+                                    <p className="text-justify">
+                                        I direct that my estate be distributed in accordance with the Islamic Law of Inheritance (Faraid) as prescribed in the Holy Quran (Surah An-Nisa).
+                                    </p>
+                                    <p className="mt-4 font-semibold">My legal heirs at the time of this writing are:</p>
+                                    <ul className="grid grid-cols-2 gap-2 mt-2">
+                                        {heirs.map(heir => (
+                                            <li key={heir.id} className="flex items-center gap-2">
+                                                <span className="w-2 h-2 rounded-full bg-gray-400"></span>
+                                                {heir.name} ({heir.relation.replace('_', ' ')})
+                                            </li>
+                                        ))}
+                                    </ul>
+
+                                    <div className="mt-12 pt-8 border-t border-gray-200">
+                                        <div className="flex justify-between mt-16">
+                                            <div className="text-center">
+                                                <div className="w-64 border-t border-black mb-2"></div>
+                                                <p>Signature of Testator</p>
+                                            </div>
+                                            <div className="text-center">
+                                                <div className="w-48 border-t border-black mb-2"></div>
+                                                <p>Date</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex justify-between mt-16">
+                                            <div className="text-center">
+                                                <div className="w-64 border-t border-black mb-2"></div>
+                                                <p>Witness 1</p>
+                                            </div>
+                                            <div className="text-center">
+                                                <div className="w-64 border-t border-black mb-2"></div>
+                                                <p>Witness 2</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="mt-8 flex justify-end gap-4 print:hidden">
+                                <button
+                                    onClick={handlePrint}
+                                    className="px-6 py-2 bg-[#1a365d] text-white rounded-lg hover:bg-[#0f2744] font-medium flex items-center gap-2"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                    </svg>
+                                    Print Will
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
+    );
+};
+
+export default WillGenerator;

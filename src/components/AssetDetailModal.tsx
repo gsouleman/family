@@ -15,9 +15,9 @@ const categories: { value: AssetCategory; label: string }[] = [
   { value: 'property', label: 'Property' },
   { value: 'investment', label: 'Investment' },
   { value: 'vehicle', label: 'Vehicle' },
-  { value: 'jewelry', label: 'Jewelry' },
   { value: 'business', label: 'Business' },
   { value: 'cash', label: 'Cash' },
+  { value: 'other', label: 'Others' },
 ];
 
 const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, onClose, onSell }) => {

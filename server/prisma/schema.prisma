@@ -15,6 +15,7 @@ enum AssetCategory {
   jewelry
   cash
   business
+  other
 }
 
 enum AssetStatus {
@@ -42,6 +43,8 @@ enum TransactionType {
   distribution_completed
   document_uploaded
   heir_added
+  income_added
+  expense_added
 }
 
 enum DocumentType {
@@ -57,12 +60,32 @@ enum NotificationType {
   distribution
   document
   general
+  ledger
 }
 
 enum DistributionStatus {
   pending
   distributed
   completed
+}
+
+enum LedgerType {
+  INCOME
+  EXPENSE
+}
+
+enum LedgerCategory {
+  SALARY
+  BUSINESS
+  RENTAL
+  DIVIDEND
+  OTHER_INCOME
+  UTILITIES
+  MAINTENANCE
+  TAX
+  DEBT
+  PERSONAL
+  OTHER_EXPENSE
 }
 
 // Models
@@ -77,6 +100,21 @@ model User {
   heirs         Heir[]
   documents     Document[]
   notifications Notification[]
+  ledgerEntries LedgerEntry[]
+}
+
+model LedgerEntry {
+  id          String   @id @default(uuid())
+  title       String
+  amount      Float
+  type        LedgerType
+  category    LedgerCategory
+  date        DateTime
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model Asset {

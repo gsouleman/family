@@ -13,18 +13,18 @@ const categories: { value: AssetCategory; label: string }[] = [
   { value: 'property', label: 'Property' },
   { value: 'investment', label: 'Investment' },
   { value: 'vehicle', label: 'Vehicle' },
-  { value: 'jewelry', label: 'Jewelry' },
   { value: 'business', label: 'Business' },
   { value: 'cash', label: 'Cash' },
+  { value: 'other', label: 'Others' },
 ];
 
 const defaultImages: Record<AssetCategory, string> = {
   property: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80',
   investment: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80',
   vehicle: 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=80',
-  jewelry: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80',
   business: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80',
   cash: 'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80',
+  other: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80',
 };
 
 const AddAssetModal: React.FC<AddAssetModalProps> = ({ onClose, onSuccess }) => {
