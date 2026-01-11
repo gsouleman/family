@@ -123,25 +123,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     // Handle Default Admin Login
-    if ((email === 'Admin' || email === 'admin') && password === 'admin') {
-      const mockAdminUser = {
-        id: 'admin-user',
-        email: 'admin@system.local',
-        user_metadata: {
-          full_name: 'Administrator',
-          role: 'admin',
-          mustChangePassword: true,
-          account_type: 'family'
-        },
-        aud: 'authenticated',
-        created_at: new Date().toISOString(),
-      } as any;
+    if (email === 'Admin' || email === 'admin') {
+      const storedPassword = localStorage.getItem('adminPassword') || 'admin';
 
-      localStorage.setItem('mockAdminSession', JSON.stringify(mockAdminUser));
-      setUser(mockAdminUser);
-      setIsAdmin(true);
-      setMustChangePassword(true);
-      return { error: null };
+      if (password === storedPassword) {
+        const mockAdminUser = {
+          id: 'admin-user',
+          email: 'admin@system.local',
+          user_metadata: {
+            full_name: 'Administrator',
+            role: 'admin',
+            mustChangePassword: storedPassword === 'admin', // Force change if still default
+            account_type: 'family'
+          },
+          aud: 'authenticated',
+          created_at: new Date().toISOString(),
+        } as any;
+
+        localStorage.setItem('mockAdminSession', JSON.stringify(mockAdminUser));
+        setUser(mockAdminUser);
+        setIsAdmin(true);
+        setMustChangePassword(mockAdminUser.user_metadata.mustChangePassword);
+        return { error: null };
+      } else {
+        return { error: new Error('Invalid login credentials') };
+      }
     }
 
     // Normal Supabase Login
@@ -173,6 +179,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user_metadata: { ...user.user_metadata, mustChangePassword: false }
       };
       localStorage.setItem('mockAdminSession', JSON.stringify(updatedAdmin));
+      localStorage.setItem('adminPassword', newPassword); // Persist the new password
       setUser(updatedAdmin);
       setMustChangePassword(false);
       return { error: null };
