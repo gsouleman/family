@@ -299,10 +299,8 @@ const LedgerDashboard: React.FC = () => {
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
                                     <select
-                                        className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4af37] outline-none ${(activeTab !== 'overview' && !editingEntryId) ? 'bg-gray-100 text-gray-500' : ''
-                                            }`}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4af37] outline-none"
                                         value={formData.type}
-                                        disabled={activeTab !== 'overview' && !editingEntryId}
                                         onChange={e => {
                                             const newType = e.target.value as LedgerType;
                                             setFormData({
@@ -334,8 +332,10 @@ const LedgerDashboard: React.FC = () => {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
                                 <select
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4af37] outline-none"
+                                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#d4af37] outline-none ${(formData.type === 'CREDITOR' || formData.type === 'DEBTOR') ? 'bg-gray-100 text-gray-500' : ''
+                                        }`}
                                     value={formData.category}
+                                    disabled={formData.type === 'CREDITOR' || formData.type === 'DEBTOR'}
                                     onChange={e => setFormData({ ...formData, category: e.target.value as LedgerCategory })}
                                 >
                                     {formData.type === 'INCOME' && (
