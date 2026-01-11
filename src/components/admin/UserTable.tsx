@@ -46,10 +46,11 @@ const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
     }, []);
 
     const handleToggleStatus = async (userId: string, currentStatus: string) => {
-        const newStatus = currentStatus === 'active' ? 'disabled' : 'active';
-        const { error } = await supabase.from('profiles').update({ status: newStatus }).eq('id', userId);
-        if (!error) fetchUsers();
-        else alert('Error updating status: ' + error.message);
+        // const newStatus = currentStatus === 'active' ? 'disabled' : 'active';
+        // const { error } = await supabase.from('profiles').update({ status: newStatus }).eq('id', userId);
+        // if (!error) fetchUsers();
+        // else alert('Error updating status: ' + error.message);
+        alert("Status toggling is temporarily disabled while pending database migration.");
     };
 
     const handleDelete = async (userId: string) => {

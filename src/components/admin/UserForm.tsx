@@ -47,8 +47,8 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                 // UPDATE USER
                 const { error } = await supabase.from('profiles').update({
                     full_name: fullName,
-                    role: role,
-                    account_type: accountType
+                    // role: role,              // Column missing in DB
+                    // account_type: accountType // Column missing in DB
                     // Note: Email and Password cannot be seemingly updated easily via profiles table alone for Auth. Always complex.
                 }).eq('id', editingUser.id);
 
@@ -88,9 +88,9 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                         id: data.user.id,
                         email: email,
                         full_name: fullName,
-                        role: role,
-                        account_type: accountType,
-                        status: 'active',
+                        // role: role,              // Column missing in DB
+                        // account_type: accountType, // Column missing in DB
+                        // status: 'active',         // Column missing in DB
                         created_at: new Date().toISOString()
                     });
 
