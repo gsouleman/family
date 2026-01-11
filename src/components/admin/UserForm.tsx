@@ -21,10 +21,12 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
 
     useEffect(() => {
         if (isOpen && editingUser) {
+            console.log("Editing User Data:", editingUser);
             setFullName(editingUser.full_name || '');
             setEmail(editingUser.email || '');
             setRole(editingUser.role || 'user');
-            setAccountType(editingUser.account_type || 'family');
+            // Ensure exact match or fallback, handling mixed case just in case
+            setAccountType((editingUser.account_type?.toLowerCase() as any) || 'family');
             setPassword(''); // Don't show password
         } else if (isOpen && !editingUser) {
             // Reset for new user
@@ -36,6 +38,22 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
         }
         setError(null);
     }, [isOpen, editingUser]);
+
+    const handleSendPasswordReset = async () => {
+        if (!email) return;
+        setLoading(true);
+        try {
+            const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + '/reset-password',
+            });
+            if (error) throw error;
+            alert('Password reset email sent to ' + email);
+        } catch (err: any) {
+            alert('Error sending reset email: ' + err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -143,14 +161,26 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
 
                     <div>
                         <label className="block text-xs font-medium text-gray-500 mb-1">Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a365d] outline-none disabled:bg-gray-100 disabled:text-gray-500"
-                            required
-                            disabled={!!editingUser}
-                        />
+                        <div className="flex gap-2">
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a365d] outline-none disabled:bg-gray-100 disabled:text-gray-500"
+                                required
+                                disabled={!!editingUser}
+                            />
+                            {editingUser && (
+                                <button
+                                    type="button"
+                                    onClick={handleSendPasswordReset}
+                                    className="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-xs font-medium whitespace-nowrap"
+                                    title="Send Password Reset Email"
+                                >
+                                    Reset PWD
+                                </button>
+                            )}
+                        </div>
                     </div>
 
                     {!editingUser && (
