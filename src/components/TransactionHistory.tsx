@@ -7,6 +7,8 @@ interface TransactionHistoryProps {
   distributions: Distribution[];
 }
 
+import PrintButton from './PrintButton';
+
 const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions, distributions }) => {
   // Combine and sort all events by date
   const allEvents = [
@@ -81,7 +83,10 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions, d
     <section id="history" className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 relative">
+          <div className="absolute right-0 top-0 hidden md:block">
+            <PrintButton title="Print History" />
+          </div>
           <h2 className="text-3xl lg:text-4xl font-bold text-[#1a365d] mb-4">
             Transaction History
           </h2>
@@ -113,11 +118,10 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions, d
                         <p className="text-sm text-gray-500 mt-1">{formatDate(event.date)}</p>
                       </div>
                       {event.amount && (
-                        <span className={`text-lg font-bold ${
-                          event.type === 'asset_sold' || event.type === 'distribution_completed'
+                        <span className={`text-lg font-bold ${event.type === 'asset_sold' || event.type === 'distribution_completed'
                             ? 'text-[#d4af37]'
                             : 'text-green-600'
-                        }`}>
+                          }`}>
                           {formatCurrency(event.amount)}
                         </span>
                       )}
