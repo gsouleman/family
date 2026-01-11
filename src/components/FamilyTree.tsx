@@ -12,7 +12,7 @@ interface FamilyTreeProps {
 
 import PrintButton from './PrintButton';
 
-const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs, onSelectHeir }) => {
+const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => {
   const { user } = useAuth();
   const [showAddHeir, setShowAddHeir] = useState(false);
 

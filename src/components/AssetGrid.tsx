@@ -29,7 +29,7 @@ const sortOptions = [
 
 import PrintButton from './PrintButton';
 
-const AssetGrid: React.FC<AssetGridProps> = ({ assets, onSelectAsset, onSellAsset }) => {
+const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSellAsset }) => {
   const { formatCurrency } = useCurrency();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<AssetCategory | 'all'>('all');
@@ -37,6 +37,7 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets, onSelectAsset, onSellAsse
   const [showActiveOnly, setShowActiveOnly] = useState(true);
 
   const filteredAndSortedAssets = useMemo(() => {
+    if (!assets) return [];
     let filtered = assets;
 
     // Filter by status
@@ -80,7 +81,7 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets, onSelectAsset, onSellAsse
     return sorted;
   }, [assets, searchQuery, selectedCategory, sortBy, showActiveOnly]);
 
-  const totalFilteredValue = filteredAndSortedAssets.reduce((sum, a) => sum + a.value, 0);
+  const totalFilteredValue = (filteredAndSortedAssets || []).reduce((sum, a) => sum + a.value, 0);
 
   return (
     <section id="assets" className="py-16 bg-gray-50">

@@ -14,15 +14,15 @@ interface InheritanceCalculatorProps {
   activeAssets: Asset[];
 }
 
-const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs, totalAssetValue, activeAssets }) => {
+const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [], totalAssetValue = 0, activeAssets = [] }) => {
   const { formatCurrency, country } = useCurrency();
   const [customAmount, setCustomAmount] = useState<string>(totalAssetValue.toString());
   const [showBreakdown, setShowBreakdown] = useState(true);
 
   const amount = parseFloat(customAmount) || 0;
-  const shares = useMemo(() => calculateIslamicInheritance(heirs, amount), [heirs, amount]);
+  const shares = useMemo(() => calculateIslamicInheritance(heirs || [], amount), [heirs, amount]);
 
-  const totalDistributed = shares.reduce((sum, s) => sum + s.shareAmount, 0);
+  const totalDistributed = (shares || []).reduce((sum, s) => sum + s.shareAmount, 0);
   const distributionPercentage = amount > 0 ? (totalDistributed / amount) * 100 : 0;
 
   // Group shares by relation type for visualization
