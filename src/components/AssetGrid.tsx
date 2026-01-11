@@ -86,121 +86,190 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSel
   return (
     <section id="assets" className="py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="text-center mb-12 relative">
-          <div className="absolute right-0 top-0 hidden md:block">
-            <PrintButton title="Print Assets" />
-          </div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a365d] mb-4">
-            Family Asset Portfolio
-          </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            Comprehensive view of all family assets. Filter, search, and manage your wealth with ease.
-          </p>
-        </div>
-
-        {/* Filters Bar */}
-        <div className="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-gray-100">
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md w-full">
-              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search assets..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none transition-all"
-              />
+        {/* Screen View - Hidden on Print */}
+        <div className="print:hidden">
+          {/* Section Header */}
+          <div className="text-center mb-12 relative">
+            <div className="absolute right-0 top-0 hidden md:block">
+              <PrintButton title="Print Assets" />
             </div>
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#1a365d] mb-4">
+              Family Asset Portfolio
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Comprehensive view of all family assets. Filter, search, and manage your wealth with ease.
+            </p>
+          </div>
 
-            {/* Filters */}
-            <div className="flex flex-wrap gap-3 items-center">
-              {/* Category Filter */}
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value as AssetCategory | 'all')}
-                className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none bg-white cursor-pointer"
-              >
-                {categories.map(cat => (
-                  <option key={cat.value} value={cat.value}>{cat.label}</option>
-                ))}
-              </select>
-
-              {/* Sort */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none bg-white cursor-pointer"
-              >
-                {sortOptions.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-
-              {/* Active Only Toggle */}
-              <label className="flex items-center gap-2 px-4 py-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+          {/* Filters Bar */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 mb-8 border border-gray-100">
+            <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+              {/* Search */}
+              <div className="relative flex-1 max-w-md w-full">
+                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
                 <input
-                  type="checkbox"
-                  checked={showActiveOnly}
-                  onChange={(e) => setShowActiveOnly(e.target.checked)}
-                  className="w-4 h-4 text-[#d4af37] border-gray-300 rounded focus:ring-[#d4af37]"
+                  type="text"
+                  placeholder="Search assets..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none transition-all"
                 />
-                <span className="text-sm text-gray-600">Active Only</span>
-              </label>
+              </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap gap-3 items-center">
+                {/* Category Filter */}
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value as AssetCategory | 'all')}
+                  className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none bg-white cursor-pointer"
+                >
+                  {categories.map(cat => (
+                    <option key={cat.value} value={cat.value}>{cat.label}</option>
+                  ))}
+                </select>
+
+                {/* Sort */}
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none bg-white cursor-pointer"
+                >
+                  {sortOptions.map(opt => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+
+                {/* Active Only Toggle */}
+                <label className="flex items-center gap-2 px-4 py-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                  <input
+                    type="checkbox"
+                    checked={showActiveOnly}
+                    onChange={(e) => setShowActiveOnly(e.target.checked)}
+                    className="w-4 h-4 text-[#d4af37] border-gray-300 rounded focus:ring-[#d4af37]"
+                  />
+                  <span className="text-sm text-gray-600">Active Only</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Results Summary */}
+            <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
+              <p className="text-gray-600">
+                Showing <span className="font-semibold text-[#1a365d]">{filteredAndSortedAssets.length}</span> assets
+              </p>
+              <p className="text-gray-600">
+                Total Value: <span className="font-bold text-[#d4af37] text-lg">{formatCurrency(totalFilteredValue)}</span>
+              </p>
             </div>
           </div>
 
-          {/* Results Summary */}
-          <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
-            <p className="text-gray-600">
-              Showing <span className="font-semibold text-[#1a365d]">{filteredAndSortedAssets.length}</span> assets
-            </p>
-            <p className="text-gray-600">
-              Total Value: <span className="font-bold text-[#d4af37] text-lg">{formatCurrency(totalFilteredValue)}</span>
-            </p>
-          </div>
-        </div>
-
-        {/* Category Pills */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          {categories.map(cat => (
-            <button
-              key={cat.value}
-              onClick={() => setSelectedCategory(cat.value)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedCategory === cat.value
-                ? 'bg-[#1a365d] text-white shadow-lg'
-                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
-                }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Asset Grid */}
-        {filteredAndSortedAssets.length > 0 ? (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredAndSortedAssets.map(asset => (
-              <AssetCard
-                key={asset.id}
-                asset={asset}
-                onSelect={onSelectAsset}
-                onSell={onSellAsset}
-              />
+          {/* Category Pills */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {categories.map(cat => (
+              <button
+                key={cat.value}
+                onClick={() => setSelectedCategory(cat.value)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedCategory === cat.value
+                  ? 'bg-[#1a365d] text-white shadow-lg'
+                  : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                  }`}
+              >
+                {cat.label}
+              </button>
             ))}
           </div>
-        ) : (
-          <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-            <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-            </svg>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No assets found</h3>
-            <p className="text-gray-500">Try adjusting your search or filter criteria</p>
+
+          {/* Asset Grid */}
+          {filteredAndSortedAssets.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredAndSortedAssets.map(asset => (
+                <AssetCard
+                  key={asset.id}
+                  asset={asset}
+                  onSelect={onSelectAsset}
+                  onSell={onSellAsset}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
+              <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+              </svg>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No assets found</h3>
+              <p className="text-gray-500">Try adjusting your search or filter criteria</p>
+            </div>
+          )}
+        </div>
+
+        {/* Print Layout - Professional Table View */}
+        <div className="hidden print:block">
+          <div className="text-center mb-8 border-b-2 border-[#1a365d] pb-4">
+            <h1 className="text-3xl font-serif text-[#1a365d] mb-2">Family Asset Portfolio</h1>
+            <p className="text-gray-600">Generated on {new Date().toLocaleDateString()}</p>
+            <p className="text-xl font-bold text-[#d4af37] mt-2">Total Portfolio Value: {formatCurrency((assets || []).reduce((sum, a) => sum + a.value, 0))}</p>
           </div>
-        )}
+
+          <div className="space-y-8">
+            {categories.filter(cat => cat.value !== 'all').map(category => {
+              const categoryAssets = assets.filter(a => a.category === category.value);
+              if (categoryAssets.length === 0) return null;
+
+              return (
+                <div key={category.value} className="break-inside-avoid">
+                  <h3 className="text-xl font-bold text-[#1a365d] border-b border-[#d4af37] mb-4 pb-1">
+                    {category.label}
+                  </h3>
+                  <table className="w-full text-sm text-left">
+                    <thead className="bg-gray-100 text-[#1a365d] border-b border-gray-300 font-serif">
+                      <tr>
+                        <th className="py-2 px-3 font-semibold">Asset Name</th>
+                        <th className="py-2 px-3 font-semibold">Location</th>
+                        <th className="py-2 px-3 font-semibold">Category</th>
+                        <th className="py-2 px-3 font-semibold">Purchase Date</th>
+                        <th className="py-2 px-3 font-semibold">Documents</th>
+                        <th className="py-2 px-3 font-semibold">Inheritance Status</th>
+                        <th className="py-2 px-3 font-semibold text-right">Value</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {categoryAssets.map(asset => (
+                        <tr key={asset.id}>
+                          <td className="py-2 px-3 font-medium text-gray-900">{asset.name}</td>
+                          <td className="py-2 px-3 text-gray-600">{asset.location || 'N/A'}</td>
+                          <td className="py-2 px-3 text-gray-600 capitalize">{asset.category}</td>
+                          <td className="py-2 px-3 text-gray-600">{new Date(asset.purchaseDate).toLocaleDateString()}</td>
+                          <td className="py-2 px-3 text-gray-600">{asset.documents?.length || 0} Docs</td>
+                          <td className="py-2 px-3">
+                            <span className={`px-2 py-0.5 rounded text-xs border ${asset.status === 'active' ? 'bg-green-50 text-green-700 border-green-200' :
+                                asset.status === 'sold' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-gray-50 text-gray-700 border-gray-200'
+                              }`}>
+                              {asset.status.toUpperCase()}
+                            </span>
+                          </td>
+                          <td className="py-2 px-3 text-right font-medium text-gray-900">{formatCurrency(asset.value)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot className="border-t-2 border-gray-300">
+                      <tr>
+                        <td colSpan={6} className="py-2 px-3 text-right font-bold text-gray-700">Subtotal</td>
+                        <td className="py-2 px-3 text-right font-bold text-[#1a365d]">{formatCurrency(categoryAssets.reduce((sum, a) => sum + a.value, 0))}</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-8 pt-8 border-t border-gray-300 text-center text-xs text-gray-400">
+            <p>Confidential Family Archive - {new Date().getFullYear()}</p>
+          </div>
+        </div>
       </div>
     </section>
   );
