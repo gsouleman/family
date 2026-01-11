@@ -32,7 +32,7 @@ async function createNeonAdmin() {
 
     // Handle "User already exists" by Signing In
     if (error && (error.message.includes('already registered') || error.message.includes('already exists'))) {
-        console.log(`\nUser already exists in Auth. Signing in to sync profile...`);
+        console.log(`\nUser already exists in Auth. Signing in to sync...`);
         const signIn = await supabase.auth.signInWithPassword({
             email: ADMIN_USER.email,
             password: ADMIN_USER.password
@@ -47,6 +47,21 @@ async function createNeonAdmin() {
     } else if (error) {
         console.error(`\n[CRITICAL] Failed to create user: ${error.message}`);
         return;
+    }
+
+    // 1.5 FORCE UPDATE METADATA (Robustness Fix)
+    // This ensures that even if the 'profiles' table is broken, the Auth Metadata has the correct role.
+    if (data.user) {
+        console.log(`\n[ROBUSTNESS] Forcing Auth Metadata update to role='admin'...`);
+        const { error: metaError } = await supabase.auth.updateUser({
+            data: { role: 'admin', full_name: ADMIN_USER.fullName }
+        });
+
+        if (metaError) {
+            console.error(`Failed to update metadata: ${metaError.message}`);
+        } else {
+            console.log(`Metadata updated successfully. (Fallback auth check will now pass)`);
+        }
     }
 
     // 2. Create/Update Profile
@@ -66,9 +81,9 @@ async function createNeonAdmin() {
     });
 
     if (profileError) {
-        console.warn(`\n[WARNING] Auth User created, but Profile update failed.`);
+        console.warn(`\n[WARNING] Profile update failed (Database table might be missing columns).`);
         console.warn(`Reason: ${profileError.message}`);
-        console.warn(`\nACTION REQUIRED: Run 'scripts/setup_profiles.sql' in your Neon Console to fix the table schema.`);
+        console.warn(`But "Admin" access should now work via Metadata Fallback.`);
     } else {
         console.log(`\n[SUCCESS] Admin User and Profile fully configured!`);
     }
