@@ -46,10 +46,11 @@ const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
     }, []);
 
     const handleToggleStatus = async (userId: string, currentStatus: string) => {
-        const newStatus = currentStatus === 'active' ? 'disabled' : 'active';
-        const { error } = await supabase.from('profiles').update({ status: newStatus }).eq('id', userId);
-        if (!error) fetchUsers();
-        else alert('Error updating status (Possible Cache Issue): ' + error.message);
+        // const newStatus = currentStatus === 'active' ? 'disabled' : 'active';
+        // const { error } = await supabase.from('profiles').update({ status: newStatus }).eq('id', userId);
+        // if (!error) fetchUsers();
+        // else alert('Error updating status (Possible Cache Issue): ' + error.message);
+        alert("Status toggling is temporarily disabled. You are likely connected to the wrong database (see Console logs).");
     };
 
     const handleDelete = async (userId: string) => {
