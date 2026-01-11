@@ -115,6 +115,9 @@ const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
                                 </td>
                                 <td className="p-3 text-right">
                                     <div className="flex justify-end gap-1">
+                                        <button onClick={() => onEdit && onEdit(u)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                        </button>
                                         <button onClick={() => handleToggleStatus(u.id, u.status)} className={`p-1.5 rounded-lg transition-colors ${u.status === 'active' || !u.status ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'
                                             }`} title={u.status === 'active' || !u.status ? 'Disable' : 'Enable'}>
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
