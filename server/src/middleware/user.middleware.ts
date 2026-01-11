@@ -15,27 +15,45 @@ declare global {
 
 export const userMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // 1. Try to get User ID from header
-        let userId = req.headers['x-user-id'] as string;
+        // 1. Try to get User details from headers (sent by Frontend)
+        const userId = req.headers['x-user-id'] as string;
+        const userEmail = req.headers['x-user-email'] as string;
+        const userName = req.headers['x-user-name'] as string;
 
-        // 2. If no header, try to find the first user in DB (for development/testing)
-        if (!userId) {
+        if (userId) {
+            // Sync User to Neon DB (Upsert)
+            // This ensures Auth (Supabase) users exist in Data (Neon) DB for Foreign Keys
+            try {
+                await prisma.user.upsert({
+                    where: { id: userId },
+                    update: {}, // No updates needed, Auth is source of truth
+                    create: {
+                        id: userId,
+                        email: userEmail || `user_${userId.substring(0, 8)}@example.com`,
+                        fullName: userName ? decodeURIComponent(userName) : 'Unknown User'
+                    }
+                });
+            } catch (dbError) {
+                console.error("Failed to sync user to Neon:", dbError);
+                // Continue? If upsert fails, subsequent queries might fail, but let's try.
+            }
+            req.userId = userId;
+        } else {
+            // 2. Fallback: If no header, use 'dev@example.com' (Development Mode)
             const firstUser = await prisma.user.findFirst();
             if (firstUser) {
-                userId = firstUser.id;
+                req.userId = firstUser.id;
             } else {
-                // Create a default user if none exists
                 const newUser = await prisma.user.create({
                     data: {
                         email: 'dev@example.com',
                         fullName: 'Development User'
                     }
                 });
-                userId = newUser.id;
+                req.userId = newUser.id;
             }
         }
 
-        req.userId = userId;
         next();
     } catch (error) {
         console.error('User middleware error:', error);
