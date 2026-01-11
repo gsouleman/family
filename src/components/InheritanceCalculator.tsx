@@ -54,226 +54,287 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Input Panel */}
-          <div className="lg:col-span-1">
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-              <h3 className="text-lg font-semibold text-white mb-4">Estate Value</h3>
+        <div className="print:hidden">
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Input Panel */}
+            <div className="lg:col-span-1">
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <h3 className="text-lg font-semibold text-white mb-4">Estate Value</h3>
 
-              <div className="relative mb-4">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">{country.currencySymbol}</span>
-                <input
-                  type="number"
-                  value={customAmount}
-                  onChange={(e) => setCustomAmount(e.target.value)}
-                  className="w-full pl-16 pr-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white text-xl font-bold focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none"
-                  placeholder="Enter amount"
-                />
-              </div>
-
-              <div className="mb-4 px-3 py-2 bg-white/5 rounded-lg flex items-center gap-2">
-                <span className="text-lg">{country.flag}</span>
-                <span className="text-sm text-gray-300">{country.name} ({country.currency})</span>
-              </div>
-
-              <button
-                onClick={() => setCustomAmount(totalAssetValue.toString())}
-                className="w-full px-4 py-3 bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[#d4af37] rounded-xl transition-colors text-sm font-medium border border-[#d4af37]/30"
-              >
-                Use Total Portfolio Value ({formatCurrency(totalAssetValue)})
-              </button>
-
-              <div className="mt-6 pt-6 border-t border-white/10">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-gray-300">Show Breakdown</span>
-                  <button
-                    onClick={() => setShowBreakdown(!showBreakdown)}
-                    className={`w-12 h-6 rounded-full transition-colors ${showBreakdown ? 'bg-[#d4af37]' : 'bg-gray-600'}`}
-                  >
-                    <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${showBreakdown ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
-                  </button>
+                <div className="relative mb-4">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">{country.currencySymbol}</span>
+                  <input
+                    type="number"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    className="w-full pl-16 pr-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white text-xl font-bold focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none"
+                    placeholder="Enter amount"
+                  />
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Total Heirs</span>
-                    <span className="text-white font-medium">{heirs.length}</span>
+                <div className="mb-4 px-3 py-2 bg-white/5 rounded-lg flex items-center gap-2">
+                  <span className="text-lg">{country.flag}</span>
+                  <span className="text-sm text-gray-300">{country.name} ({country.currency})</span>
+                </div>
+
+                <button
+                  onClick={() => setCustomAmount(totalAssetValue.toString())}
+                  className="w-full px-4 py-3 bg-[#d4af37]/20 hover:bg-[#d4af37]/30 text-[#d4af37] rounded-xl transition-colors text-sm font-medium border border-[#d4af37]/30"
+                >
+                  Use Total Portfolio Value ({formatCurrency(totalAssetValue)})
+                </button>
+
+                <div className="mt-6 pt-6 border-t border-white/10">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-gray-300">Show Breakdown</span>
+                    <button
+                      onClick={() => setShowBreakdown(!showBreakdown)}
+                      className={`w-12 h-6 rounded-full transition-colors ${showBreakdown ? 'bg-[#d4af37]' : 'bg-gray-600'}`}
+                    >
+                      <div className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${showBreakdown ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
+                    </button>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Distribution</span>
-                    <span className="text-[#d4af37] font-medium">{formatPercentage(distributionPercentage)}</span>
+
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Total Heirs</span>
+                      <span className="text-white font-medium">{heirs.length}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Distribution</span>
+                      <span className="text-[#d4af37] font-medium">{formatPercentage(distributionPercentage)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Reference */}
+              <div className="mt-6 bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
+                <h4 className="text-sm font-semibold text-[#d4af37] mb-4">Quick Reference</h4>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Wife (with children)</span>
+                    <span className="text-white">1/8</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Wife (no children)</span>
+                    <span className="text-white">1/4</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Father</span>
+                    <span className="text-white">1/6</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Mother</span>
+                    <span className="text-white">1/6</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Son : Daughter</span>
+                    <span className="text-white">2 : 1</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Quick Reference */}
-            <div className="mt-6 bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-              <h4 className="text-sm font-semibold text-[#d4af37] mb-4">Quick Reference</h4>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Wife (with children)</span>
-                  <span className="text-white">1/8</span>
+            {/* Distribution Visualization */}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-2xl p-6 shadow-xl">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold text-[#1a365d]">Distribution Breakdown</h3>
+                  <span className="text-xl font-bold text-[#d4af37]">{formatCurrency(amount)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Wife (no children)</span>
-                  <span className="text-white">1/4</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Father</span>
-                  <span className="text-white">1/6</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Mother</span>
-                  <span className="text-white">1/6</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Son : Daughter</span>
-                  <span className="text-white">2 : 1</span>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Distribution Visualization */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl p-6 shadow-xl">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-[#1a365d]">Distribution Breakdown</h3>
-                <span className="text-xl font-bold text-[#d4af37]">{formatCurrency(amount)}</span>
-              </div>
+                {/* Progress Bar */}
+                <div className="mb-8">
+                  <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full flex">
+                      {shares.map((share, index) => {
+                        const colors = [
+                          'bg-blue-500', 'bg-purple-500', 'bg-pink-500', 'bg-amber-500',
+                          'bg-green-500', 'bg-indigo-500', 'bg-red-500', 'bg-teal-500'
+                        ];
+                        return (
+                          <div
+                            key={share.heirId}
+                            className={`${colors[index % colors.length]} transition-all duration-500`}
+                            style={{ width: `${share.sharePercentage}%` }}
+                            title={`${share.heirName}: ${formatPercentage(share.sharePercentage)}`}
+                          ></div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
 
-              {/* Progress Bar */}
-              <div className="mb-8">
-                <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
-                  <div className="h-full flex">
+                {/* Shares List */}
+                {showBreakdown && (
+                  <div className="space-y-4">
                     {shares.map((share, index) => {
                       const colors = [
-                        'bg-blue-500', 'bg-purple-500', 'bg-pink-500', 'bg-amber-500',
-                        'bg-green-500', 'bg-indigo-500', 'bg-red-500', 'bg-teal-500'
+                        'border-l-blue-500', 'border-l-purple-500', 'border-l-pink-500', 'border-l-amber-500',
+                        'border-l-green-500', 'border-l-indigo-500', 'border-l-red-500', 'border-l-teal-500'
                       ];
+                      const bgColors = [
+                        'bg-blue-50', 'bg-purple-50', 'bg-pink-50', 'bg-amber-50',
+                        'bg-green-50', 'bg-indigo-50', 'bg-red-50', 'bg-teal-50'
+                      ];
+
                       return (
                         <div
                           key={share.heirId}
-                          className={`${colors[index % colors.length]} transition-all duration-500`}
-                          style={{ width: `${share.sharePercentage}%` }}
-                          title={`${share.heirName}: ${formatPercentage(share.sharePercentage)}`}
-                        ></div>
+                          className={`${bgColors[index % bgColors.length]} ${colors[index % colors.length]} border-l-4 rounded-lg p-4 transition-all hover:shadow-md`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center">
+                                <span className="text-lg font-bold text-gray-600">
+                                  {share.heirName.charAt(0)}
+                                </span>
+                              </div>
+                              <div>
+                                <h4 className="font-semibold text-gray-900">{share.heirName}</h4>
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-xs px-2 py-0.5 rounded-full ${getRelationColor(share.relation)}`}>
+                                    {getRelationLabel(share.relation)}
+                                  </span>
+                                  <span className="text-xs text-gray-500">
+                                    Share: {share.shareFraction}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-lg font-bold text-[#1a365d]">{formatCurrency(share.shareAmount)}</p>
+                              <p className="text-sm text-gray-500">{formatPercentage(share.sharePercentage)}</p>
+                            </div>
+                          </div>
+                        </div>
                       );
                     })}
+                  </div>
+                )}
+
+                {/* Summary */}
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-500 text-sm">Total Distributed</p>
+                      <p className="text-xl font-bold text-[#1a365d]">{formatCurrency(totalDistributed)}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-gray-500 text-sm">Remaining</p>
+                      <p className="text-xl font-bold text-gray-400">{formatCurrency(amount - totalDistributed)}</p>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Shares List */}
-              {showBreakdown && (
-                <div className="space-y-4">
-                  {shares.map((share, index) => {
-                    const colors = [
-                      'border-l-blue-500', 'border-l-purple-500', 'border-l-pink-500', 'border-l-amber-500',
-                      'border-l-green-500', 'border-l-indigo-500', 'border-l-red-500', 'border-l-teal-500'
-                    ];
-                    const bgColors = [
-                      'bg-blue-50', 'bg-purple-50', 'bg-pink-50', 'bg-amber-50',
-                      'bg-green-50', 'bg-indigo-50', 'bg-red-50', 'bg-teal-50'
-                    ];
-
+              {/* Pie Chart Visualization */}
+              <div className="mt-6 bg-white rounded-2xl p-6 shadow-xl">
+                <h3 className="text-lg font-semibold text-[#1a365d] mb-4">Visual Distribution</h3>
+                <div className="flex flex-wrap gap-4 justify-center">
+                  {Object.entries(sharesByType).map(([type, typeShares]) => {
+                    const totalTypeShare = typeShares.reduce((sum, s) => sum + s.sharePercentage, 0);
                     return (
-                      <div
-                        key={share.heirId}
-                        className={`${bgColors[index % bgColors.length]} ${colors[index % colors.length]} border-l-4 rounded-lg p-4 transition-all hover:shadow-md`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center">
-                              <span className="text-lg font-bold text-gray-600">
-                                {share.heirName.charAt(0)}
-                              </span>
-                            </div>
-                            <div>
-                              <h4 className="font-semibold text-gray-900">{share.heirName}</h4>
-                              <div className="flex items-center gap-2">
-                                <span className={`text-xs px-2 py-0.5 rounded-full ${getRelationColor(share.relation)}`}>
-                                  {getRelationLabel(share.relation)}
-                                </span>
-                                <span className="text-xs text-gray-500">
-                                  Share: {share.shareFraction}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-lg font-bold text-[#1a365d]">{formatCurrency(share.shareAmount)}</p>
-                            <p className="text-sm text-gray-500">{formatPercentage(share.sharePercentage)}</p>
+                      <div key={type} className="text-center">
+                        <div className="relative w-24 h-24 mx-auto mb-2">
+                          <svg className="w-full h-full transform -rotate-90">
+                            <circle
+                              cx="48"
+                              cy="48"
+                              r="40"
+                              fill="none"
+                              stroke="#e5e7eb"
+                              strokeWidth="8"
+                            />
+                            <circle
+                              cx="48"
+                              cy="48"
+                              r="40"
+                              fill="none"
+                              stroke="#d4af37"
+                              strokeWidth="8"
+                              strokeDasharray={`${totalTypeShare * 2.51} 251`}
+                              className="transition-all duration-500"
+                            />
+                          </svg>
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="text-lg font-bold text-[#1a365d]">
+                              {totalTypeShare.toFixed(0)}%
+                            </span>
                           </div>
                         </div>
+                        <span className={`text-xs px-2 py-1 rounded-full ${getRelationColor(type)}`}>
+                          {getRelationLabel(type as any)}
+                        </span>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {typeShares.length} heir{typeShares.length > 1 ? 's' : ''}
+                        </p>
                       </div>
                     );
                   })}
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Print View - Professional Table */}
+        <div className="hidden print:block">
+          <div className="text-center mb-8 border-b-2 border-[#1a365d] pb-4">
+            <h1 className="text-3xl font-serif text-[#1a365d] mb-2">Inheritance Calculation Report</h1>
+            <p className="text-gray-600">Generated on {new Date().toLocaleDateString()}</p>
+            <p className="text-xl font-bold text-[#d4af37] mt-2">Calculated Estate Value: {formatCurrency(amount)}</p>
+          </div>
+
+          <table className="w-full text-sm text-left">
+            <thead className="bg-gray-100 text-[#1a365d] border-b border-gray-300 font-serif">
+              <tr>
+                <th className="py-2 px-3 font-semibold">Heir Name</th>
+                <th className="py-2 px-3 font-semibold">Relation</th>
+                <th className="py-2 px-3 font-semibold text-center">Share</th>
+                <th className="py-2 px-3 font-semibold text-center">Percentage</th>
+                <th className="py-2 px-3 font-semibold text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {shares.map(share => (
+                <tr key={share.heirId}>
+                  <td className="py-2 px-3 font-medium text-gray-900">{share.heirName}</td>
+                  <td className="py-2 px-3">
+                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium border ${getRelationColor(share.relation)}`}>
+                      {getRelationLabel(share.relation)}
+                    </span>
+                  </td>
+                  <td className="py-2 px-3 text-center text-gray-600 font-mono">{share.shareFraction}</td>
+                  <td className="py-2 px-3 text-center text-gray-600">{formatPercentage(share.sharePercentage)}</td>
+                  <td className="py-2 px-3 text-right font-bold text-[#1a365d]">{formatCurrency(share.shareAmount)}</td>
+                </tr>
+              ))}
+              {shares.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-gray-500">
+                    No calculations available.
+                  </td>
+                </tr>
               )}
+            </tbody>
+            <tfoot className="border-t-2 border-gray-300">
+              <tr>
+                <td colSpan={4} className="py-2 px-3 text-right font-bold text-gray-700">Total Distributed</td>
+                <td className="py-2 px-3 text-right font-bold text-[#1a365d]">{formatCurrency(totalDistributed)}</td>
+              </tr>
+              {amount - totalDistributed > 0 && (
+                <tr>
+                  <td colSpan={4} className="py-2 px-3 text-right font-medium text-gray-500">Undistributed Remainder</td>
+                  <td className="py-2 px-3 text-right font-medium text-gray-500">{formatCurrency(amount - totalDistributed)}</td>
+                </tr>
+              )}
+            </tfoot>
+          </table>
 
-              {/* Summary */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-gray-500 text-sm">Total Distributed</p>
-                    <p className="text-xl font-bold text-[#1a365d]">{formatCurrency(totalDistributed)}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-gray-500 text-sm">Remaining</p>
-                    <p className="text-xl font-bold text-gray-400">{formatCurrency(amount - totalDistributed)}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Pie Chart Visualization */}
-            <div className="mt-6 bg-white rounded-2xl p-6 shadow-xl">
-              <h3 className="text-lg font-semibold text-[#1a365d] mb-4">Visual Distribution</h3>
-              <div className="flex flex-wrap gap-4 justify-center">
-                {Object.entries(sharesByType).map(([type, typeShares]) => {
-                  const totalTypeShare = typeShares.reduce((sum, s) => sum + s.sharePercentage, 0);
-                  return (
-                    <div key={type} className="text-center">
-                      <div className="relative w-24 h-24 mx-auto mb-2">
-                        <svg className="w-full h-full transform -rotate-90">
-                          <circle
-                            cx="48"
-                            cy="48"
-                            r="40"
-                            fill="none"
-                            stroke="#e5e7eb"
-                            strokeWidth="8"
-                          />
-                          <circle
-                            cx="48"
-                            cy="48"
-                            r="40"
-                            fill="none"
-                            stroke="#d4af37"
-                            strokeWidth="8"
-                            strokeDasharray={`${totalTypeShare * 2.51} 251`}
-                            className="transition-all duration-500"
-                          />
-                        </svg>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-lg font-bold text-[#1a365d]">
-                            {totalTypeShare.toFixed(0)}%
-                          </span>
-                        </div>
-                      </div>
-                      <span className={`text-xs px-2 py-1 rounded-full ${getRelationColor(type)}`}>
-                        {getRelationLabel(type as any)}
-                      </span>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {typeShares.length} heir{typeShares.length > 1 ? 's' : ''}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+          <div className="mt-8 pt-8 border-t border-gray-300 text-center text-xs text-gray-400">
+            <p>Confidential Family Archive - {new Date().getFullYear()}</p>
           </div>
         </div>
       </div>

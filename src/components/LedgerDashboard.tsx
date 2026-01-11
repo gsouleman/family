@@ -155,7 +155,7 @@ const LedgerDashboard: React.FC = () => {
                 </div>
 
                 {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8 print:hidden">
                     <div className="bg-green-50 p-6 rounded-2xl border border-green-100">
                         <p className="text-green-600 font-medium text-sm uppercase">Total Income</p>
                         <p className="text-2xl font-bold text-green-700 mt-2">{formatCurrency(totalIncome)}</p>
@@ -174,8 +174,71 @@ const LedgerDashboard: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Print View - Professional Grouped Table View */}
+                <div className="hidden print:block">
+                    <div className="text-center mb-8 border-b-2 border-[#1a365d] pb-4">
+                        <h1 className="text-3xl font-serif text-[#1a365d] mb-2">Financial Ledger Report</h1>
+                        <p className="text-gray-600">Generated on {new Date().toLocaleDateString()}</p>
+                        <p className="text-xl font-bold text-[#d4af37] mt-2">Net Financial Position: {formatCurrency(totalIncome - totalExpense + totalDebtors - totalCreditors)}</p>
+                    </div>
+
+                    <div className="space-y-8">
+                        {[
+                            { title: 'Income', items: incomes, total: totalIncome },
+                            { title: 'Expenses', items: expenses, total: totalExpense },
+                            { title: 'Debts (Creditors)', items: creditors, total: totalCreditors },
+                            { title: 'Receivables (Debtors)', items: debtors, total: totalDebtors }
+                        ].map(group => {
+                            if (group.items.length === 0) return null;
+
+                            return (
+                                <div key={group.title} className="break-inside-avoid">
+                                    <h3 className="text-xl font-bold text-[#1a365d] border-b border-[#d4af37] mb-4 pb-1">
+                                        {group.title}
+                                    </h3>
+                                    <table className="w-full text-sm text-left">
+                                        <thead className="bg-gray-100 text-[#1a365d] border-b border-gray-300 font-serif">
+                                            <tr>
+                                                <th className="py-2 px-3 font-semibold">Date</th>
+                                                <th className="py-2 px-3 font-semibold">Name/Title</th>
+                                                <th className="py-2 px-3 font-semibold">Category</th>
+                                                <th className="py-2 px-3 font-semibold">Description</th>
+                                                <th className="py-2 px-3 font-semibold text-right">Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-200">
+                                            {group.items.map(entry => (
+                                                <tr key={entry.id}>
+                                                    <td className="py-2 px-3 text-gray-900">{new Date(entry.date).toLocaleDateString()}</td>
+                                                    <td className="py-2 px-3 font-medium text-gray-900">{entry.title}</td>
+                                                    <td className="py-2 px-3 text-gray-600 capitalize">{entry.category.replace('_', ' ').toLowerCase()}</td>
+                                                    <td className="py-2 px-3 text-gray-500">{entry.description || '-'}</td>
+                                                    <td className={`py-2 px-3 text-right font-medium 
+                                                        ${group.title === 'Income' || group.title === 'Receivables (Debtors)' ? 'text-green-700' : 'text-red-700'}`}>
+                                                        {formatCurrency(entry.amount)}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                        <tfoot className="border-t-2 border-gray-300">
+                                            <tr>
+                                                <td colSpan={4} className="py-2 px-3 text-right font-bold text-gray-700">Subtotal</td>
+                                                <td className="py-2 px-3 text-right font-bold text-[#1a365d]">{formatCurrency(group.total)}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            );
+                        })}
+                    </div>
+
+                    <div className="mt-8 pt-8 border-t border-gray-300 text-center text-xs text-gray-400">
+                        <p>Confidential Family Archive - {new Date().getFullYear()}</p>
+                    </div>
+                </div>
+
                 {/* Tabs */}
-                <div className="flex border-b border-gray-200 mb-6 no-print overflow-x-auto">
+                <div className="flex border-b border-gray-200 mb-6 print:hidden overflow-x-auto">
                     {(['overview', 'income', 'expense', 'creditor', 'debtor'] as const).map(tab => (
                         <button
                             key={tab}
@@ -190,9 +253,9 @@ const LedgerDashboard: React.FC = () => {
                     ))}
                 </div>
 
-                {/* Table */}
-                <div className="overflow-x-auto">
-                    <table className="w-full print-table">
+                {/* Table - Screen Only */}
+                <div className="overflow-x-auto print:hidden">
+                    <table className="w-full text-sm text-left">
                         <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
@@ -205,7 +268,7 @@ const LedgerDashboard: React.FC = () => {
                                 )}
                                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Description</th>
                                 <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Amount</th>
-                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase no-print">Actions</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -251,7 +314,7 @@ const LedgerDashboard: React.FC = () => {
                                             }`}>
                                             {entry.type === 'INCOME' || entry.type === 'DEBTOR' ? '+' : '-'}{formatCurrency(entry.amount)}
                                         </td>
-                                        <td className="px-6 py-4 text-right no-print">
+                                        <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end gap-2">
                                                 <button
                                                     onClick={() => handleEdit(entry)}
@@ -272,6 +335,11 @@ const LedgerDashboard: React.FC = () => {
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Print View Footer */}
+                <div className="hidden print:block mt-8 pt-8 border-t border-gray-300 text-center text-xs text-gray-400">
+                    <p>Confidential Family Archive - {new Date().getFullYear()}</p>
                 </div>
             </div>
 
@@ -308,7 +376,7 @@ const LedgerDashboard: React.FC = () => {
                                                 type: newType,
                                                 category: newType === 'INCOME' ? 'SALARY' :
                                                     newType === 'EXPENSE' ? 'UTILITIES' :
-                                                        newType === 'CREDITOR' ? 'LOAN' : 'PERSONAL_LOAN' as any || 'LOAN'
+                                                        newType === 'CREDITOR' ? 'LOAN' : 'LOAN'
                                             });
                                         }}
                                     >
