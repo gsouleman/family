@@ -12,7 +12,12 @@ interface User {
     created_at: string;
 }
 
-const UserTable: React.FC = () => {
+interface UserTableProps {
+    onEdit?: (user: User) => void;
+    // key prop is handled by React automatically
+}
+
+const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
     const [users, setUsers] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -88,8 +93,8 @@ const UserTable: React.FC = () => {
                                 </td>
                                 <td className="p-3">
                                     <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${u.role === 'admin' ? 'bg-red-50 text-red-600' :
-                                            u.role === 'guest' ? 'bg-gray-100 text-gray-600' :
-                                                'bg-blue-50 text-blue-600'
+                                        u.role === 'guest' ? 'bg-gray-100 text-gray-600' :
+                                            'bg-blue-50 text-blue-600'
                                         }`}>
                                         {u.role || 'user'}
                                     </span>
