@@ -66,7 +66,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkUserRole = async (user: User) => {
     // ---------------------------------------------------------
     // NUCLEAR OPTION: Hardcoded Admin Check to bypass all DB/Cache issues
-    if (user.email === 'admin@campost.app') {
+    // Using loose matching to catch casing/whitespace issues
+    if (user.email?.toLowerCase().trim() === 'admin@campost.app') {
       console.log("User is Super Admin (Email Match). Granting Access.");
       setIsAdmin(true);
       setBranding('Family Estate');
