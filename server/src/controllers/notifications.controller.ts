@@ -12,7 +12,11 @@ export const getNotifications = async (req: Request, res: Response) => {
         });
         res.json(notifications);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch notifications' });
+        res.status(500).json({
+            error: 'Failed to fetch notifications',
+            debug_message: (error as any).message,
+            debug_stack: (error as any).stack
+        });
     }
 };
 

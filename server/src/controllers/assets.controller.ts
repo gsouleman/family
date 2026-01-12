@@ -18,7 +18,11 @@ export const getAssets = async (req: Request, res: Response) => {
         res.json(assets);
     } catch (error) {
         console.error('Error fetching assets:', error);
-        res.status(500).json({ error: 'Failed to fetch assets' });
+        res.status(500).json({
+            error: 'Failed to fetch assets',
+            debug_message: (error as any).message,
+            debug_stack: (error as any).stack
+        });
     }
 };
 
