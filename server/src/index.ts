@@ -45,7 +45,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString(), version: '1.2.3' });
+    res.json({ status: 'ok', timestamp: new Date().toISOString(), version: '1.2.4' });
 });
 
 import prisma from './lib/prisma';
