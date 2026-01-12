@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { PrismaClient, LedgerType, LedgerCategory } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { LedgerType, LedgerCategory } from '@prisma/client';
+import prisma from '../lib/prisma';
 
 export const getLedgerEntries = async (req: Request, res: Response) => {
     try {

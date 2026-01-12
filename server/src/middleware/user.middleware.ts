@@ -1,17 +1,7 @@
 
 import { Request, Response, NextFunction } from 'express';
+import prisma from '../lib/prisma';
 import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-// Extend Express Request type to include user
-declare global {
-    namespace Express {
-        interface Request {
-            userId?: string;
-        }
-    }
-}
 
 export const userMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -43,8 +43,7 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import prisma from './lib/prisma';
 
 app.get('/api/debug/db', async (req, res) => {
     try {
