@@ -15,7 +15,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState<'guest' | 'user' | 'admin'>('user');
-    const [role, setRole] = useState<'guest' | 'user' | 'admin'>('user');
+
     const [accountType, setAccountType] = useState<'family' | 'personal'>('family');
     const [phone, setPhone] = useState('');
     const [is2FAEnabled, setIs2FAEnabled] = useState(false);
@@ -78,8 +78,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                 await api.updateUser(editingUser.id, {
                     full_name: fullName,
                     role: role,
-                    full_name: fullName,
-                    role: role,
+
                     account_type: accountType,
                     phone: phone || null,
                     is_2fa_enabled: is2FAEnabled,
@@ -107,7 +106,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                     options: {
                         data: {
                             full_name: fullName,
-                            role: role,
+
                             account_type: accountType
                         }
                     }
@@ -129,7 +128,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                         email: email,
                         full_name: fullName,
                         role: role,
-                        role: role,
+
                         account_type: accountType,
                         phone: phone || null,
                         is_2fa_enabled: is2FAEnabled,
