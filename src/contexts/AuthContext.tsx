@@ -14,7 +14,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: Error | null, needs2FA?: boolean, method?: string }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
-  updateProfile: (data: { full_name?: string }) => Promise<{ error: Error | null }>;
+  updateProfile: (data: { full_name?: string; phone?: string; is_2fa_enabled?: boolean; two_factor_method?: string }) => Promise<{ error: Error | null }>;
   changePassword: (newPassword: string) => Promise<{ error: Error | null }>;
   verify2FA: (email: string, token: string) => Promise<{ error: Error | null }>;
 }
@@ -238,7 +238,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const updateProfile = async (data: { full_name?: string }) => {
+  const updateProfile = async (data: { full_name?: string; phone?: string; is_2fa_enabled?: boolean; two_factor_method?: string }) => {
     try {
       if (!user) throw new Error('No user logged in');
 
@@ -250,6 +250,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       await supabase.from('profiles').update({
         full_name: data.full_name,
+        phone: data.phone,
+        is_2fa_enabled: data.is_2fa_enabled,
+        two_factor_method: data.two_factor_method,
         updated_at: new Date().toISOString(),
       }).eq('id', user.id);
 
