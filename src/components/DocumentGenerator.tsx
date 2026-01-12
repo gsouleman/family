@@ -377,7 +377,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                             </div>
 
                                             <p className="text-sm text-gray-500 italic mt-8">
-                                                This certificate serves as an official record of the financial relationship documented in the Family Ledger.
+                                                This certificate serves as an official record of the financial relationship documented in the Ledger.
                                             </p>
                                         </div>
 
@@ -390,9 +390,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                             </div>
 
                                             <div className="text-center">
-                                                <div className="w-16 h-16 border-2 border-[#d4af37] rounded-full flex items-center justify-center mx-auto mb-2 opacity-80">
-                                                    <span className="text-[#d4af37] font-bold text-xs uppercase">Official<br />Seal</span>
-                                                </div>
+                                                <div className="h-16 mb-2"></div>
                                                 <p className="text-xs text-gray-400">{new Date().toLocaleDateString()}</p>
                                             </div>
 
