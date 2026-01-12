@@ -33,6 +33,20 @@ export const userMiddleware = async (req: Request, res: Response, next: NextFunc
                         fullName: userName ? decodeURIComponent(userName) : 'Unknown User'
                     }
                 });
+
+                // ALSO Sync Profile (for Admin Panel visibility)
+                await prisma.profile.upsert({
+                    where: { id: userId },
+                    update: {}, // Don't overwrite admin changes (role/status)
+                    create: {
+                        id: userId,
+                        email: userEmail || `user_${userId.substring(0, 8)}@example.com`,
+                        full_name: userName ? decodeURIComponent(userName) : 'Unknown User',
+                        role: 'user', // Default
+                        account_type: 'family',
+                        status: 'active'
+                    }
+                });
             } catch (dbError) {
                 console.error("Failed to sync user to Neon:", dbError);
                 // Continue? If upsert fails, subsequent queries might fail, but let's try.
