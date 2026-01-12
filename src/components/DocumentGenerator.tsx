@@ -340,12 +340,12 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                             <p className="text-lg leading-relaxed">
                                                 {activeModal === 'creditor_certificate' ? (
                                                     <>
-                                                        is a recognized <strong>Creditor</strong> of the {branding}.
+                                                        is a recognized <strong>Creditor</strong> of {branding}.
                                                         The Estate acknowledges a debt obligation in the amount of:
                                                     </>
                                                 ) : (
                                                     <>
-                                                        is a recognized <strong>Debtor</strong> to the {branding}.
+                                                        is a recognized <strong>Debtor</strong> to {branding}.
                                                         The Estate holds a receivable credit claim in the amount of:
                                                     </>
                                                 )}

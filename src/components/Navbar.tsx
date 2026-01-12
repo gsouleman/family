@@ -80,8 +80,8 @@ const Navbar: React.FC<NavbarProps> = ({
             </svg>
           </div>
           <div>
-            <h1 className="text-lg font-bold text-[#1a365d]">Njikam</h1>
-            <p className="text-xs text-gray-500 -mt-0.5">{branding}</p>
+            <h1 className="text-lg font-bold text-[#1a365d]">{branding}</h1>
+            <p className="text-xs text-gray-500 -mt-0.5">Asset Dashboard</p>
           </div>
         </div>
 
