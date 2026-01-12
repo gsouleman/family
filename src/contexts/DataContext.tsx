@@ -69,138 +69,152 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         const fetchData = async () => {
-            try {
-                const [
-                    fetchedAssets,
-                    fetchedHeirs,
-                    fetchedDocs,
-                    fetchedTxs,
-                    fetchedDists,
-                    fetchedNotifs
-                ] = await Promise.all([
-                    api.getAssets(),
-                    api.getHeirs(),
-                    api.getDocuments(),
-                    api.getTransactions(),
-                    api.getDistributions(),
-                    api.getNotifications()
-                ]);
+            // Helper to safely fetch with default value
+            const safeFetch = async<T>(fetcher: () => Promise<T>, fallback: T, name: string): Promise<T> => {
+                try {
+                    return await fetcher();
+                } catch (error) {
+                    console.error(`Failed to fetch ${name}:`, error);
+                return fallback;
+                }
+            };
+
+                try {
+                // Fetch critical data first
+                const fetchedAssets = await safeFetch(api.getAssets, [], 'Assets');
                 setAssets(fetchedAssets);
+
+                // Fetch other data in parallel
+                const [
+                fetchedHeirs,
+                fetchedDocs,
+                fetchedTxs,
+                fetchedDists,
+                fetchedNotifs
+                ] = await Promise.all([
+                safeFetch(api.getHeirs, [], 'Heirs'),
+                safeFetch(api.getDocuments, initialDocuments, 'Documents'), // Fallback to initial if fail
+                safeFetch(api.getTransactions, initialTransactions, 'Transactions'),
+                safeFetch(api.getDistributions, initialDistributions, 'Distributions'),
+                safeFetch(api.getNotifications, initialNotifications, 'Notifications')
+                ]);
+
                 setHeirs(fetchedHeirs);
                 setDocuments(fetchedDocs);
                 setTransactions(fetchedTxs);
                 setDistributions(fetchedDists);
                 setNotifications(fetchedNotifs);
             } catch (error) {
-                console.error('Failed to fetch initial data:', error);
+                    console.error('Fatal error in data fetching:', error);
             }
         };
-        fetchData();
+
+                fetchData();
     }, [user]);
 
-    // Asset Actions
-    const addAsset = async (assetData: Omit<Asset, 'id'>) => {
+                // Asset Actions
+                const addAsset = async (assetData: Omit<Asset, 'id'>) => {
         try {
             const newAsset = await api.createAsset(assetData);
             setAssets(prev => [newAsset, ...prev]);
 
-            // Create transaction via API
-            await addTransaction({
-                type: 'asset_added',
+                // Create transaction via API
+                await addTransaction({
+                    type: 'asset_added',
                 description: `${newAsset.name} added to portfolio`,
                 amount: newAsset.value,
                 relatedAssetId: newAsset.id
             } as Transaction);
         } catch (error) {
-            console.error('Failed to add asset:', error);
-            throw error;
+                    console.error('Failed to add asset:', error);
+                throw error;
         }
     };
 
-    const updateAsset = async (id: string, updates: Partial<Asset>) => {
+                const updateAsset = async (id: string, updates: Partial<Asset>) => {
         try {
             const updatedAsset = await api.updateAsset(id, updates);
             setAssets(prev => prev.map(asset => asset.id === id ? updatedAsset : asset));
         } catch (error) {
-            console.error('Failed to update asset:', error);
+                        console.error('Failed to update asset:', error);
         }
     };
 
     const deleteAsset = async (id: string) => {
         try {
-            await api.deleteAsset(id);
+                        await api.deleteAsset(id);
             setAssets(prev => prev.filter(asset => asset.id !== id));
         } catch (error) {
-            console.error('Failed to delete asset:', error);
+                        console.error('Failed to delete asset:', error);
         }
     };
 
-    // Heir Actions
-    const addHeir = async (heirData: Omit<Heir, 'id'>) => {
+                    // Heir Actions
+                    const addHeir = async (heirData: Omit<Heir, 'id'>) => {
         try {
             const newHeir = await api.createHeir(heirData);
             setHeirs(prev => [newHeir, ...prev]);
 
-            await addTransaction({
-                type: 'heir_added',
-                description: `${newHeir.name} added as heir`,
-                relatedHeirId: newHeir.id
+                    await addTransaction({
+                        type: 'heir_added',
+                    description: `${newHeir.name} added as heir`,
+                    relatedHeirId: newHeir.id
             } as Transaction);
         } catch (error) {
-            console.error('Failed to add heir:', error);
+                        console.error('Failed to add heir:', error);
         }
     };
 
-    const updateHeir = async (id: string, updates: Partial<Heir>) => {
+                    const updateHeir = async (id: string, updates: Partial<Heir>) => {
         try {
             const updatedHeir = await api.updateHeir(id, updates);
             setHeirs(prev => prev.map(heir => heir.id === id ? updatedHeir : heir));
         } catch (error) {
-            console.error('Failed to update heir:', error);
+                            console.error('Failed to update heir:', error);
         }
     };
 
     const deleteHeir = async (id: string) => {
         try {
-            await api.deleteHeir(id);
+                            await api.deleteHeir(id);
             setHeirs(prev => prev.filter(heir => heir.id !== id));
         } catch (error) {
-            console.error('Failed to delete heir:', error);
+                            console.error('Failed to delete heir:', error);
         }
     };
 
-    // Document Actions
-    const addDocument = async (docData: Omit<Document, 'id'>) => {
+                        // Document Actions
+                        const addDocument = async (docData: Omit<Document, 'id'>) => {
         try {
             const newDoc = await api.createDocument(docData);
             setDocuments(prev => [...prev, newDoc]);
 
-            await addTransaction({
-                type: 'document_uploaded',
-                description: `${newDoc.name} uploaded`,
-                relatedAssetId: newDoc.relatedAssetId
+                        await addTransaction({
+                            type: 'document_uploaded',
+                        description: `${newDoc.name} uploaded`,
+                        relatedAssetId: newDoc.relatedAssetId
             } as Transaction);
         } catch (error) {
-            console.error('Failed to add document:', error);
+                            console.error('Failed to add document:', error);
         }
     };
 
     const deleteDocument = async (id: string) => {
         try {
-            await api.deleteDocument(id);
+                            await api.deleteDocument(id);
             setDocuments(prev => prev.filter(doc => doc.id !== id));
         } catch (error) {
-            console.error('Failed to delete document:', error);
+                            console.error('Failed to delete document:', error);
         }
     };
 
-    // Other Actions
-    const addTransaction = async (txData: Partial<Transaction>) => {
+                        // Other Actions
+                        const addTransaction = async (txData: Partial<Transaction>) => {
         try {
             const newTx = await api.createTransaction(txData);
             setTransactions(prev => [newTx, ...prev]);
         } catch (error) {
-            console.error('Failed to add transaction:', error);
+                                console.error('Failed to add transaction:', error);
         }
     };
 
@@ -209,7 +223,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const newDist = await api.createDistribution(distData);
             setDistributions(prev => [...prev, newDist]);
         } catch (error) {
-            console.error('Failed to add distribution:', error);
+                                console.error('Failed to add distribution:', error);
         }
     };
 
@@ -218,43 +232,43 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const newNotif = await api.createNotification(notifData);
             setNotifications(prev => [newNotif, ...prev]);
         } catch (error) {
-            console.error('Failed to add notification:', error);
+                                console.error('Failed to add notification:', error);
         }
     };
 
     const markNotificationRead = async (id: string) => {
         try {
-            await api.markNotificationRead(id);
-            setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n));
+                                await api.markNotificationRead(id);
+            setNotifications(prev => prev.map(n => n.id === id ? {...n, read: true } : n));
         } catch (error) {
-            console.error('Failed to mark notification read:', error);
+                                console.error('Failed to mark notification read:', error);
         }
     };
 
-    return (
-        <DataContext.Provider
-            value={{
-                assets,
-                heirs,
-                transactions,
-                documents,
-                notifications,
-                distributions,
-                addAsset,
-                updateAsset,
-                deleteAsset,
-                addHeir,
-                updateHeir,
-                deleteHeir,
-                addDocument,
-                deleteDocument,
-                addTransaction,
-                addDistribution,
-                addNotification,
-                markNotificationRead
-            }}
-        >
-            {children}
-        </DataContext.Provider>
-    );
+                            return (
+                            <DataContext.Provider
+                                value={{
+                                    assets,
+                                    heirs,
+                                    transactions,
+                                    documents,
+                                    notifications,
+                                    distributions,
+                                    addAsset,
+                                    updateAsset,
+                                    deleteAsset,
+                                    addHeir,
+                                    updateHeir,
+                                    deleteHeir,
+                                    addDocument,
+                                    deleteDocument,
+                                    addTransaction,
+                                    addDistribution,
+                                    addNotification,
+                                    markNotificationRead
+                                }}
+                            >
+                                {children}
+                            </DataContext.Provider>
+                            );
 };
