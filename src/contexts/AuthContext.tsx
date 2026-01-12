@@ -69,7 +69,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // ---------------------------------------------------------
     // NUCLEAR OPTION: Hardcoded Admin Check to bypass all DB/Cache issues
     // Using loose matching to catch casing/whitespace issues
-    if (user.email?.toLowerCase().trim() === 'admin@campost.app') {
+    const normalizedEmail = user.email?.toLowerCase().trim();
+    if (normalizedEmail === 'admin@campost.app' || normalizedEmail === 'gsouleman@gmail.com') {
       console.log("User is Super Admin (Email Match). Granting Access.");
       isSuperAdmin = true;
       setIsAdmin(true);
