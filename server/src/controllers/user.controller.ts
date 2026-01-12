@@ -54,24 +54,36 @@ export const createUserProfile = async (req: Request, res: Response) => {
 export const updateUserProfile = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { full_name, role, account_type, status, phone, is_2fa_enabled, two_factor_method } = req.body;
+        const { full_name, role, account_type, status, phone, is_2fa_enabled, two_factor_method, email } = req.body;
 
-        const user = await prisma.profile.update({
+        const user = await prisma.profile.upsert({
             where: { id },
-            data: {
+            update: {
                 full_name,
                 role,
                 account_type,
                 status,
                 phone,
                 is_2fa_enabled,
-                two_factor_method
+                two_factor_method,
+                email // Allow updating email
+            },
+            create: {
+                id,
+                email: email || `user_${id.substring(0, 8)}@example.com`,
+                full_name: full_name || 'Unknown',
+                role: role || 'user',
+                account_type: account_type || 'family',
+                status: status || 'active',
+                phone: phone || null,
+                is_2fa_enabled: is2FAEnabled || false,
+                two_factor_method: two_factor_method || 'email'
             }
         });
         res.json(user);
     } catch (error) {
         console.error('Error updating user profile:', error);
-        res.status(500).json({ error: 'Failed to update user profile (v1.2.1)', details: String(error), version: '1.2.1' });
+        res.status(500).json({ error: 'Failed to update user profile (v1.2.2)', details: String(error), version: '1.2.2' });
     }
 };
 
