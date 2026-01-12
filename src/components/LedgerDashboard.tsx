@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { LedgerEntry, LedgerCategory, LedgerType } from '../types';
+import { useAuth } from '@/contexts/AuthContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
 import { api } from '@/lib/api';
 import PrintButton from './PrintButton';
 
 const LedgerDashboard: React.FC = () => {
+    const { user } = useAuth();
     const { formatCurrency } = useCurrency();
     const [entries, setEntries] = useState<LedgerEntry[]>([]);
     const [activeTab, setActiveTab] = useState<'overview' | 'income' | 'expense' | 'creditor' | 'debtor'>('overview');
@@ -24,8 +26,12 @@ const LedgerDashboard: React.FC = () => {
     });
 
     useEffect(() => {
-        fetchEntries();
-    }, []);
+        if (user) {
+            fetchEntries();
+        } else {
+            setEntries([]);
+        }
+    }, [user]);
 
     const fetchEntries = async () => {
         setIsLoading(true);

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 import { Asset, Heir, Transaction, Document, Notification, Distribution } from '../types';
 import { api } from '../lib/api';
 import { initialTransactions, initialDocuments, initialNotifications, initialDistributions } from '../data/family';
@@ -47,6 +48,7 @@ export const useData = () => {
 };
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { user } = useAuth();
     const [assets, setAssets] = useState<Asset[]>([]);
     const [heirs, setHeirs] = useState<Heir[]>([]);
     const [transactions, setTransactions] = useState<Transaction[]>(initialTransactions);
@@ -56,6 +58,16 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Initial Fetch
     useEffect(() => {
+        if (!user) {
+            setAssets([]);
+            setHeirs([]);
+            setTransactions(initialTransactions); // Or empty? initialTransactions is mock data. Should probably be empty.
+            setDocuments(initialDocuments);
+            setNotifications(initialNotifications);
+            setDistributions(initialDistributions);
+            return;
+        }
+
         const fetchData = async () => {
             try {
                 const [
@@ -84,7 +96,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
             }
         };
         fetchData();
-    }, []);
+    }, [user]);
 
     // Asset Actions
     const addAsset = async (assetData: Omit<Asset, 'id'>) => {
