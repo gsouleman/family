@@ -76,14 +76,14 @@ export const updateUserProfile = async (req: Request, res: Response) => {
                 account_type: account_type || 'family',
                 status: status || 'active',
                 phone: phone || null,
-                is_2fa_enabled: is2FAEnabled || false,
+                is_2fa_enabled: is_2fa_enabled || false,
                 two_factor_method: two_factor_method || 'email'
             }
         });
         res.json(user);
     } catch (error) {
         console.error('Error updating user profile:', error);
-        res.status(500).json({ error: 'Failed to update user profile (v1.2.2)', details: String(error), version: '1.2.2' });
+        res.status(500).json({ error: 'Failed to update user profile (v1.2.3)', details: String(error), version: '1.2.3' });
     }
 };
 
