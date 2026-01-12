@@ -15,7 +15,7 @@
   "dependencies": {
     "@eslint/js": "^9.9.0",
     "@hookform/resolvers": "^3.9.0",
-    "@prisma/client": "^7.2.0",
+    "@prisma/client": "5.22.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-aspect-ratio": "^1.1.0",
@@ -73,7 +73,6 @@
     "nodemon": "^3.1.11",
     "postcss": "^8.4.47",
     "prisma": "5.22.0",
-    "@prisma/client": "5.22.0",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
