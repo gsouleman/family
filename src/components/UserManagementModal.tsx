@@ -91,10 +91,15 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
             if (signUpError) {
                 setError(signUpError.message);
             } else {
-                // Try to set role
+                // Update additional fields (Role, Phone, 2FA)
                 const { data: userData } = await supabase.from('profiles').select('id').eq('email', email).single();
-                if (userData && role !== 'user') {
-                    await supabase.from('profiles').update({ role }).eq('id', userData.id);
+                if (userData) {
+                    await supabase.from('profiles').update({
+                        role,
+                        phone: phone || null,
+                        is_2fa_enabled: is2FAEnabled,
+                        two_factor_method: twoFactorMethod
+                    }).eq('id', userData.id);
                 }
 
                 setSuccess('User created successfully. (You might be logged in as the new user)');
@@ -218,6 +223,17 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                                 />
                             </div>
 
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1">Phone Number (Required for SMS 2FA)</label>
+                                <input
+                                    type="tel"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#1a365d] outline-none"
+                                    placeholder="+1234567890"
+                                />
+                            </div>
+
                             {!editingUser || showResetPassword ? (
                                 <div className="grid grid-cols-1 gap-2">
                                     <label className="block text-xs font-medium text-gray-500 mb-1">
@@ -261,16 +277,7 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                                 </div>
                             )}
 
-                            <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1">Phone Number (Required for SMS 2FA)</label>
-                                <input
-                                    type="tel"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#1a365d] outline-none"
-                                    placeholder="+1234567890"
-                                />
-                            </div>
+
 
                             <div>
                                 <label className="block text-xs font-medium text-gray-500 mb-1">Role</label>
