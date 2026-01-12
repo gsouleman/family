@@ -53,6 +53,10 @@ const handleResponse = async (res: Response, errorMessage: string) => {
             const data = await res.json();
             if (data && data.error) {
                 serverError = data.error;
+                if (data.debug_message) {
+                    serverError += ` | DEBUG: ${data.debug_message}`;
+                    console.error('SERVER STACK:', data.debug_stack);
+                }
             }
         } catch (e) {
             // Ignore json parse error, use default message with status
