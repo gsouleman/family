@@ -25,7 +25,7 @@ export const createUserProfile = async (req: Request, res: Response) => {
                 role,
                 account_type,
                 status,
-                status,
+
                 email, // Allow updating email if changed
                 phone,
                 is_2fa_enabled,
@@ -37,7 +37,7 @@ export const createUserProfile = async (req: Request, res: Response) => {
                 full_name,
                 role: role || 'user',
                 account_type: account_type || 'family',
-                account_type: account_type || 'family',
+
                 status: status || 'active',
                 phone,
                 is_2fa_enabled,
