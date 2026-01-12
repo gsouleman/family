@@ -15,8 +15,11 @@ console.log('Current directory:', __dirname);
 try {
     console.log('Root contents:', fs.readdirSync(__dirname));
 
-    if (!fs.existsSync(path.join(__dirname, 'dist'))) {
-        console.log('Dist directory DOES NOT EXIST. Attempting to build...');
+    const distPath = path.join(__dirname, 'dist');
+    const indexPath = path.join(distPath, 'index.html');
+
+    if (!fs.existsSync(distPath) || !fs.existsSync(indexPath)) {
+        console.log('Dist directory or index.html DOES NOT EXIST. Attempting to build...');
         try {
             console.log('Running: npm run build');
             execSync('npm run build', { stdio: 'inherit' });
