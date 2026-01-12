@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 
 interface UserManagementModalProps {
     isOpen: boolean;
@@ -90,55 +91,48 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
             // Create Real User
             // Note: signUp automatically signs in the new user in client-side Auth.
             // This is a known limitation without Admin API.
-            const { data: signUpData, error: signUpError } = await signUp(email, password, fullName, accountType);
+            const { error: signUpError } = await signUp(email, password, fullName, accountType);
 
             if (signUpError) {
                 setError(signUpError.message);
             } else {
                 // Update additional fields (Role, Phone, 2FA) via Backend
-                // Wait for a moment for auth hook to create profile? Or just explicit create.
-                // Since we have api.createUser, we can ensure profile exists fully.
-                // But signUp trigger might have made it. Let's use api.updateUser to be safe/consistent.
-                // Actually, if we use api.createUser we might duplicate if trigger existed.
-                // Safest: api.createUser which does upsert.
-                await api.createUser({
-                    id: signUpData.user?.id, // Will be set by controller if passed or typically from token? 
-                    // No, for creation we need ID. But wait, signUp returns user.
-                    // Let's rely on api.createUser upserting.
-                    email: email,
-                    full_name: fullName,
-                    account_type: accountType,
-                    role,
-                    phone: phone || null,
-                    is_2fa_enabled: is2FAEnabled,
-                    two_factor_method: twoFactorMethod,
-                    status: 'active'
-                });
+                // The signUp function already creates the profile via api.createUser
+                // We need to update it with additional fields like role, phone, 2FA
+                try {
+                    // Get the current session to retrieve the user ID
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (session?.user) {
+                        await api.updateUser(session.user.id, {
+                            role,
+                            phone: phone || null,
+                            is_2fa_enabled: is2FAEnabled,
+                            two_factor_method: twoFactorMethod,
+                        });
+                    }
 
-                setSuccess('User created successfully. (You might be logged in as the new user)');
-                fetchUsers();
-                resetForm();
+                    setSuccess('User created successfully. (You might be logged in as the new user)');
+                    fetchUsers();
+                    resetForm();
+                } catch (error: any) {
+                    setError(error.message || 'User created but failed to set additional fields');
+                }
             }
         } else {
-            // Update Real User Profile
+            // Update Real User Profile via Backend API
             const updates: any = {
                 full_name: fullName,
-
-
+                role: role,
                 account_type: accountType,
                 is_2fa_enabled: is2FAEnabled,
                 two_factor_method: twoFactorMethod,
-                phone: phone
+                phone: phone || null,
+                email: email
             };
 
-            const { error: updateError } = await supabase
-                .from('profiles')
-                .update(updates)
-                .eq('id', editingUser);
+            try {
+                await api.updateUser(editingUser, updates);
 
-            if (updateError) {
-                setError(updateError.message);
-            } else {
                 if (showResetPassword) {
                     setError("Password reset requires Admin Backend API. Profile updated only.");
                 } else {
@@ -146,6 +140,8 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                 }
                 fetchUsers();
                 resetForm();
+            } catch (error: any) {
+                setError(error.message || 'Failed to update user profile');
             }
         }
 
