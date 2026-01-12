@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 
-type AuthMode = 'signin' | 'signup' | 'reset';
+type AuthMode = 'signin' | 'signup' | 'reset' | 'verify_2fa';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -10,12 +10,13 @@ interface AuthModalProps {
 }
 
 const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 'signin' }) => {
-  const { signIn, signUp, resetPassword } = useAuth();
+  const { signIn, signUp, resetPassword, verify2FA } = useAuth();
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -27,6 +28,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     setPassword('');
     setConfirmPassword('');
     setFullName('');
+    setOtp('');
     setError(null);
     setSuccess(null);
   };
@@ -41,14 +43,34 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     setLoading(true);
     setError(null);
 
-    const { error } = await signIn(email, password);
+    const { error, needs2FA } = await signIn(email, password);
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
+    } else if (needs2FA) {
+      setLoading(false);
+      setMode('verify_2fa');
+      setSuccess('Please enter the code sent to your email.');
+    } else {
+      setLoading(false);
+      onClose();
+    }
+  };
+
+  const handleVerify2FA = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    const { error } = await verify2FA(email, otp);
 
     if (error) {
       setError(error.message);
       setLoading(false);
     } else {
       setLoading(false);
-      onClose();
+      onClose(); // Successfully verified
     }
   };
 
@@ -69,7 +91,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
       return;
     }
 
-    const { error } = await signUp(email, password, fullName);
+    const { error } = await signUp(email, password, fullName, 'family');
 
     if (error) {
       setError(error.message);
@@ -124,11 +146,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
             {mode === 'signin' && 'Welcome Back'}
             {mode === 'signup' && 'Create Account'}
             {mode === 'reset' && 'Reset Password'}
+            {mode === 'verify_2fa' && 'Two-Factor Verification'}
           </h2>
           <p className="text-gray-300 text-sm">
             {mode === 'signin' && 'Sign in to manage your family assets'}
             {mode === 'signup' && 'Join Mirath to secure your family legacy'}
             {mode === 'reset' && 'Enter your email to reset your password'}
+            {mode === 'verify_2fa' && 'Enter the code sent to your email'}
           </p>
         </div>
 
@@ -253,6 +277,41 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
             </form>
           )}
 
+          {/* Verify 2FA Form */}
+          {mode === 'verify_2fa' && (
+            <form onSubmit={handleVerify2FA} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Verification Code
+                </label>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#d4af37] focus:border-transparent outline-none transition-all tracking-widest text-center text-lg"
+                  placeholder="123456"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full px-6 py-3 bg-[#1a365d] hover:bg-[#0f2744] text-white rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {loading ? 'Verifying...' : 'Verify Code'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleModeChange('signin')}
+                className="w-full px-6 py-3 text-gray-600 hover:text-[#1a365d] transition-colors font-medium"
+              >
+                Back to Sign In
+              </button>
+            </form>
+          )}
+
           {/* Mode Switch */}
           {mode !== 'reset' && (
             <div className="mt-6 pt-6 border-t border-gray-100 text-center">
@@ -278,7 +337,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
           </p>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

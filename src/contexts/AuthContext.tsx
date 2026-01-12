@@ -11,11 +11,12 @@ interface AuthContextType {
   mustChangePassword: boolean;
   branding: string;
   signUp: (email: string, password: string, fullName: string, accountType: 'personal' | 'family') => Promise<{ error: Error | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null, needs2FA?: boolean }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
   updateProfile: (data: { full_name?: string }) => Promise<{ error: Error | null }>;
   changePassword: (newPassword: string) => Promise<{ error: Error | null }>;
+  verify2FA: (email: string, token: string) => Promise<{ error: Error | null }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -163,11 +164,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error, data } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
+      if (error) throw error;
+
+      // Check if 2FA is enabled for this user
+      if (data.user) {
+        const { data: profile } = await supabase.from('profiles').select('is_2fa_enabled').eq('id', data.user.id).single();
+
+        if (profile?.is_2fa_enabled) {
+          // Trigger OTP
+          await supabase.auth.signInWithOtp({ email });
+          return { error: null, needs2FA: true };
+        }
+      }
+
+      return { error: null, needs2FA: false };
+    } catch (error) {
+      return { error: error as Error, needs2FA: false };
+    }
+  };
+
+  const verify2FA = async (email: string, token: string) => {
+    try {
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: 'email'
+      });
       if (error) throw error;
       return { error: null };
     } catch (error) {
@@ -233,6 +260,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     resetPassword,
     updateProfile,
     changePassword,
+    verify2FA,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

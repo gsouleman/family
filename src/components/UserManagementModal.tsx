@@ -33,6 +33,7 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
     const [confirmPassword, setConfirmPassword] = useState('');
     const [accountType, setAccountType] = useState<'family' | 'personal'>('family');
     const [role, setRole] = useState<'guest' | 'user' | 'admin'>('user');
+    const [is2FAEnabled, setIs2FAEnabled] = useState(false);
     const [showResetPassword, setShowResetPassword] = useState(false);
 
     const [loading, setLoading] = useState(false);
@@ -46,7 +47,9 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
         setPassword('');
         setConfirmPassword('');
         setAccountType('family');
+        setAccountType('family');
         setRole('user');
+        setIs2FAEnabled(false);
         setShowResetPassword(false);
         setError(null);
         setSuccess(null);
@@ -98,7 +101,8 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
             const updates: any = {
                 full_name: fullName,
                 role,
-                account_type: accountType
+                account_type: accountType,
+                is_2fa_enabled: is2FAEnabled
             };
 
             const { error: updateError } = await supabase
@@ -128,6 +132,7 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
         setEmail(user.email);
         setRole(user.role);
         setAccountType(user.account_type);
+        setIs2FAEnabled(user.is_2fa_enabled || false);
         setPassword('');
         setConfirmPassword('');
         setShowResetPassword(false);
@@ -278,6 +283,19 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                                 </div>
                             </div>
 
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="checkbox"
+                                    id="is2FAEnabled"
+                                    checked={is2FAEnabled}
+                                    onChange={(e) => setIs2FAEnabled(e.target.checked)}
+                                    className="w-4 h-4 text-[#1a365d] border-gray-300 rounded focus:ring-[#1a365d]"
+                                />
+                                <label htmlFor="is2FAEnabled" className="text-xs font-medium text-gray-500 select-none cursor-pointer">
+                                    Enable 2FA (Email Verification Required on Login)
+                                </label>
+                            </div>
+
                             <div className="flex gap-2 pt-2">
                                 {editingUser && (
                                     <button
@@ -324,13 +342,22 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                                     {users.map(u => (
                                         <tr key={u.id} className="hover:bg-gray-50/50">
                                             <td className="p-3">
-                                                <p className="font-medium text-gray-900">{u.full_name}</p>
-                                                <p className="text-gray-400 text-xs">{u.email}</p>
+                                                <div className="flex flex-col gap-1">
+                                                    <p className="font-medium text-gray-900">{u.full_name}</p>
+                                                    <div className="flex items-center gap-2">
+                                                        <p className="text-gray-400 text-xs">{u.email}</p>
+                                                        {u.is_2fa_enabled && (
+                                                            <span className="px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded text-[10px] font-bold border border-purple-200" title="2FA Enabled">
+                                                                2FA
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </td>
                                             <td className="p-3">
                                                 <span className={`px-2 py-0.5 rounded text-xs font-medium capitalize ${u.role === 'admin' ? 'bg-red-50 text-red-600' :
-                                                        u.role === 'guest' ? 'bg-gray-100 text-gray-600' :
-                                                            'bg-blue-50 text-blue-600'
+                                                    u.role === 'guest' ? 'bg-gray-100 text-gray-600' :
+                                                        'bg-blue-50 text-blue-600'
                                                     }`}>
                                                     {u.role || 'user'}
                                                 </span>
