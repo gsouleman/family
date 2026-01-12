@@ -17,13 +17,24 @@ export const userMiddleware = async (req: Request, res: Response, next: NextFunc
                 const existingProfile = await prisma.profile.findUnique({ where: { id: userId } });
                 console.log(`[Middleware] Existing Profile before sync:`, existingProfile);
 
+                let nameToUse = userName ? decodeURIComponent(userName) : '';
+                if (!nameToUse && existingProfile?.full_name) {
+                    nameToUse = existingProfile.full_name;
+                }
+                if (!nameToUse && userEmail === 'gsouleman@gmail.com') {
+                    nameToUse = 'GHOUENZEN SOULEMANOU';
+                }
+                if (!nameToUse) {
+                    nameToUse = userEmail || 'System User';
+                }
+
                 await prisma.user.upsert({
                     where: { id: userId },
                     update: {}, // No updates needed, Auth is source of truth
                     create: {
                         id: userId,
                         email: userEmail || `user_${userId.substring(0, 8)}@example.com`,
-                        fullName: userName ? decodeURIComponent(userName) : 'Unknown User'
+                        fullName: nameToUse
                     }
                 });
 
