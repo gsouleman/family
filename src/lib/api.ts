@@ -14,7 +14,7 @@ const getApiUrl = () => {
         return '/api';
     }
 
-    if (!url.startsWith('http')) {
+    if (!url.startsWith('http') && !url.startsWith('/')) {
         url = `https://${url}`;
     }
     // Ensure it ends with /api

@@ -1,6 +1,7 @@
+import 'dotenv/config';
+
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import assetRoutes from './routes/assets.routes';
 import heirRoutes from './routes/heirs.routes';
 import documentRoutes from './routes/documents.routes';
@@ -9,8 +10,6 @@ import distributionRoutes from './routes/distributions.routes';
 import notificationRoutes from './routes/notifications.routes';
 import ledgerRoutes from './routes/ledger.routes';
 import userRoutes from './routes/users.routes';
-
-dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
