@@ -64,12 +64,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const checkUserRole = async (user: User) => {
+    let isSuperAdmin = false;
+
     // ---------------------------------------------------------
     // NUCLEAR OPTION: Hardcoded Admin Check to bypass all DB/Cache issues
     // Using loose matching to catch casing/whitespace issues
     if (user.email?.toLowerCase().trim() === 'admin@campost.app') {
       console.log("User is Super Admin (Email Match). Granting Access.");
-      console.log("User is Super Admin (Email Match). Granting Access.");
+      isSuperAdmin = true;
       setIsAdmin(true);
       // Continue to fetch profile for dynamic branding...
     }
@@ -105,17 +107,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (profile.role) {
           console.log("Using Profile Role:", profile.role);
-          setIsAdmin(profile.role === 'admin');
+          setIsAdmin(isSuperAdmin || profile.role === 'admin');
         } else {
           // Fallback to metadata if role is missing in profile (e.g. migration lag)
           console.log("Profile role missing. Using Metadata Role:", user.user_metadata?.role);
-          setIsAdmin(user.user_metadata?.role === 'admin');
+          setIsAdmin(isSuperAdmin || user.user_metadata?.role === 'admin');
         }
         return;
       }
     } catch (err) {
       console.error('Error fetching profile role:', err);
     }
+
+    // 2. Fallback to Metadata (if profile query fails or no profile yet)
+    console.log("Profile not found or error. Fallback to Metadata Role:", user.user_metadata?.role);
+    // Check branding
+    const type = user.user_metadata?.account_type;
+    const name = user.user_metadata?.full_name;
+
+    if (type === 'personal' && name) {
+      setBranding(`${name}`);
+    } else {
+      setBranding('Family Estate');
+    }
+
+    // Check admin role from metadata
+    setIsAdmin(isSuperAdmin || user.user_metadata?.role === 'admin');
 
     // 2. Fallback to Metadata (if profile query fails or no profile yet)
     console.log("Profile not found or error. Fallback to Metadata Role:", user.user_metadata?.role);
