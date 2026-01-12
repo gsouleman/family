@@ -13,14 +13,14 @@ export const seedData = async (req: Request, res: Response) => {
 
         // Embedded data from family.ts to ensure standalone execution
         const assets = [
-            { id: 'asset-1', name: 'Family Villa - Palm Jumeirah', value: 4500000, category: AssetCategory.real_estate, status: AssetStatus.active },
-            { id: 'asset-2', name: 'Downtown Apartment', value: 1200000, category: AssetCategory.real_estate, status: AssetStatus.active },
+            { id: 'asset-1', name: 'Family Villa - Palm Jumeirah', value: 4500000, category: AssetCategory.property, status: AssetStatus.active },
+            { id: 'asset-2', name: 'Downtown Apartment', value: 1200000, category: AssetCategory.property, status: AssetStatus.active },
             { id: 'asset-4', name: 'Investment Portfolio', value: 850000, category: AssetCategory.investment, status: AssetStatus.active },
             { id: 'asset-5', name: 'Sukuk Bonds', value: 500000, category: AssetCategory.investment, status: AssetStatus.active },
             { id: 'asset-6', name: 'Mercedes-Benz S-Class', value: 180000, category: AssetCategory.vehicle, status: AssetStatus.active },
             { id: 'asset-9', name: 'Jewelry Collection', value: 250000, category: AssetCategory.other, status: AssetStatus.active },
             { id: 'asset-12', name: 'Trading Co LLC', value: 2000000, category: AssetCategory.business, status: AssetStatus.active },
-            { id: 'asset-16', name: 'Beach House - Maldives', value: 2100000, category: AssetCategory.real_estate, status: AssetStatus.active },
+            { id: 'asset-16', name: 'Beach House - Maldives', value: 2100000, category: AssetCategory.property, status: AssetStatus.active },
             { id: 'asset-17', name: 'Family Yacht', value: 750000, category: AssetCategory.vehicle, status: AssetStatus.active },
         ];
 
@@ -34,7 +34,7 @@ export const seedData = async (req: Request, res: Response) => {
 
         const documents = [
             { id: 'doc-1', name: 'Family Will - 2024 Update', type: 'will', uploadDate: '2024-01-15' },
-            { id: 'doc-2', name: 'Palm Jumeirah Villa - Title Deed', type: 'title_deed', relatedAssetId: 'asset-1' },
+            { id: 'doc-2', name: 'Palm Jumeirah Villa - Title Deed', type: 'deed', relatedAssetId: 'asset-1' },
             { id: 'doc-7', name: 'Investment Portfolio Statement', type: 'other', relatedAssetId: 'asset-4' }
         ];
 
@@ -69,7 +69,7 @@ export const seedData = async (req: Request, res: Response) => {
                 create: {
                     id: heir.id,
                     name: heir.name,
-                    relation: heir.relation,
+                    relation: heir.relation as any,
                     email: heir.email,
                     phone: heir.phone,
                     dateOfBirth: new Date(heir.dateOfBirth),
@@ -87,10 +87,10 @@ export const seedData = async (req: Request, res: Response) => {
                 create: {
                     id: doc.id,
                     name: doc.name,
-                    type: doc.type,
-                    fileUrl: 'https://example.com/demo.pdf',
+                    type: doc.type as any,
+                    url: 'https://example.com/demo.pdf',
                     userId,
-                    relatedAssetId: doc.relatedAssetId
+                    assetId: doc.relatedAssetId
                 }
             });
         }
@@ -103,7 +103,7 @@ export const seedData = async (req: Request, res: Response) => {
                     message: notif.message,
                     date: new Date(notif.date),
                     read: notif.read,
-                    type: notif.type,
+                    type: notif.type as any,
                     userId
                 }
             });

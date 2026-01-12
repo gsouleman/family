@@ -6,8 +6,7 @@ import { AssetCategory, AssetStatus } from '@prisma/client';
 const seedForUser = async (email: string) => {
     try {
         const user = await prisma.user.findUnique({
-            where: { email },
-            include: { profile: true }
+            where: { email }
         });
 
         if (!user) {
@@ -21,14 +20,14 @@ const seedForUser = async (email: string) => {
         // Seed Assets manually (since they are not in family.ts directly as a list, but transactions refer to them)
         // I will create some dummy assets based on the transactions or hardcoded values
         const assets = [
-            { id: 'asset-1', name: 'Family Villa - Palm Jumeirah', value: 4500000, category: AssetCategory.real_estate, status: AssetStatus.active },
-            { id: 'asset-2', name: 'Downtown Apartment', value: 1200000, category: AssetCategory.real_estate, status: AssetStatus.active },
+            { id: 'asset-1', name: 'Family Villa - Palm Jumeirah', value: 4500000, category: AssetCategory.property, status: AssetStatus.active },
+            { id: 'asset-2', name: 'Downtown Apartment', value: 1200000, category: AssetCategory.property, status: AssetStatus.active },
             { id: 'asset-4', name: 'Investment Portfolio', value: 850000, category: AssetCategory.investment, status: AssetStatus.active },
             { id: 'asset-5', name: 'Sukuk Bonds', value: 500000, category: AssetCategory.investment, status: AssetStatus.active },
             { id: 'asset-6', name: 'Mercedes-Benz S-Class', value: 180000, category: AssetCategory.vehicle, status: AssetStatus.active },
             { id: 'asset-9', name: 'Jewelry Collection', value: 250000, category: AssetCategory.other, status: AssetStatus.active },
             { id: 'asset-12', name: 'Trading Co LLC', value: 2000000, category: AssetCategory.business, status: AssetStatus.active },
-            { id: 'asset-16', name: 'Beach House - Maldives', value: 2100000, category: AssetCategory.real_estate, status: AssetStatus.active },
+            { id: 'asset-16', name: 'Beach House - Maldives', value: 2100000, category: AssetCategory.property, status: AssetStatus.active },
             { id: 'asset-17', name: 'Family Yacht', value: 750000, category: AssetCategory.vehicle, status: AssetStatus.active },
         ];
 
@@ -77,7 +76,7 @@ const seedForUser = async (email: string) => {
         // Seed Documents
         for (const doc of initialDocuments) {
             const { id, ...data } = doc;
-            const docTypeMap: any = { 'will': 'other', 'deed': 'title_deed', 'certificate': 'certificate', 'other': 'other' };
+            const docTypeMap: any = { 'will': 'other', 'deed': 'deed', 'certificate': 'certificate', 'other': 'other' };
 
             await prisma.document.upsert({
                 where: { id },
@@ -86,9 +85,9 @@ const seedForUser = async (email: string) => {
                     id,
                     name: data.name,
                     type: docTypeMap[data.type] || 'other',
-                    fileUrl: 'https://example.com/doc.pdf', // Mock URL
+                    url: 'https://example.com/doc.pdf', // Mock URL
                     userId,
-                    relatedAssetId: data.relatedAssetId
+                    assetId: data.relatedAssetId
                 }
             });
         }
