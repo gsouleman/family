@@ -95,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const profileType = profile.account_type;
         const profileName = profile.full_name;
 
-        if (profileType === 'personal' && profileName) {
+        if (profileType?.toLowerCase() === 'personal' && profileName) {
           setBranding(`${profileName}`);
         } else {
           setBranding('Family Estate');
@@ -122,7 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const metaType = user.user_metadata?.account_type;
     const metaName = user.user_metadata?.full_name;
 
-    if (metaType === 'personal' && metaName) {
+    if (metaType?.toLowerCase() === 'personal' && metaName) {
       setBranding(`${metaName}`);
     } else {
       setBranding('Family Estate');
