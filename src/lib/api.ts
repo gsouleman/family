@@ -264,6 +264,11 @@ export const api = {
         return handleResponse(res, 'Failed to delete user');
     },
 
+    getProfile: async () => {
+        const res = await request('/users/me');
+        return handleResponse(res, 'Failed to fetch user profile');
+    },
+
     // Generic methods for flexibility
     get: async (endpoint: string) => {
         const res = await request(endpoint);

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
 import { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -82,18 +83,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log("Metadata:", user.user_metadata);
 
     try {
-      // 1. Try to fetch fresh profile data
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('role, account_type, full_name')
-        .eq('id', user.id)
-        .single();
+      // 1. Try to fetch fresh profile data from Backend (Neon) using validated token
+      // We must wait for session to be available for headers to work, which they should be since we have 'user'
+      console.log("Fetching profile from Backend for:", user.email);
+      const profile = await api.getProfile();
 
-      if (error) {
-        console.warn("Profile fetch error:", error);
-      }
-
-      console.log("Profile Data:", profile);
+      console.log("Profile Data (Neon):", profile);
 
       if (profile) {
         // Use Profile Data
@@ -110,14 +105,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.log("Using Profile Role:", profile.role);
           setIsAdmin(isSuperAdmin || profile.role === 'admin');
         } else {
-          // Fallback to metadata if role is missing in profile (e.g. migration lag)
-          console.log("Profile role missing. Using Metadata Role:", user.user_metadata?.role);
+          console.log("Profile role missing/unknown in Neon. Fallback to Metadata.");
           setIsAdmin(isSuperAdmin || user.user_metadata?.role === 'admin');
         }
         return;
       }
     } catch (err) {
-      console.error('Error fetching profile role:', err);
+      console.error('Error fetching profile from Backend:', err);
+      // Fallthrough to metadata
     }
 
     // 2. Fallback to Metadata (if profile query fails or no profile yet)
