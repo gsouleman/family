@@ -9,7 +9,7 @@ export const getUsers = async (req: Request, res: Response) => {
         res.json(users);
     } catch (error) {
         console.error('Error fetching users:', error);
-        res.status(500).json({ error: 'Failed to fetch users' });
+        res.status(500).json({ error: 'Failed to fetch users', details: String(error) });
     }
 };
 
@@ -47,7 +47,7 @@ export const createUserProfile = async (req: Request, res: Response) => {
         res.json(user);
     } catch (error) {
         console.error('Error creating user profile:', error);
-        res.status(500).json({ error: 'Failed to create user profile' });
+        res.status(500).json({ error: 'Failed to create user profile', details: String(error) });
     }
 };
 
@@ -71,7 +71,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
         res.json(user);
     } catch (error) {
         console.error('Error updating user profile:', error);
-        res.status(500).json({ error: 'Failed to update user profile' });
+        res.status(500).json({ error: 'Failed to update user profile', details: String(error) });
     }
 };
 
@@ -84,7 +84,7 @@ export const deleteUserProfile = async (req: Request, res: Response) => {
         res.json({ message: 'User deleted successfully' });
     } catch (error) {
         console.error('Error deleting user profile:', error);
-        res.status(500).json({ error: 'Failed to delete user profile' });
+        res.status(500).json({ error: 'Failed to delete user profile', details: String(error) });
     }
 };
 
@@ -105,6 +105,6 @@ export const getProfile = async (req: Request, res: Response) => {
         res.json(user);
     } catch (error) {
         console.error('Error fetching profile:', error);
-        res.status(500).json({ error: 'Failed to fetch profile' });
+        res.status(500).json({ error: 'Failed to fetch profile', details: String(error) });
     }
 };
