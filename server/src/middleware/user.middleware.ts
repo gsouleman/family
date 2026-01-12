@@ -28,6 +28,10 @@ export const userMiddleware = async (req: Request, res: Response, next: NextFunc
                 });
 
                 // ALSO Sync Profile (for Admin Panel visibility)
+                // BLOCKED: This was causing "Unknown User" ghosts to reappear after deletion.
+                // The frontend should handle profile creation via AuthContext/SignUp.
+
+                /*
                 const upsertedProfile = await prisma.profile.upsert({
                     where: { id: userId },
                     update: {}, // Don't overwrite admin changes (role/status)
@@ -41,6 +45,7 @@ export const userMiddleware = async (req: Request, res: Response, next: NextFunc
                     }
                 });
                 console.log(`[Middleware] Upserted Profile:`, upsertedProfile);
+                */
             } catch (dbError) {
                 console.error("Failed to sync user to Neon:", dbError);
                 // Continue? If upsert fails, subsequent queries might fail, but let's try.
