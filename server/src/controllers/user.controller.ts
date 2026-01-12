@@ -71,7 +71,7 @@ export const updateUserProfile = async (req: Request, res: Response) => {
         res.json(user);
     } catch (error) {
         console.error('Error updating user profile:', error);
-        res.status(500).json({ error: 'Failed to update user profile', details: String(error), version: '1.2.1' });
+        res.status(500).json({ error: 'Failed to update user profile (v1.2.1)', details: String(error), version: '1.2.1' });
     }
 };
 
