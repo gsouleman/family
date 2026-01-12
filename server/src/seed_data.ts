@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import prisma from './lib/prisma';
-import { initialHeirs, initialDocuments, initialTransactions, initialNotifications } from '../../src/data/family';
+import { initialHeirs, initialDocuments, initialTransactions, initialNotifications } from './data/family';
 import { AssetCategory, AssetStatus } from '@prisma/client';
 
 const seedForUser = async (email: string) => {
