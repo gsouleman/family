@@ -22,7 +22,7 @@ This application consists of **two separate services** deployed on Render.com:
 
 **Build Command:**
 ```bash
-npm install && npx prisma generate && npm run build
+npm install && npx prisma generate && npx prisma migrate deploy && npm run build
 ```
 
 **Start Command:**
@@ -69,7 +69,7 @@ npm start
 4. Configure:
    - **Name:** `family-assets-backend`
    - **Root Directory:** `server`
-   - **Build Command:** `npm install && npx prisma generate && npm run build`
+   - **Build Command:** `npm install && npx prisma generate && npx prisma migrate deploy && npm run build`
    - **Start Command:** `npm start`
 5. Add environment variables:
    - `NODE_ENV` = `production`
