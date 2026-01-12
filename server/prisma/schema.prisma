@@ -1,13 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  fullName      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  assets        Asset[]
+  documents     Document[]
+  heirs         Heir[]
+  ledgerEntries LedgerEntry[]
+  notifications Notification[]
 }
 
-// Enums
+model Profile {
+  id                String   @id @default(uuid())
+  full_name         String?
+  email             String   @unique
+  role              String   @default("user")
+  account_type      String   @default("family")
+  status            String   @default("active")
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+  avatar_url        String?
+  is_2fa_enabled    Boolean  @default(false)
+  phone             String?
+  two_factor_method String   @default("email")
+
+  @@map("profiles")
+}
+
+model LedgerEntry {
+  id          String         @id @default(uuid())
+  title       String
+  amount      Float
+  type        LedgerType
+  category    LedgerCategory
+  date        DateTime
+  description String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  userId      String
+  user        User           @relation(fields: [userId], references: [id])
+}
+
+model Asset {
+  id            String         @id @default(uuid())
+  name          String
+  category      AssetCategory
+  value         Float
+  description   String?
+  location      String?
+  purchaseDate  DateTime?
+  image         String?
+  status        AssetStatus    @default(active)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  userId        String
+  isForSale     Boolean        @default(true)
+  user          User           @relation(fields: [userId], references: [id])
+  distributions Distribution[]
+  documents     Document[]
+}
+
+model Heir {
+  id          String             @id @default(uuid())
+  name        String
+  relation    HeirRelation
+  dateOfBirth DateTime?
+  email       String?
+  phone       String?
+  avatar      String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  userId      String
+  user        User               @relation(fields: [userId], references: [id])
+  shares      InheritanceShare[]
+}
+
+model Document {
+  id         String       @id @default(uuid())
+  name       String
+  type       DocumentType
+  url        String
+  fileSize   String?
+  uploadDate DateTime     @default(now())
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  userId     String
+  assetId    String?
+  asset      Asset?       @relation(fields: [assetId], references: [id])
+  user       User         @relation(fields: [userId], references: [id])
+}
+
+model Transaction {
+  id             String          @id @default(uuid())
+  type           TransactionType
+  description    String
+  amount         Float?
+  date           DateTime        @default(now())
+  relatedAssetId String?
+  relatedHeirId  String?
+}
+
+model Notification {
+  id      String           @id @default(uuid())
+  title   String
+  message String
+  date    DateTime         @default(now())
+  read    Boolean          @default(false)
+  type    NotificationType
+  userId  String
+  user    User             @relation(fields: [userId], references: [id])
+}
+
+model Distribution {
+  id          String             @id @default(uuid())
+  totalAmount Float
+  saleDate    DateTime
+  status      DistributionStatus @default(pending)
+  assetId     String
+  asset       Asset              @relation(fields: [assetId], references: [id])
+  shares      InheritanceShare[]
+}
+
+model InheritanceShare {
+  id              String       @id @default(uuid())
+  sharePercentage Float
+  shareAmount     Float
+  shareFraction   String
+  heirId          String
+  distributionId  String
+  distribution    Distribution @relation(fields: [distributionId], references: [id])
+  heir            Heir         @relation(fields: [heirId], references: [id])
+}
+
 enum AssetCategory {
   property
   investment
@@ -90,141 +224,4 @@ enum LedgerCategory {
   OTHER_EXPENSE
   LOAN
   MORTGAGE
-}
-
-// Models
-
-model User {
-  id            String         @id @default(uuid())
-  email         String         @unique
-  fullName      String
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  assets        Asset[]
-  heirs         Heir[]
-  documents     Document[]
-  notifications Notification[]
-  ledgerEntries LedgerEntry[]
-}
-
-model Profile {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  full_name    String?
-  avatar_url   String?
-  role         String   @default("user")
-  account_type String   @default("family")
-  status       String   @default("active")
-  is_2fa_enabled Boolean @default(false)
-  two_factor_method String @default("email") // 'email' or 'phone'
-  phone        String?
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
-
-  @@map("profiles")
-}
-
-model LedgerEntry {
-  id          String   @id @default(uuid())
-  title       String
-  amount      Float
-  type        LedgerType
-  category    LedgerCategory
-  date        DateTime
-  description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-}
-
-model Asset {
-  id            String         @id @default(uuid())
-  name          String
-  category      AssetCategory
-  value         Float
-  description   String?
-  location      String?
-  purchaseDate  DateTime?
-  image         String?
-  status        AssetStatus    @default(active)
-  isForSale     Boolean        @default(true)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  userId        String
-  user          User           @relation(fields: [userId], references: [id])
-  documents     Document[]
-  distributions Distribution[]
-}
-
-model Heir {
-  id          String             @id @default(uuid())
-  name        String
-  relation    HeirRelation
-  dateOfBirth DateTime?
-  email       String?
-  phone       String?
-  avatar      String?
-  createdAt   DateTime           @default(now())
-  updatedAt   DateTime           @updatedAt
-  userId      String
-  user        User               @relation(fields: [userId], references: [id])
-  shares      InheritanceShare[]
-}
-
-model Document {
-  id         String       @id @default(uuid())
-  name       String
-  type       DocumentType
-  url        String
-  fileSize   String?
-  uploadDate DateTime     @default(now())
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  userId     String
-  user       User         @relation(fields: [userId], references: [id])
-  assetId    String?
-  asset      Asset?       @relation(fields: [assetId], references: [id])
-}
-
-model Transaction {
-  id             String          @id @default(uuid())
-  type           TransactionType
-  description    String
-  amount         Float?
-  date           DateTime        @default(now())
-  relatedAssetId String?
-  relatedHeirId  String?
-}
-
-model Notification {
-  id        String           @id @default(uuid())
-  title     String
-  message   String
-  date      DateTime         @default(now())
-  read      Boolean          @default(false)
-  type      NotificationType
-  userId    String
-  user      User             @relation(fields: [userId], references: [id])
-}
-
-model Distribution {
-  id          String             @id @default(uuid())
-  totalAmount Float
-  saleDate    DateTime
-  status      DistributionStatus @default(pending)
-  assetId     String
-  asset       Asset              @relation(fields: [assetId], references: [id])
-  shares      InheritanceShare[]
-}
-
-model InheritanceShare {
-  id              String       @id @default(uuid())
-  sharePercentage Float
-  shareAmount     Float
-  shareFraction   String
-  heirId          String
-  heir            Heir         @relation(fields: [heirId], references: [id])
-  distributionId  String
-  distribution    Distribution @relation(fields: [distributionId], references: [id])
 }

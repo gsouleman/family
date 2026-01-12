@@ -54,6 +54,7 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
         setRole('user');
 
         setTwoFactorMethod('email');
+        setIs2FAEnabled(false);
         setPhone('');
         setShowResetPassword(false);
         setError(null);
