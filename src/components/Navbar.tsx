@@ -28,7 +28,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
 
