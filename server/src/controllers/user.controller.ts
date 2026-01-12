@@ -71,3 +71,24 @@ export const deleteUserProfile = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Failed to delete user profile' });
     }
 };
+
+export const getProfile = async (req: Request, res: Response) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const user = await prisma.profile.findUnique({
+            where: { id: userId }
+        });
+
+        if (!user) {
+            return res.status(404).json({ error: 'Profile not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        console.error('Error fetching profile:', error);
+        res.status(500).json({ error: 'Failed to fetch profile' });
+    }
+};
