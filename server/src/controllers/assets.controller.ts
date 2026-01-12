@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 
+import { PrismaClient, AssetCategory, AssetStatus } from '@prisma/client';
 export const getAssets = async (req: Request, res: Response) => {
     try {
         const userId = req.userId;
