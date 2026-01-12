@@ -43,6 +43,36 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
+
+app.get('/api/debug/db', async (req, res) => {
+    try {
+        const dbUrlExists = !!process.env.DATABASE_URL;
+        // Obfuscate the URL for safety if it exists
+        const dbUrlSafe = dbUrlExists ? (process.env.DATABASE_URL?.substring(0, 20) + '...') : 'MISSING';
+
+        await prisma.$connect();
+        const userCount = await prisma.user.count();
+
+        res.json({
+            status: 'connected',
+            env_database_url: dbUrlExists ? 'PRESENT' : 'MISSING',
+            url_preview: dbUrlSafe,
+            user_count: userCount
+        });
+    } catch (error: any) {
+        console.error('DB Debug Connection Failed:', error);
+        res.status(500).json({
+            status: 'failed',
+            env_database_url: !!process.env.DATABASE_URL ? 'PRESENT' : 'MISSING',
+            error: error.message
+        });
+    } finally {
+        await prisma.$disconnect();
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
