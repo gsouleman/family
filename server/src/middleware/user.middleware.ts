@@ -11,9 +11,12 @@ export const userMiddleware = async (req: Request, res: Response, next: NextFunc
         const userName = req.headers['x-user-name'] as string;
 
         if (userId) {
-            // Sync User to Neon DB (Upsert)
-            // This ensures Auth (Supabase) users exist in Data (Neon) DB for Foreign Keys
             try {
+                console.log(`[Middleware] Syncing user ${userId} (Email: ${userEmail}, Name: ${userName})`);
+
+                const existingProfile = await prisma.profile.findUnique({ where: { id: userId } });
+                console.log(`[Middleware] Existing Profile before sync:`, existingProfile);
+
                 await prisma.user.upsert({
                     where: { id: userId },
                     update: {}, // No updates needed, Auth is source of truth
@@ -25,7 +28,7 @@ export const userMiddleware = async (req: Request, res: Response, next: NextFunc
                 });
 
                 // ALSO Sync Profile (for Admin Panel visibility)
-                await prisma.profile.upsert({
+                const upsertedProfile = await prisma.profile.upsert({
                     where: { id: userId },
                     update: {}, // Don't overwrite admin changes (role/status)
                     create: {
@@ -37,6 +40,7 @@ export const userMiddleware = async (req: Request, res: Response, next: NextFunc
                         status: 'active'
                     }
                 });
+                console.log(`[Middleware] Upserted Profile:`, upsertedProfile);
             } catch (dbError) {
                 console.error("Failed to sync user to Neon:", dbError);
                 // Continue? If upsert fails, subsequent queries might fail, but let's try.

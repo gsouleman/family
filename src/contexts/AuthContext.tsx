@@ -92,11 +92,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (profile) {
         // Use Profile Data
-        const profileType = profile.account_type;
         const profileName = profile.full_name;
 
-        if (profileType?.toLowerCase() === 'personal' && profileName) {
-          setBranding(`${profileName}`);
+        if (profileName) {
+          setBranding(profileName);
         } else {
           setBranding('Family Estate');
         }
@@ -116,14 +115,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // 2. Fallback to Metadata (if profile query fails or no profile yet)
-    // 2. Fallback to Metadata (if profile query fails or no profile yet)
     console.log("Profile not found or error. Fallback to Metadata Role:", user.user_metadata?.role);
     // Check branding
-    const metaType = user.user_metadata?.account_type;
     const metaName = user.user_metadata?.full_name;
 
-    if (metaType?.toLowerCase() === 'personal' && metaName) {
-      setBranding(`${metaName}`);
+    if (metaName) {
+      setBranding(metaName);
     } else {
       setBranding('Family Estate');
     }

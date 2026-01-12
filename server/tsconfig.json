@@ -1,16 +1,21 @@
 {
+    "extends": "../tsconfig.json",
+    "include": [
+        "src/**/*",
+        "src/types/**/*.d.ts"
+    ],
     "compilerOptions": {
-        "target": "es2020",
-        "module": "commonjs",
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
+        "baseUrl": "./",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ]
+        },
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "esModuleInterop": true
     },
-    "exclude": [
-        "node_modules",
-        "scripts"
-    ]
+    "ts-node": {
+        "esm": true
+    }
 }
