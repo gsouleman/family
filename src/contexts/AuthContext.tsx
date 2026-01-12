@@ -96,11 +96,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (profile) {
         // Use Profile Data
-        const type = profile.account_type;
-        const name = profile.full_name;
+        const profileType = profile.account_type;
+        const profileName = profile.full_name;
 
-        if (type === 'personal' && name) {
-          setBranding(`${name}`);
+        if (profileType === 'personal' && profileName) {
+          setBranding(`${profileName}`);
         } else {
           setBranding('Family Estate');
         }
@@ -120,34 +120,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // 2. Fallback to Metadata (if profile query fails or no profile yet)
+    // 2. Fallback to Metadata (if profile query fails or no profile yet)
     console.log("Profile not found or error. Fallback to Metadata Role:", user.user_metadata?.role);
     // Check branding
-    const type = user.user_metadata?.account_type;
-    const name = user.user_metadata?.full_name;
+    const metaType = user.user_metadata?.account_type;
+    const metaName = user.user_metadata?.full_name;
 
-    if (type === 'personal' && name) {
-      setBranding(`${name}`);
+    if (metaType === 'personal' && metaName) {
+      setBranding(`${metaName}`);
     } else {
       setBranding('Family Estate');
     }
 
     // Check admin role from metadata
     setIsAdmin(isSuperAdmin || user.user_metadata?.role === 'admin');
-
-    // 2. Fallback to Metadata (if profile query fails or no profile yet)
-    console.log("Profile not found or error. Fallback to Metadata Role:", user.user_metadata?.role);
-    // Check branding
-    const type = user.user_metadata?.account_type;
-    const name = user.user_metadata?.full_name;
-
-    if (type === 'personal' && name) {
-      setBranding(`${name}`);
-    } else {
-      setBranding('Family Estate');
-    }
-
-    // Check admin role from metadata
-    setIsAdmin(user.user_metadata?.role === 'admin');
   };
 
   const signUp = async (email: string, password: string, fullName: string, accountType: 'personal' | 'family') => {
