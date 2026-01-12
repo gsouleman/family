@@ -1,0 +1,9 @@
+{
+    "full_name": "Family Estate",
+    "phone": "00237675299868",
+    "is_2fa_enabled": true,
+    "two_factor_method": "phone",
+    "role": "admin",
+    "account_type": "family",
+    "status": "active"
+}
