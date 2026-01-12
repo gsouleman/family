@@ -11,6 +11,8 @@ import notificationRoutes from './routes/notifications.routes';
 import ledgerRoutes from './routes/ledger.routes';
 import userRoutes from './routes/users.routes';
 import seedRoutes from './routes/seed.routes';
+import debugRoutes from './routes/debug.routes';
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -33,6 +35,8 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/ledger', ledgerRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/seed', seedRoutes);
+app.use('/api/debug', debugRoutes);
+
 
 app.use(errorHandler);
 

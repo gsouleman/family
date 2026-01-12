@@ -81,9 +81,15 @@ export const updateUserProfile = async (req: Request, res: Response) => {
             }
         });
         res.json(user);
-    } catch (error) {
-        console.error('Error updating user profile:', error);
-        res.status(500).json({ error: 'Failed to update user profile (v1.2.3)', details: String(error), version: '1.2.3' });
+    } catch (error: any) {
+        console.error('❌ Error updating user profile:', error);
+        console.error('Error Stack:', error.stack);
+        // Respond with actual error details to help diagnosis
+        res.status(500).json({
+            error: 'Failed to update user profile',
+            details: error.message || String(error),
+            code: error.code // Prisma error code (e.g. P2002)
+        });
     }
 };
 
