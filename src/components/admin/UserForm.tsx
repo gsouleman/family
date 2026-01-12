@@ -98,7 +98,14 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                     }
                 });
 
-                if (signUpError) throw signUpError;
+                if (signUpError) {
+                    if (signUpError.message?.includes('already registered')) {
+                        // Soft error: User exists in Auth but maybe not in Data
+                        console.warn("User already exists in Auth. Cannot retrieve UID to force-create Profile.");
+                        throw new Error("This email is already registered in the Login System. If this is YOU, please close this form and Refresh the page to sync your profile. If it is someone else, ask them to Log In.");
+                    }
+                    throw signUpError;
+                }
 
                 if (data.user) {
                     // 2. Create Profile in Neon (via Backend)
