@@ -15,7 +15,7 @@ export const getUsers = async (req: Request, res: Response) => {
 
 export const createUserProfile = async (req: Request, res: Response) => {
     try {
-        const { id, email, full_name, role, account_type, status } = req.body;
+        const { id, email, full_name, role, account_type, status, phone, is_2fa_enabled, two_factor_method } = req.body;
 
         // Upsert to ensure we don't fail if user already exists (e.g. from middleware sync)
         const user = await prisma.profile.upsert({
@@ -25,7 +25,11 @@ export const createUserProfile = async (req: Request, res: Response) => {
                 role,
                 account_type,
                 status,
-                email // Allow updating email if changed
+                status,
+                email, // Allow updating email if changed
+                phone,
+                is_2fa_enabled,
+                two_factor_method
             },
             create: {
                 id,
@@ -33,7 +37,11 @@ export const createUserProfile = async (req: Request, res: Response) => {
                 full_name,
                 role: role || 'user',
                 account_type: account_type || 'family',
-                status: status || 'active'
+                account_type: account_type || 'family',
+                status: status || 'active',
+                phone,
+                is_2fa_enabled,
+                two_factor_method: two_factor_method || 'email'
             }
         });
         res.json(user);
