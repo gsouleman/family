@@ -1,7 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { supabase } from '@/lib/supabase';
+import { api } from '@/lib/api';
+// Remove direct supabase usage if not needed for Auth (but AuthContext uses it)
+// We might still need it in this file? No, looks like only for profile data.
+// But check imports.
 
 interface ProfileSettingsModalProps {
     isOpen: boolean;
@@ -28,12 +31,16 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
     useEffect(() => {
         const loadProfile = async () => {
             if (!user) return;
-            const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-            if (data) {
-                setFullName(data.full_name || '');
-                setPhone(data.phone || '');
-                setIs2FAEnabled(data.is_2fa_enabled || false);
-                setTwoFactorMethod(data.two_factor_method || 'email');
+            try {
+                const data = await api.getProfile();
+                if (data) {
+                    setFullName(data.full_name || '');
+                    setPhone(data.phone || '');
+                    setIs2FAEnabled(data.is_2fa_enabled || false);
+                    setTwoFactorMethod(data.two_factor_method || 'email');
+                }
+            } catch (err) {
+                console.error("Failed to load profile settings", err);
             }
         };
 

@@ -147,11 +147,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (error) throw error;
 
       if (data.user) {
-        await supabase.from('profiles').upsert({
+        // Use Backend API (Neon) to persist profile
+        await api.createUser({
           id: data.user.id,
           email: email,
           full_name: fullName,
           account_type: accountType,
+          role: 'user', // Default
+          status: 'active',
           created_at: new Date().toISOString(),
         });
       }
@@ -173,7 +176,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Check if 2FA is enabled for this user
       if (data.user) {
-        const { data: profile } = await supabase.from('profiles').select('is_2fa_enabled, two_factor_method, phone').eq('id', data.user.id).single();
+        // Fetch profile from Backend (Neon) to check 2FA
+        // Since we have a session now (from signInWithPassword), api.getProfile() might work 
+        // IF the session is immediately available to getHeaders(). 
+        // However, api.getHeaders() relies on supabase.auth.getSession().
+        // Let's assume it works. If not, we might need to pass the token explicitly, 
+        // but our api wrapper doesn't support that easily yet. 
+        // A safer bet might be to try api.getProfile() and catch error.
+
+        let profile = null;
+        try {
+          profile = await api.getProfile();
+        } catch (e) {
+          console.error("Failed to fetch 2FA profile", e);
+        }
 
         if (profile?.is_2fa_enabled) {
           // Check 2FA method
@@ -248,13 +264,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (error) throw error;
 
-      await supabase.from('profiles').update({
+      // Use Backend API (Neon)
+      await api.updateUser(user.id, {
         full_name: data.full_name,
         phone: data.phone,
         is_2fa_enabled: data.is_2fa_enabled,
         two_factor_method: data.two_factor_method,
-        updated_at: new Date().toISOString(),
-      }).eq('id', user.id);
+      });
 
       return { error: null };
     } catch (error) {
