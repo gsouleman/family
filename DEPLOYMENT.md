@@ -22,7 +22,7 @@ This application consists of **two separate services** deployed on Render.com:
 
 **Build Command:**
 ```bash
-npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+npm install && npx prisma generate --schema=./prisma/schema.prisma && npx prisma migrate deploy --schema=./prisma/schema.prisma && npm run build
 ```
 
 **Start Command:**
