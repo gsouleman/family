@@ -11,7 +11,7 @@ interface AuthContextType {
   mustChangePassword: boolean;
   branding: string;
   signUp: (email: string, password: string, fullName: string, accountType: 'personal' | 'family') => Promise<{ error: Error | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null, needs2FA?: boolean }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null, needs2FA?: boolean, method?: string }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
   updateProfile: (data: { full_name?: string }) => Promise<{ error: Error | null }>;
@@ -173,12 +173,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       // Check if 2FA is enabled for this user
       if (data.user) {
-        const { data: profile } = await supabase.from('profiles').select('is_2fa_enabled').eq('id', data.user.id).single();
+        const { data: profile } = await supabase.from('profiles').select('is_2fa_enabled, two_factor_method, phone').eq('id', data.user.id).single();
 
         if (profile?.is_2fa_enabled) {
-          // Trigger OTP
-          await supabase.auth.signInWithOtp({ email });
-          return { error: null, needs2FA: true };
+          // Check 2FA method
+          const method = profile.two_factor_method || 'email';
+
+          if (method === 'phone' && profile.phone) {
+            console.log("Triggering SMS 2FA for:", profile.phone);
+            const { error: otpError } = await supabase.auth.signInWithOtp({
+              phone: profile.phone
+            });
+            if (otpError) throw otpError;
+          } else {
+            // Default to Email
+            await supabase.auth.signInWithOtp({ email });
+          }
+
+          return { error: null, needs2FA: true, method };
         }
       }
 
@@ -193,7 +205,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { error } = await supabase.auth.verifyOtp({
         email,
         token,
-        type: 'email'
+        type: (email.includes('@') ? 'email' : 'sms') as any
       });
       if (error) throw error;
       return { error: null };

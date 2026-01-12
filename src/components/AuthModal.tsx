@@ -43,7 +43,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     setLoading(true);
     setError(null);
 
-    const { error, needs2FA } = await signIn(email, password);
+    const { error, needs2FA, method } = await signIn(email, password);
 
     if (error) {
       setError(error.message);
@@ -51,7 +51,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     } else if (needs2FA) {
       setLoading(false);
       setMode('verify_2fa');
-      setSuccess('Please enter the code sent to your email.');
+      setSuccess(method === 'phone' ? 'Please enter the code sent to your phone.' : 'Please enter the code sent to your email.');
     } else {
       setLoading(false);
       onClose();
@@ -152,7 +152,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
             {mode === 'signin' && 'Sign in to manage your family assets'}
             {mode === 'signup' && 'Join Mirath to secure your family legacy'}
             {mode === 'reset' && 'Enter your email to reset your password'}
-            {mode === 'verify_2fa' && 'Enter the code sent to your email'}
+            {mode === 'verify_2fa' && 'Enter the verification code'}
           </p>
         </div>
 

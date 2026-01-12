@@ -33,7 +33,10 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
     const [confirmPassword, setConfirmPassword] = useState('');
     const [accountType, setAccountType] = useState<'family' | 'personal'>('family');
     const [role, setRole] = useState<'guest' | 'user' | 'admin'>('user');
+
     const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+    const [twoFactorMethod, setTwoFactorMethod] = useState<string>('email');
+    const [phone, setPhone] = useState('');
     const [showResetPassword, setShowResetPassword] = useState(false);
 
     const [loading, setLoading] = useState(false);
@@ -47,9 +50,11 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
         setPassword('');
         setConfirmPassword('');
         setAccountType('family');
-        setAccountType('family');
+
         setRole('user');
-        setIs2FAEnabled(false);
+
+        setTwoFactorMethod('email');
+        setPhone('');
         setShowResetPassword(false);
         setError(null);
         setSuccess(null);
@@ -100,9 +105,12 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
             // Update Real User Profile
             const updates: any = {
                 full_name: fullName,
-                role,
+
+
                 account_type: accountType,
-                is_2fa_enabled: is2FAEnabled
+                is_2fa_enabled: is2FAEnabled,
+                two_factor_method: twoFactorMethod,
+                phone: phone
             };
 
             const { error: updateError } = await supabase
@@ -132,7 +140,10 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
         setEmail(user.email);
         setRole(user.role);
         setAccountType(user.account_type);
+
         setIs2FAEnabled(user.is_2fa_enabled || false);
+        setTwoFactorMethod(user.two_factor_method || 'email');
+        setPhone(user.phone || '');
         setPassword('');
         setConfirmPassword('');
         setShowResetPassword(false);
@@ -251,6 +262,17 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                             )}
 
                             <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1">Phone Number (Required for SMS 2FA)</label>
+                                <input
+                                    type="tel"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#1a365d] outline-none"
+                                    placeholder="+1234567890"
+                                />
+                            </div>
+
+                            <div>
                                 <label className="block text-xs font-medium text-gray-500 mb-1">Role</label>
                                 <select
                                     value={role}
@@ -283,17 +305,33 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    id="is2FAEnabled"
-                                    checked={is2FAEnabled}
-                                    onChange={(e) => setIs2FAEnabled(e.target.checked)}
-                                    className="w-4 h-4 text-[#1a365d] border-gray-300 rounded focus:ring-[#1a365d]"
-                                />
-                                <label htmlFor="is2FAEnabled" className="text-xs font-medium text-gray-500 select-none cursor-pointer">
-                                    Enable 2FA (Email Verification Required on Login)
-                                </label>
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="checkbox"
+                                        id="is2FAEnabled"
+                                        checked={is2FAEnabled}
+                                        onChange={(e) => setIs2FAEnabled(e.target.checked)}
+                                        className="w-4 h-4 text-[#1a365d] border-gray-300 rounded focus:ring-[#1a365d]"
+                                    />
+                                    <label htmlFor="is2FAEnabled" className="text-xs font-medium text-gray-500 select-none cursor-pointer">
+                                        Enable 2FA
+                                    </label>
+                                </div>
+
+                                {is2FAEnabled && (
+                                    <div className="pl-6">
+                                        <label className="block text-xs font-medium text-gray-500 mb-1">2FA Method</label>
+                                        <select
+                                            value={twoFactorMethod}
+                                            onChange={(e) => setTwoFactorMethod(e.target.value)}
+                                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#1a365d] outline-none"
+                                        >
+                                            <option value="email">Email</option>
+                                            <option value="phone">Phone (SMS)</option>
+                                        </select>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="flex gap-2 pt-2">

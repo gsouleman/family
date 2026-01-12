@@ -116,6 +116,8 @@ model Profile {
   account_type String   @default("family")
   status       String   @default("active")
   is_2fa_enabled Boolean @default(false)
+  two_factor_method String @default("email") // 'email' or 'phone'
+  phone        String?
   created_at   DateTime @default(now())
   updated_at   DateTime @updatedAt
 
