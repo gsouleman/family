@@ -15,7 +15,11 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState<'guest' | 'user' | 'admin'>('user');
+    const [role, setRole] = useState<'guest' | 'user' | 'admin'>('user');
     const [accountType, setAccountType] = useState<'family' | 'personal'>('family');
+    const [phone, setPhone] = useState('');
+    const [is2FAEnabled, setIs2FAEnabled] = useState(false);
+    const [twoFactorMethod, setTwoFactorMethod] = useState<string>('email');
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -28,6 +32,9 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
             setRole(editingUser.role || 'user');
             // Ensure exact match or fallback, handling mixed case just in case
             setAccountType((editingUser.account_type?.toLowerCase() as any) || 'family');
+            setPhone(editingUser.phone || '');
+            setIs2FAEnabled(editingUser.is_2fa_enabled || false);
+            setTwoFactorMethod(editingUser.two_factor_method || 'email');
             setPassword(''); // Don't show password
         } else if (isOpen && !editingUser) {
             // Reset for new user
@@ -36,6 +43,9 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
             setPassword('');
             setRole('user');
             setAccountType('family');
+            setPhone('');
+            setIs2FAEnabled(false);
+            setTwoFactorMethod('email');
         }
         setError(null);
     }, [isOpen, editingUser]);
@@ -68,7 +78,12 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                 await api.updateUser(editingUser.id, {
                     full_name: fullName,
                     role: role,
-                    account_type: accountType
+                    full_name: fullName,
+                    role: role,
+                    account_type: accountType,
+                    phone: phone || null,
+                    is_2fa_enabled: is2FAEnabled,
+                    two_factor_method: twoFactorMethod
                 });
 
                 // Note: We don't update Email/Password here as that requires Auth API/Client handling
@@ -114,7 +129,11 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                         email: email,
                         full_name: fullName,
                         role: role,
+                        role: role,
                         account_type: accountType,
+                        phone: phone || null,
+                        is_2fa_enabled: is2FAEnabled,
+                        two_factor_method: twoFactorMethod,
                         status: 'active'
                     });
                 }
@@ -184,6 +203,17 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                         </div>
                     </div>
 
+                    <div>
+                        <label className="block text-xs font-medium text-gray-500 mb-1">Phone Number (Required for SMS 2FA)</label>
+                        <input
+                            type="tel"
+                            value={phone}
+                            onChange={e => setPhone(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a365d] outline-none"
+                            placeholder="+1234567890"
+                        />
+                    </div>
+
                     {!editingUser && (
                         <div>
                             <label className="block text-xs font-medium text-gray-500 mb-1">Password</label>
@@ -222,6 +252,35 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                                 <option value="personal">Personal</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-3">
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="is2FAEnabled"
+                                checked={is2FAEnabled}
+                                onChange={(e) => setIs2FAEnabled(e.target.checked)}
+                                className="w-4 h-4 text-[#1a365d] border-gray-300 rounded focus:ring-[#1a365d]"
+                            />
+                            <label htmlFor="is2FAEnabled" className="text-xs font-medium text-gray-700 cursor-pointer">
+                                Enable 2FA
+                            </label>
+                        </div>
+
+                        {is2FAEnabled && (
+                            <div>
+                                <label className="block text-xs font-medium text-gray-500 mb-1">2FA Method</label>
+                                <select
+                                    value={twoFactorMethod}
+                                    onChange={(e) => setTwoFactorMethod(e.target.value)}
+                                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a365d] outline-none text-sm"
+                                >
+                                    <option value="email">Email</option>
+                                    <option value="phone">Phone (SMS)</option>
+                                </select>
+                            </div>
+                        )}
                     </div>
 
                     <div className="pt-4 flex gap-3">
