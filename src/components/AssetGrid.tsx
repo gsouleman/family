@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Asset, AssetCategory } from '../types';
 import AssetCard from './AssetCard';
 import { useCurrency } from '@/contexts/CurrencyContext';
+import { api } from '@/lib/api';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface AssetGridProps {
   assets: Asset[];
@@ -31,10 +33,26 @@ import PrintButton from './PrintButton';
 
 const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSellAsset }) => {
   const { formatCurrency } = useCurrency();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<AssetCategory | 'all'>('all');
   const [sortBy, setSortBy] = useState('value-desc');
   const [showActiveOnly, setShowActiveOnly] = useState(true);
+  const [isSeeding, setIsSeeding] = useState(false);
+
+  const handleSeedData = async () => {
+    if (!confirm('This will load demo data into your account. Continue?')) return;
+    setIsSeeding(true);
+    try {
+      await api.seedData();
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to seed data', error);
+      alert('Failed to load demo data. Please try again.');
+    } finally {
+      setIsSeeding(false);
+    }
+  };
 
   const filteredAndSortedAssets = useMemo(() => {
     if (!assets) return [];
@@ -200,7 +218,16 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSel
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
               </svg>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">No assets found</h3>
-              <p className="text-gray-500">Try adjusting your search or filter criteria</p>
+              <p className="text-gray-500 mb-6">Try adjusting your search or filter criteria</p>
+              {user && assets.length === 0 && searchQuery === '' && selectedCategory === 'all' && (
+                <button
+                  onClick={handleSeedData}
+                  disabled={isSeeding}
+                  className="px-6 py-2 bg-[#d4af37] hover:bg-[#c9a432] text-[#1a365d] font-semibold rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {isSeeding ? 'Loading Demo Data...' : 'Load Demo Data'}
+                </button>
+              )}
             </div>
           )}
         </div>

@@ -269,6 +269,13 @@ export const api = {
         return handleResponse(res, 'Failed to fetch user profile');
     },
 
+    seedData: async () => {
+        const res = await request('/seed', {
+            method: 'POST'
+        });
+        return handleResponse(res, 'Failed to seed data');
+    },
+
     // Generic methods for flexibility
     get: async (endpoint: string) => {
         const res = await request(endpoint);
