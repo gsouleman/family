@@ -14,9 +14,12 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
     const [users, setUsers] = useState<any[]>([]);
 
     const fetchUsers = async () => {
-        const { data, error } = await supabase.from('profiles').select('*');
-        if (data) setUsers(data);
-        if (error) console.error("Error fetching users:", error);
+        try {
+            const data = await api.getUsers();
+            if (data) setUsers(data);
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
     };
 
     useEffect(() => {
@@ -87,21 +90,30 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
             // Create Real User
             // Note: signUp automatically signs in the new user in client-side Auth.
             // This is a known limitation without Admin API.
-            const { error: signUpError } = await signUp(email, password, fullName, accountType);
+            const { data: signUpData, error: signUpError } = await signUp(email, password, fullName, accountType);
 
             if (signUpError) {
                 setError(signUpError.message);
             } else {
-                // Update additional fields (Role, Phone, 2FA)
-                const { data: userData } = await supabase.from('profiles').select('id').eq('email', email).single();
-                if (userData) {
-                    await supabase.from('profiles').update({
-                        role,
-                        phone: phone || null,
-                        is_2fa_enabled: is2FAEnabled,
-                        two_factor_method: twoFactorMethod
-                    }).eq('id', userData.id);
-                }
+                // Update additional fields (Role, Phone, 2FA) via Backend
+                // Wait for a moment for auth hook to create profile? Or just explicit create.
+                // Since we have api.createUser, we can ensure profile exists fully.
+                // But signUp trigger might have made it. Let's use api.updateUser to be safe/consistent.
+                // Actually, if we use api.createUser we might duplicate if trigger existed.
+                // Safest: api.createUser which does upsert.
+                await api.createUser({
+                    id: signUpData.user?.id, // Will be set by controller if passed or typically from token? 
+                    // No, for creation we need ID. But wait, signUp returns user.
+                    // Let's rely on api.createUser upserting.
+                    email: email,
+                    full_name: fullName,
+                    account_type: accountType,
+                    role,
+                    phone: phone || null,
+                    is_2fa_enabled: is2FAEnabled,
+                    two_factor_method: twoFactorMethod,
+                    status: 'active'
+                });
 
                 setSuccess('User created successfully. (You might be logged in as the new user)');
                 fetchUsers();
@@ -161,15 +173,22 @@ const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen, onClo
         if (!user) return;
 
         const newStatus = user.status === 'active' ? 'disabled' : 'active';
-        const { error } = await supabase.from('profiles').update({ status: newStatus }).eq('id', userId);
-        if (!error) fetchUsers();
+        try {
+            await api.updateUser(userId, { status: newStatus });
+            fetchUsers();
+        } catch (error) {
+            console.error("Error updating status:", error);
+        }
     };
 
     const handleDelete = async (userId: string) => {
         if (confirm('Are you sure you want to delete this user? This will delete their profile data.')) {
-            const { error } = await supabase.from('profiles').delete().eq('id', userId);
-            if (!error) fetchUsers();
-            else alert('Error deleting user: ' + error.message);
+            try {
+                await api.deleteUser(userId);
+                fetchUsers();
+            } catch (error: any) {
+                alert('Error deleting user: ' + error.message);
+            }
         }
     };
 
