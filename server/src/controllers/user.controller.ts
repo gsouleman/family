@@ -54,11 +54,19 @@ export const createUserProfile = async (req: Request, res: Response) => {
 export const updateUserProfile = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const updates = req.body;
+        const { full_name, role, account_type, status, phone, is_2fa_enabled, two_factor_method } = req.body;
 
         const user = await prisma.profile.update({
             where: { id },
-            data: updates
+            data: {
+                full_name,
+                role,
+                account_type,
+                status,
+                phone,
+                is_2fa_enabled,
+                two_factor_method
+            }
         });
         res.json(user);
     } catch (error) {
