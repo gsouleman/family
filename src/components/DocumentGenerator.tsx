@@ -384,9 +384,8 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                         <div className="flex justify-between items-end mt-24">
                                             <div className="text-center w-64">
                                                 <div className="border-b border-gray-400 pb-2 mb-2 font-dancing-script text-2xl text-[#1a365d]">
-                                                    Authorized Signatory
+                                                    {branding}
                                                 </div>
-                                                <p className="text-xs text-gray-500 uppercase tracking-wider">{branding} Administrator</p>
                                             </div>
 
                                             <div className="text-center">
