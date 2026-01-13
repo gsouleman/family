@@ -81,6 +81,11 @@ app.get('/api/debug/db', async (req, res) => {
     }
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
     console.log(`Server is running at http://localhost:${port}`);
+
+    // Verify SMTP Connection on Startup
+    import('./services/auth.service.js').then(({ AuthService }) => {
+        AuthService.verifySMTPConnection();
+    });
 });

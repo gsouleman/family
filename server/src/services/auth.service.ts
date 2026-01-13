@@ -4,6 +4,45 @@ import nodemailer from 'nodemailer';
 import twilio from 'twilio';
 
 export class AuthService {
+    private static transporter: nodemailer.Transporter | null = null;
+
+    private static getTransporter() {
+        if (!this.transporter && process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+            this.transporter = nodemailer.createTransport({
+                host: process.env.SMTP_HOST,
+                port: parseInt(process.env.SMTP_PORT || '587'),
+                secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+                auth: {
+                    user: process.env.SMTP_USER,
+                    pass: process.env.SMTP_PASS,
+                },
+                // Add timeouts to fail faster and provide better errors
+                connectionTimeout: 10000, // 10 seconds
+                greetingTimeout: 10000,
+                socketTimeout: 10000
+            });
+        }
+        return this.transporter;
+    }
+
+    /**
+     * Verify SMTP Connection (Call on server startup)
+     */
+    static async verifySMTPConnection(): Promise<boolean> {
+        const transporter = this.getTransporter();
+        if (!transporter) {
+            console.warn('⚠️ SMTP Transporter not initialized (Missing credentials)');
+            return false;
+        }
+        try {
+            await transporter.verify();
+            console.log('✅ SMTP Connection Verified Successfully');
+            return true;
+        } catch (error) {
+            console.error('❌ SMTP Connection Verification Failed:', error);
+            return false;
+        }
+    }
     /**
      * Generate a 6-digit OTP code
      */
@@ -104,17 +143,8 @@ export class AuthService {
             }
 
             // Production: Send Real Email
-            if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-                const transporter = nodemailer.createTransport({
-                    host: process.env.SMTP_HOST,
-                    port: parseInt(process.env.SMTP_PORT || '587'),
-                    secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
-                    auth: {
-                        user: process.env.SMTP_USER,
-                        pass: process.env.SMTP_PASS,
-                    },
-                });
-
+            const transporter = this.getTransporter();
+            if (transporter) {
                 await transporter.sendMail({
                     from: process.env.EMAIL_FROM || '"Family Assets Support" <noreply@familyassets.com>',
                     to: email,
@@ -133,7 +163,7 @@ export class AuthService {
                 });
                 console.log('✅ Email sent successfully via SMTP');
             } else {
-                console.warn('⚠️ SMTP credentials missing. OTP email NOT sent (check server logs/console).');
+                console.warn('⚠️ SMTP credentials missing or invalid. OTP email NOT sent.');
             }
 
             return { success: true };
