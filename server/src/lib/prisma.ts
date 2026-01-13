@@ -8,14 +8,21 @@ declare global {
 
 const getDatabaseUrl = () => {
     let url = process.env.DATABASE_URL;
+
     if (!url) {
         console.error('❌ DATABASE_URL environment variable is not set!');
-        console.error('📝 Please set DATABASE_URL in your Render dashboard:');
-        console.error('   1. Go to https://dashboard.render.com');
-        console.error('   2. Select your backend service');
-        console.error('   3. Go to Environment tab');
-        console.error('   4. Add DATABASE_URL with your Neon connection string');
-        throw new Error('DATABASE_URL environment variable is required');
+        console.error('------------------------------------------------------------------');
+        console.error('🔍 DIAGNOSIS:');
+        console.error('1. IF THIS IS THE BACKEND SERVICE:');
+        console.error('   - Go to Render Dashboard > Environment');
+        console.error('   - Add DATABASE_URL = postgresql://...');
+        console.error('');
+        console.error('2. IF THIS IS THE FRONTEND SERVICE:');
+        console.error('   - 🛑 YOUR CONFIGURATION IS WRONG!');
+        console.error('   - You are running Backend code in the Frontend Service.');
+        console.error('   - FIX: Go to Settings > Start Command. Change to: npm start');
+        console.error('------------------------------------------------------------------');
+        throw new Error('DATABASE_URL is missing. See logs above for fix.');
     }
 
     // Fix for Neon Pooling: Force Simple Query Mode (pgbouncer=true)
