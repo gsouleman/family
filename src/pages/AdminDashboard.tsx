@@ -21,7 +21,7 @@ const AdminDashboard: React.FC = () => {
     // Redirect if not admin
     React.useEffect(() => {
         if (!loading && !isAdmin) {
-            navigate('/');
+            navigate('/admin/login');
         }
     }, [isAdmin, loading, navigate]);
 
@@ -49,7 +49,6 @@ const AdminDashboard: React.FC = () => {
                 notifications={notifications}
                 onMarkNotificationRead={markNotificationRead}
                 onOpenAuthModal={() => { }}
-                onOpenAdminModal={() => { }}
             />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

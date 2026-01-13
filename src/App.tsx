@@ -14,6 +14,9 @@ import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { DataProvider } from '@/contexts/DataContext';
 import { AppProvider } from '@/contexts/AppContext';
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminLogin from "./pages/AdminLogin";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +33,10 @@ const App = () => (
                 <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<Index />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
                     <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/admin/login" element={<AdminLogin />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>

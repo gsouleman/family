@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { supabase, supabaseUrl, supabaseKey } from '@/lib/supabase';
 import { api } from '@/lib/api';
+import ErrorBanner from '@/components/ui/ErrorBanner';
 
 interface UserFormProps {
     isOpen: boolean;
@@ -106,7 +107,6 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                     options: {
                         data: {
                             full_name: fullName,
-
                             account_type: accountType
                         }
                     }
@@ -151,154 +151,178 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-                <div className="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                    <h3 className="font-bold text-gray-800">{editingUser ? 'Edit User' : 'Create New User'}</h3>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
+                <div className="bg-gradient-to-r from-[#1a365d] to-[#0f2744] px-8 py-6 flex justify-between items-center text-white shrink-0">
+                    <div>
+                        <h3 className="text-xl font-bold">{editingUser ? 'Edit User Profile' : 'Add New Member'}</h3>
+                        <p className="text-blue-200 text-xs mt-1">Manage access and permissions</p>
+                    </div>
+                    <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
-                    {error && (
-                        <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-100">
-                            {error}
+                <div className="overflow-y-auto p-8">
+                    <ErrorBanner error={error} className="mb-6" />
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="col-span-2">
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Full Name</label>
+                                <input
+                                    type="text"
+                                    value={fullName}
+                                    onChange={e => setFullName(e.target.value)}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm font-medium"
+                                    placeholder="e.g. John Doe"
+                                    required
+                                />
+                            </div>
+
+                            <div className="col-span-2">
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
+                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm disabled:opacity-60"
+                                        placeholder="john@example.com"
+                                        required
+                                        disabled={!!editingUser}
+                                    />
+                                    {editingUser && (
+                                        <button
+                                            type="button"
+                                            onClick={handleSendPasswordReset}
+                                            className="px-4 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 text-xs font-bold whitespace-nowrap transition-colors"
+                                            title="Send Password Reset Email"
+                                        >
+                                            Reset
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="col-span-2">
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Phone Number</label>
+                                <input
+                                    type="tel"
+                                    value={phone}
+                                    onChange={e => setPhone(e.target.value)}
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm"
+                                    placeholder="+1 (555) 000-0000"
+                                />
+                                <p className="text-[10px] text-gray-400 mt-1 ml-1">Required for SMS 2FA</p>
+                            </div>
+
+                            {!editingUser && (
+                                <div className="col-span-2">
+                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Password</label>
+                                    <input
+                                        type="password"
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
+                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm"
+                                        required={!editingUser}
+                                        minLength={6}
+                                        placeholder="••••••••"
+                                    />
+                                </div>
+                            )}
+
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Role</label>
+                                <div className="relative">
+                                    <select
+                                        value={role}
+                                        onChange={e => setRole(e.target.value as any)}
+                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm appearance-none"
+                                    >
+                                        <option value="user">User</option>
+                                        <option value="admin">Admin</option>
+                                        <option value="guest">Guest</option>
+                                    </select>
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Account Type</label>
+                                <div className="relative">
+                                    <select
+                                        value={accountType}
+                                        onChange={e => setAccountType(e.target.value as any)}
+                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm appearance-none"
+                                    >
+                                        <option value="family">Family</option>
+                                        <option value="personal">Personal</option>
+                                    </select>
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    )}
 
-                    <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1">Full Name</label>
-                        <input
-                            type="text"
-                            value={fullName}
-                            onChange={e => setFullName(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a365d] outline-none"
-                            required
-                        />
-                    </div>
+                        <div className="bg-yellow-50/50 p-4 rounded-xl border border-yellow-100 flex flex-col gap-3">
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="checkbox"
+                                    id="is2FAEnabled"
+                                    checked={is2FAEnabled}
+                                    onChange={(e) => setIs2FAEnabled(e.target.checked)}
+                                    className="w-5 h-5 text-[#1a365d] border-gray-300 rounded focus:ring-[#1a365d] cursor-pointer"
+                                />
+                                <label htmlFor="is2FAEnabled" className="text-sm font-semibold text-gray-800 cursor-pointer select-none">
+                                    Enforce 2FA Security
+                                </label>
+                            </div>
 
-                    <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1">Email</label>
-                        <div className="flex gap-2">
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a365d] outline-none disabled:bg-gray-100 disabled:text-gray-500"
-                                required
-                                disabled={!!editingUser}
-                            />
-                            {editingUser && (
-                                <button
-                                    type="button"
-                                    onClick={handleSendPasswordReset}
-                                    className="px-3 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 text-xs font-medium whitespace-nowrap"
-                                    title="Send Password Reset Email"
-                                >
-                                    Reset PWD
-                                </button>
+                            {is2FAEnabled && (
+                                <div className="pl-8 animate-in slide-in-from-top-1 fade-in">
+                                    <label className="block text-xs font-bold text-yellow-700 uppercase tracking-wider mb-2">Preferred Method</label>
+                                    <div className="flex gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setTwoFactorMethod('email')}
+                                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold border transition-all ${twoFactorMethod === 'email' ? 'bg-[#1a365d] text-white border-[#1a365d]' : 'bg-white text-gray-600 border-gray-200'}`}
+                                        >
+                                            Email
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setTwoFactorMethod('phone')}
+                                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold border transition-all ${twoFactorMethod === 'phone' ? 'bg-[#1a365d] text-white border-[#1a365d]' : 'bg-white text-gray-600 border-gray-200'}`}
+                                        >
+                                            SMS (Phone)
+                                        </button>
+                                    </div>
+                                </div>
                             )}
                         </div>
-                    </div>
 
-                    <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1">Phone Number (Required for SMS 2FA)</label>
-                        <input
-                            type="tel"
-                            value={phone}
-                            onChange={e => setPhone(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a365d] outline-none"
-                            placeholder="+1234567890"
-                        />
-                    </div>
-
-                    {!editingUser && (
-                        <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">Password</label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={e => setPassword(e.target.value)}
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a365d] outline-none"
-                                required={!editingUser}
-                                minLength={6}
-                            />
-                        </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">Role</label>
-                            <select
-                                value={role}
-                                onChange={e => setRole(e.target.value as any)}
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a365d] outline-none"
+                        <div className="pt-2 flex gap-4">
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="flex-1 px-6 py-3 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 font-semibold transition-colors"
                             >
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
-                                <option value="guest">Guest</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-medium text-gray-500 mb-1">Account Type</label>
-                            <select
-                                value={accountType}
-                                onChange={e => setAccountType(e.target.value as any)}
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a365d] outline-none"
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="flex-1 px-6 py-3 bg-[#1a365d] text-white rounded-xl hover:bg-[#0f2744] font-bold shadow-lg shadow-blue-900/10 disabled:opacity-70 transition-all transform active:scale-95"
                             >
-                                <option value="family">Family</option>
-                                <option value="personal">Personal</option>
-                            </select>
+                                {loading ? 'Saving...' : (editingUser ? 'Save Changes' : 'Create Account')}
+                            </button>
                         </div>
-                    </div>
-
-                    <div className="bg-gray-50 p-3 rounded-lg border border-gray-100 space-y-3">
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                id="is2FAEnabled"
-                                checked={is2FAEnabled}
-                                onChange={(e) => setIs2FAEnabled(e.target.checked)}
-                                className="w-4 h-4 text-[#1a365d] border-gray-300 rounded focus:ring-[#1a365d]"
-                            />
-                            <label htmlFor="is2FAEnabled" className="text-xs font-medium text-gray-700 cursor-pointer">
-                                Enable 2FA
-                            </label>
-                        </div>
-
-                        {is2FAEnabled && (
-                            <div>
-                                <label className="block text-xs font-medium text-gray-500 mb-1">2FA Method</label>
-                                <select
-                                    value={twoFactorMethod}
-                                    onChange={(e) => setTwoFactorMethod(e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#1a365d] outline-none text-sm"
-                                >
-                                    <option value="email">Email</option>
-                                    <option value="phone">Phone (SMS)</option>
-                                </select>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="pt-4 flex gap-3">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="flex-1 px-4 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 font-medium"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="flex-1 px-4 py-2 bg-[#1a365d] text-white rounded-lg hover:bg-[#0f2744] font-medium disabled:opacity-50"
-                        >
-                            {loading ? 'Saving...' : (editingUser ? 'Update User' : 'Create User')}
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     );

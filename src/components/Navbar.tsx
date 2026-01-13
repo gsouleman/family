@@ -9,14 +9,12 @@ interface NavbarProps {
   notifications: Notification[];
   onMarkNotificationRead: (id: string) => void;
   onOpenAuthModal: () => void;
-  onOpenAdminModal: () => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
   notifications,
   onMarkNotificationRead,
-  onOpenAuthModal,
-  onOpenAdminModal
+  onOpenAuthModal
 }) => {
   const {
     user,

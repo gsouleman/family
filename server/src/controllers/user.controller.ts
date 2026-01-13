@@ -56,39 +56,92 @@ export const updateUserProfile = async (req: Request, res: Response) => {
         const { id } = req.params;
         const { full_name, role, account_type, status, phone, is_2fa_enabled, two_factor_method, email } = req.body;
 
-        const user = await prisma.profile.upsert({
-            where: { id },
-            update: {
-                full_name,
-                role,
-                account_type,
-                status,
-                phone,
-                is_2fa_enabled,
-                two_factor_method,
-                email // Allow updating email
-            },
-            create: {
-                id,
-                email: email || `user_${id.substring(0, 8)}@example.com`,
-                full_name: full_name || 'Unknown',
-                role: role || 'user',
-                account_type: account_type || 'family',
-                status: status || 'active',
-                phone: phone || null,
-                is_2fa_enabled: is_2fa_enabled || false,
-                two_factor_method: two_factor_method || 'email'
-            }
+        // Validation: Check if user exists first
+        const existingProfile = await prisma.profile.findUnique({
+            where: { id }
         });
+
+        if (!existingProfile) {
+            return res.status(404).json({
+                error: 'User profile not found',
+                details: `No profile exists with ID: ${id}`,
+                field: 'id'
+            });
+        }
+
+        // Validate email if being updated
+        if (email && email !== existingProfile.email) {
+            const emailExists = await prisma.profile.findUnique({
+                where: { email: email.toLowerCase().trim() }
+            });
+
+            if (emailExists && emailExists.id !== id) {
+                return res.status(400).json({
+                    error: 'Email already in use',
+                    details: `The email ${email} is already registered to another account`,
+                    field: 'email'
+                });
+            }
+        }
+
+        // Validate phone if 2FA via SMS is enabled
+        if (is_2fa_enabled && two_factor_method === 'phone' && !phone) {
+            return res.status(400).json({
+                error: 'Phone number required',
+                details: 'Phone number is required when enabling 2FA via SMS',
+                field: 'phone'
+            });
+        }
+
+        // Build update object with only provided fields
+        const updateData: any = {};
+        if (full_name !== undefined) updateData.full_name = full_name;
+        if (role !== undefined) updateData.role = role;
+        if (account_type !== undefined) updateData.account_type = account_type;
+        if (status !== undefined) updateData.status = status;
+        if (phone !== undefined) updateData.phone = phone || null;
+        if (is_2fa_enabled !== undefined) updateData.is_2fa_enabled = is_2fa_enabled;
+        if (two_factor_method !== undefined) updateData.two_factor_method = two_factor_method;
+        if (email !== undefined) updateData.email = email.toLowerCase().trim();
+
+        // Perform the update
+        const user = await prisma.profile.update({
+            where: { id },
+            data: updateData
+        });
+
+        console.log(`✅ Successfully updated profile for user: ${user.email}`);
         res.json(user);
+
     } catch (error: any) {
         console.error('❌ Error updating user profile:', error);
         console.error('Error Stack:', error.stack);
-        // Respond with actual error details to help diagnosis
+        console.error('Request body:', req.body);
+
+        // Handle specific Prisma errors
+        if (error.code === 'P2002') {
+            return res.status(400).json({
+                error: 'Unique constraint violation',
+                details: 'Email address is already in use',
+                field: 'email',
+                code: error.code
+            });
+        }
+
+        if (error.code === 'P2025') {
+            return res.status(404).json({
+                error: 'Record not found',
+                details: 'User profile does not exist',
+                field: 'id',
+                code: error.code
+            });
+        }
+
+        // Generic error response
         res.status(500).json({
             error: 'Failed to update user profile',
             details: error.message || String(error),
-            code: error.code // Prisma error code (e.g. P2002)
+            code: error.code
         });
     }
 };

@@ -20,7 +20,6 @@ import AddAssetModal from './AddAssetModal';
 import SuccessNotification from './SuccessNotification';
 import AuthModal from './AuthModal';
 import LedgerDashboard from './LedgerDashboard';
-import UserManagementModal from './UserManagementModal';
 import ForcePasswordChangeModal from './ForcePasswordChangeModal';
 
 const AppLayout: React.FC = () => {
@@ -47,7 +46,6 @@ const AppLayout: React.FC = () => {
   const [assetToSell, setAssetToSell] = useState<Asset | null>(null);
   const [showAddAsset, setShowAddAsset] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [showAdminModal, setShowAdminModal] = useState(false);
   const [authPromptMessage, setAuthPromptMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<{ message: string; amount?: number } | null>(null);
 
@@ -121,7 +119,6 @@ const AppLayout: React.FC = () => {
         notifications={notifications}
         onMarkNotificationRead={markNotificationRead}
         onOpenAuthModal={() => { setAuthPromptMessage(null); setShowAuthModal(true); }}
-        onOpenAdminModal={() => setShowAdminModal(true)}
       />
 
       <Hero
@@ -175,7 +172,6 @@ const AppLayout: React.FC = () => {
       {assetToSell && <SaleWorkflow asset={assetToSell} heirs={heirs} onClose={() => setAssetToSell(null)} onConfirmSale={handleConfirmSale} />}
       {showAddAsset && <AddAssetModal onClose={() => setShowAddAsset(false)} onSuccess={handleAssetAdded} />}
       <AuthModal isOpen={showAuthModal} onClose={() => { setShowAuthModal(false); setAuthPromptMessage(null); }} />
-      <UserManagementModal isOpen={showAdminModal} onClose={() => setShowAdminModal(false)} />
       {successMessage && <SuccessNotification message={successMessage.message} amount={successMessage.amount} onClose={() => setSuccessMessage(null)} />}
     </div>
   );

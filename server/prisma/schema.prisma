@@ -21,18 +21,21 @@ model User {
 }
 
 model Profile {
-  id                String   @id @default(uuid())
-  full_name         String?
-  email             String   @unique
-  role              String   @default("user")
-  account_type      String   @default("family")
-  status            String   @default("active")
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
-  avatar_url        String?
-  is_2fa_enabled    Boolean  @default(false)
-  phone             String?
-  two_factor_method String   @default("email")
+  id                      String    @id @default(uuid())
+  full_name               String?
+  email                   String    @unique
+  role                    String    @default("user")
+  account_type            String    @default("family")
+  status                  String    @default("active")
+  created_at              DateTime  @default(now())
+  updated_at              DateTime  @updatedAt
+  avatar_url              String?
+  is_2fa_enabled          Boolean   @default(false)
+  phone                   String?
+  two_factor_method       String    @default("email")
+  two_factor_code         String?
+  two_factor_code_expires DateTime?
+  last_login              DateTime?
 
   @@map("profiles")
 }

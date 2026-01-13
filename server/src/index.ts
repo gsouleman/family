@@ -12,6 +12,7 @@ import ledgerRoutes from './routes/ledger.routes';
 import userRoutes from './routes/users.routes';
 import seedRoutes from './routes/seed.routes';
 import debugRoutes from './routes/debug.routes';
+import authRoutes from './routes/auth.routes';
 
 
 const app = express();
@@ -23,7 +24,10 @@ app.use(express.json());
 import { errorHandler } from './middleware/error.middleware';
 import { userMiddleware } from './middleware/user.middleware';
 
+
 // Apply user middleware essentially globally or to specific routes
+// Auth routes come BEFORE user middleware (they don't need auth)
+app.use('/api/auth', authRoutes);
 app.use(userMiddleware);
 
 app.use('/api/assets', assetRoutes);
