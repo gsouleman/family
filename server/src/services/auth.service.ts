@@ -22,7 +22,7 @@ export class AuthService {
                 socketTimeout: 10000,
                 // FORCE IPv4 to avoid IPv6 connection issues on Render
                 family: 4
-            });
+            } as any);
         }
         return this.transporter;
     }
