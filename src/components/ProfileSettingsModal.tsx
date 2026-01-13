@@ -192,7 +192,10 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
                                 )}
                             </div>
 
-                            <div className="flex justify-end pt-2">
+                            <div className="flex justify-end pt-2 gap-3">
+                                <button type="button" onClick={onClose} disabled={loading} className="px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50">
+                                    Cancel
+                                </button>
                                 <button type="submit" disabled={loading} className="px-6 py-2 bg-[#1a365d] hover:bg-[#0f2744] text-white font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50">
                                     Save Changes
                                 </button>
@@ -226,8 +229,11 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
                                     />
                                 </div>
                             </div>
-                            <div className="flex justify-end pt-2">
-                                <button type="submit" disabled={loading || !newPassword} className="px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50">
+                            <div className="flex justify-end pt-2 gap-3">
+                                <button type="button" onClick={onClose} disabled={loading} className="px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50">
+                                    Cancel
+                                </button>
+                                <button type="submit" disabled={loading || !newPassword} className="px-6 py-2 bg-[#1a365d] hover:bg-[#0f2744] text-white font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50">
                                     Update Password
                                 </button>
                             </div>
