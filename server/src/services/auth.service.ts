@@ -17,9 +17,11 @@ export class AuthService {
                     pass: process.env.SMTP_PASS,
                 },
                 // Add timeouts to fail faster and provide better errors
-                connectionTimeout: 10000, // 10 seconds
+                connectionTimeout: 10000,
                 greetingTimeout: 10000,
-                socketTimeout: 10000
+                socketTimeout: 10000,
+                // FORCE IPv4 to avoid IPv6 connection issues on Render
+                family: 4
             });
         }
         return this.transporter;
