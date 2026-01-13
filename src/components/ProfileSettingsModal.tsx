@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { api } from '@/lib/api';
+import { toast } from "sonner";
 // Remove direct supabase usage if not needed for Auth (but AuthContext uses it)
 // We might still need it in this file? No, looks like only for profile data.
 // But check imports.
@@ -25,7 +26,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
     const [confirmPassword, setConfirmPassword] = useState('');
 
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
 
     // Fetch initial profile data
     useEffect(() => {
@@ -46,7 +47,6 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
 
         if (isOpen) {
             loadProfile();
-            setMessage(null);
             setNewPassword('');
             setConfirmPassword('');
         }
@@ -57,7 +57,6 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
     const handleSaveProfile = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        setMessage(null);
 
         try {
             const { error } = await updateProfile({
@@ -68,9 +67,10 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
             });
 
             if (error) throw error;
-            setMessage({ type: 'success', text: 'Profile updated successfully' });
+            toast.success("Profile updated successfully");
+            onClose();
         } catch (err: any) {
-            setMessage({ type: 'error', text: err.message });
+            toast.error(err.message);
         } finally {
             setLoading(false);
         }
@@ -79,25 +79,25 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
     const handleChangePassword = async (e: React.FormEvent) => {
         e.preventDefault();
         if (newPassword !== confirmPassword) {
-            setMessage({ type: 'error', text: 'Passwords do not match' });
+            toast.error("Passwords do not match");
             return;
         }
         if (newPassword.length < 6) {
-            setMessage({ type: 'error', text: 'Password must be at least 6 characters' });
+            toast.error("Password must be at least 6 characters");
             return;
         }
 
         setLoading(true);
-        setMessage(null);
 
         try {
             const { error } = await changePassword(newPassword);
             if (error) throw error;
-            setMessage({ type: 'success', text: 'Password changed successfully' });
+            toast.success("Password changed successfully");
             setNewPassword('');
             setConfirmPassword('');
+            onClose();
         } catch (err: any) {
-            setMessage({ type: 'error', text: err.message });
+            toast.error(err.message);
         } finally {
             setLoading(false);
         }
@@ -114,11 +114,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
                 </div>
 
                 <div className="p-6 space-y-8">
-                    {message && (
-                        <div className={`p-4 rounded-lg text-sm ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-100' : 'bg-red-50 text-red-700 border border-red-100'}`}>
-                            {message.text}
-                        </div>
-                    )}
+
 
                     {/* Profile Section */}
                     <section>
