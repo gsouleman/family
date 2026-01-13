@@ -1,31 +1,21 @@
 services:
-  # Backend Web Service
-  - type: web
-    name: family-assets-backend
-    runtime: node
-    repo: https://github.com/gsouleman/family
-    branch: main
-    rootDir: server
-    buildCommand: npm install && npm run build
-    startCommand: npm start
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: DATABASE_URL
-        sync: false # User must set this to their Neon connection string in Render Dashboard
-
-  # Frontend Web Service (serving static files)
+  # Frontend Service
   - type: web
     name: family-assets-frontend
-    runtime: node
-    repo: https://github.com/gsouleman/family
-    branch: main
-    rootDir: .
+    env: node
     buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: family-assets-backend
-          property: host
+        value: https://family-assets-backend.onrender.com
+  # Backend Service  
+  - type: web
+    name: family-assets-backend
+    env: node
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: family-database
+          property: connectionString
