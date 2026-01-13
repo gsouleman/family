@@ -7,25 +7,16 @@ export class AuthService {
     private static transporter: nodemailer.Transporter | null = null;
 
     private static getTransporter() {
-        if (!this.transporter && process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-            const host = process.env.SMTP_HOST || 'smtp.gmail.com';
-            const port = parseInt(process.env.SMTP_PORT || '465'); // Default to 465 (SSL)
-            const secure = process.env.SMTP_SECURE === 'true' || port === 465; // True for 465
-            const user = process.env.SMTP_USER;
-            const pass = process.env.SMTP_PASS;
-
-            console.log(`🔌 Initializing SMTP with: Host=${host}, Port=${port}, Secure=${secure}, User=${user ? '***' : 'Missing'}`);
+        if (!this.transporter && process.env.SMTP_USER && process.env.SMTP_PASS) {
+            console.log('🔌 Initializing SMTP with service: "gmail"');
 
             this.transporter = nodemailer.createTransport({
-                host,
-                port,
-                secure,
-                auth: { user, pass },
-                // Robustness
-                connectionTimeout: 20000,
-                greetingTimeout: 20000,
-                socketTimeout: 20000,
-                family: 4,     // Force IPv4
+                service: 'gmail',
+                auth: {
+                    user: process.env.SMTP_USER,
+                    pass: process.env.SMTP_PASS,
+                },
+                // Basic logging only, let defaults handle connection
                 logger: true,
                 debug: true
             } as any);
