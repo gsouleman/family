@@ -2,17 +2,17 @@ import 'dotenv/config';
 
 import express from 'express';
 import cors from 'cors';
-import assetRoutes from './routes/assets.routes';
-import heirRoutes from './routes/heirs.routes';
-import documentRoutes from './routes/documents.routes';
-import transactionRoutes from './routes/transactions.routes';
-import distributionRoutes from './routes/distributions.routes';
-import notificationRoutes from './routes/notifications.routes';
-import ledgerRoutes from './routes/ledger.routes';
-import userRoutes from './routes/users.routes';
-import seedRoutes from './routes/seed.routes';
-import debugRoutes from './routes/debug.routes';
-import authRoutes from './routes/auth.routes';
+import assetRoutes from './routes/assets.routes.js';
+import heirRoutes from './routes/heirs.routes.js';
+import documentRoutes from './routes/documents.routes.js';
+import transactionRoutes from './routes/transactions.routes.js';
+import distributionRoutes from './routes/distributions.routes.js';
+import notificationRoutes from './routes/notifications.routes.js';
+import ledgerRoutes from './routes/ledger.routes.js';
+import userRoutes from './routes/users.routes.js';
+import seedRoutes from './routes/seed.routes.js';
+import debugRoutes from './routes/debug.routes.js';
+import authRoutes from './routes/auth.routes.js';
 
 
 const app = express();
