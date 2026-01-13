@@ -1,5 +1,7 @@
 import prisma from '../lib/prisma.js';
 import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import twilio from 'twilio';
 
 export class AuthService {
     /**
@@ -94,19 +96,50 @@ export class AuthService {
         try {
             console.log(`📧 Sending OTP ${code} to ${email}`);
 
-            // TODO: Integrate with actual email service (SendGrid, AWS SES, etc.)
-            // For now, we'll log it and rely on Supabase's email for production
-
-            // In development, the code is logged
+            // Development Logging
             if (process.env.NODE_ENV === 'development') {
                 console.log(`\n${'='.repeat(50)}`);
                 console.log(`🔐 2FA CODE FOR ${email}: ${code}`);
                 console.log(`${'='.repeat(50)}\n`);
             }
 
+            // Production: Send Real Email
+            if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+                const transporter = nodemailer.createTransport({
+                    host: process.env.SMTP_HOST,
+                    port: parseInt(process.env.SMTP_PORT || '587'),
+                    secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+                    auth: {
+                        user: process.env.SMTP_USER,
+                        pass: process.env.SMTP_PASS,
+                    },
+                });
+
+                await transporter.sendMail({
+                    from: process.env.EMAIL_FROM || '"Family Assets Support" <noreply@familyassets.com>',
+                    to: email,
+                    subject: '🔐 Your 2FA Verification Code',
+                    html: `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                            <h2>Verification Required</h2>
+                            <p>Here is your One-Time Password (OTP) to verify your identity:</p>
+                            <div style="background-color: #f4f4f4; padding: 15px; text-align: center; border-radius: 8px; margin: 20px 0;">
+                                <h1 style="letter-spacing: 5px; color: #333; margin: 0;">${code}</h1>
+                            </div>
+                            <p>This code will expire in 10 minutes.</p>
+                            <p>If you didn't request this code, please ignore this email.</p>
+                        </div>
+                    `,
+                });
+                console.log('✅ Email sent successfully via SMTP');
+            } else {
+                console.warn('⚠️ SMTP credentials missing. OTP email NOT sent (check server logs/console).');
+            }
+
             return { success: true };
         } catch (error) {
             console.error('Error sending OTP email:', error);
+            // Don't leak exact error to client, but log it
             return { success: false, error: 'Failed to send verification code' };
         }
     }
@@ -118,12 +151,25 @@ export class AuthService {
         try {
             console.log(`📱 Sending OTP ${code} to ${phone}`);
 
-            // TODO: Integrate with Twilio or similar SMS service
-
+            // Development Logging
             if (process.env.NODE_ENV === 'development') {
                 console.log(`\n${'='.repeat(50)}`);
                 console.log(`🔐 2FA CODE FOR ${phone}: ${code}`);
                 console.log(`${'='.repeat(50)}\n`);
+            }
+
+            // Production: Send Real SMS via Twilio
+            if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+                const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+                await client.messages.create({
+                    body: `Your Family Assets verification code is: ${code}. Valid for 10 minutes.`,
+                    from: process.env.TWILIO_PHONE_NUMBER,
+                    to: phone
+                });
+                console.log('✅ SMS sent successfully via Twilio');
+            } else {
+                console.warn('⚠️ Twilio credentials missing. OTP SMS NOT sent (check server logs/console).');
             }
 
             return { success: true };

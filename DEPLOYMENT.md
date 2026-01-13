@@ -39,6 +39,21 @@ npm start
 postgresql://user:password@host/database?sslmode=require
 ```
 
+### 🔐 2FA Configuration (Optional but Recommended)
+For Email and SMS 2FA to work, add these variables to your **Backend** service:
+
+| Variable | Description |
+|----------|-------------|
+| `SMTP_HOST` | Email Server Host (e.g. `smtp.gmail.com`) |
+| `SMTP_PORT` | Email Server Port (`587` or `465`) |
+| `SMTP_USER` | Your Email Address |
+| `SMTP_PASS` | Your Email App Password |
+| `SMTP_SECURE` | `true` (for 465) or `false` (for 587) |
+| `EMAIL_FROM` | `"Sender Name" <email@example.com>` |
+| `TWILIO_ACCOUNT_SID` | Twilio Account SID |
+| `TWILIO_AUTH_TOKEN` | Twilio Auth Token |
+| `TWILIO_PHONE_NUMBER` | Twilio Phone Number |
+
 ### Frontend Service (family-assets-frontend)
 
 **Service Type:** Web Service  
