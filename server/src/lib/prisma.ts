@@ -8,7 +8,15 @@ declare global {
 
 const getDatabaseUrl = () => {
     let url = process.env.DATABASE_URL;
-    if (!url) return undefined;
+    if (!url) {
+        console.error('❌ DATABASE_URL environment variable is not set!');
+        console.error('📝 Please set DATABASE_URL in your Render dashboard:');
+        console.error('   1. Go to https://dashboard.render.com');
+        console.error('   2. Select your backend service');
+        console.error('   3. Go to Environment tab');
+        console.error('   4. Add DATABASE_URL with your Neon connection string');
+        throw new Error('DATABASE_URL environment variable is required');
+    }
 
     // Fix for Neon Pooling: Force Simple Query Mode (pgbouncer=true)
     // This prevents "cached plan must not change result type" errors
