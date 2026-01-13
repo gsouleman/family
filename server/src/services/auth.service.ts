@@ -9,15 +9,20 @@ export class AuthService {
     private static getTransporter() {
         if (!this.transporter && process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
             this.transporter = nodemailer.createTransport({
-                // Optimized Gmail Configuration
-                service: 'gmail', // Automatically sets host/port/secure
+                host: process.env.SMTP_HOST || 'smtp.gmail.com',
+                port: 587, // Force 587 for STARTTLS (best for Render)
+                secure: false, // Must be false for port 587
+                requireTLS: true, // Force TLS
                 auth: {
                     user: process.env.SMTP_USER,
                     pass: process.env.SMTP_PASS,
                 },
+                tls: {
+                    ciphers: 'SSLv3' // Compatibility setting
+                },
                 // Robustness & Logging
-                connectionTimeout: 15000,
-                greetingTimeout: 15000,
+                connectionTimeout: 20000,
+                greetingTimeout: 20000,
                 family: 4,     // Force IPv4
                 logger: true,  // Log SMTP traffic to console
                 debug: true    // Include debug info in logs
