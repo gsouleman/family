@@ -5,6 +5,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
+console.log('\n-------------------------------------------------------');
+console.log('🚀 FRONTEND PROXY - STARTING (server.js)');
+console.log('-------------------------------------------------------');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 

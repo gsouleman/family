@@ -107,6 +107,17 @@ The repository includes a `render.yaml` file that automatically configures both 
 
 ## Common Issues & Troubleshooting
 
+### 🚨 CRITICAL: "DATABASE_URL environment variable is required" (Frontend Logs)
+**Problem:** Your Frontend service crashes with a Backend/Prisma error.
+**Cause:** Your Frontend service is misconfigured and is incorrectly running the Backend code.
+**Fix:**
+1. Go to **Frontend Service** > **Settings** on Render.
+2. Set **Root Directory** to `.` (Project Root).
+3. Set **Start Command** to `npm start` (runs `node server.js`).
+   - ❌ **Incorrect:** `cd server && npm start` (This runs the Backend!)
+   - ❌ **Incorrect:** `node dist/index.js`
+4. **Manual Deploy** > Clear build cache & deploy.
+
 ### Issue: "tsx: not found" Error
 
 **Cause:** Build command is using `npm run dev:all` instead of production build commands.
