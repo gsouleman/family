@@ -22,8 +22,7 @@ router.get('/db-schema', async (req, res) => {
         res.json({
             message: 'Database Schema Check',
             db_connection: 'Success',
-            profile_columns: columns,
-            prisma_client_version: PrismaClient.dmmf?.datamodel?.models // This might not be accessible at runtime easily
+            profile_columns: columns
         });
     } catch (error) {
         res.status(500).json({
