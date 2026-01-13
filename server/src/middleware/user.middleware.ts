@@ -1,6 +1,6 @@
 
 import { Request, Response, NextFunction } from 'express';
-import prisma from '../lib/prisma';
+import prisma from '../lib/prisma.js';
 import { PrismaClient } from '@prisma/client';
 
 export const userMiddleware = async (req: Request, res: Response, next: NextFunction) => {
