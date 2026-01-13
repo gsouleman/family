@@ -21,8 +21,8 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-import { errorHandler } from './middleware/error.middleware';
-import { userMiddleware } from './middleware/user.middleware';
+import { errorHandler } from './middleware/error.middleware.js';
+import { userMiddleware } from './middleware/user.middleware.js';
 
 
 // Apply user middleware essentially globally or to specific routes
@@ -52,7 +52,7 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString(), version: '1.2.4' });
 });
 
-import prisma from './lib/prisma';
+import prisma from './lib/prisma.js';
 
 app.get('/api/debug/db', async (req, res) => {
     try {
