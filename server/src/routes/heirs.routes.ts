@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getHeirs, createHeir, updateHeir, deleteHeir } from '../controllers/heirs.controller';
+import { getHeirs, createHeir, updateHeir, deleteHeir } from '../controllers/heirs.controller.js';
 
 const router = Router();
 

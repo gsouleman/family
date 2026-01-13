@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getDistributions, createDistribution } from '../controllers/distributions.controller';
+import { getDistributions, createDistribution } from '../controllers/distributions.controller.js';
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAssets, createAsset, updateAsset, deleteAsset } from '../controllers/assets.controller';
+import { getAssets, createAsset, updateAsset, deleteAsset } from '../controllers/assets.controller.js';
 
 const router = Router();
 

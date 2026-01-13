@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { DocumentType } from '@prisma/client';
-import prisma from '../lib/prisma';
+import prisma from '../lib/prisma.js';
 
 export const getDocuments = async (req: Request, res: Response) => {
     try {

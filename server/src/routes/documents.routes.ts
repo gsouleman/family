@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getDocuments, createDocument, deleteDocument } from '../controllers/documents.controller';
+import { getDocuments, createDocument, deleteDocument } from '../controllers/documents.controller.js';
 
 const router = Router();
 

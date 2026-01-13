@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { HeirRelation } from '@prisma/client';
-import prisma from '../lib/prisma';
+import prisma from '../lib/prisma.js';
 
 export const getHeirs = async (req: Request, res: Response) => {
     try {
