@@ -1,47 +1,9 @@
 import prisma from '../lib/prisma.js';
 import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import twilio from 'twilio';
 
 export class AuthService {
-    private static transporter: nodemailer.Transporter | null = null;
-
-    private static getTransporter() {
-        if (!this.transporter && process.env.SMTP_USER && process.env.SMTP_PASS) {
-            console.log('🔌 Initializing SMTP with service: "gmail"');
-
-            this.transporter = nodemailer.createTransport({
-                service: 'gmail',
-                auth: {
-                    user: process.env.SMTP_USER,
-                    pass: process.env.SMTP_PASS,
-                },
-                // Basic logging only, let defaults handle connection
-                logger: true,
-                debug: true
-            } as any);
-        }
-        return this.transporter;
-    }
-
-    /**
-     * Verify SMTP Connection (Call on server startup)
-     */
-    static async verifySMTPConnection(): Promise<boolean> {
-        const transporter = this.getTransporter();
-        if (!transporter) {
-            console.warn('⚠️ SMTP Transporter not initialized (Missing credentials)');
-            return false;
-        }
-        try {
-            await transporter.verify();
-            console.log('✅ SMTP Connection Verified Successfully');
-            return true;
-        } catch (error) {
-            console.error('❌ SMTP Connection Verification Failed:', error);
-            return false;
-        }
-    }
     /**
      * Generate a 6-digit OTP code
      */
@@ -127,8 +89,7 @@ export class AuthService {
     }
 
     /**
-     * Send OTP code via email (using Supabase Auth)
-     * In production, you'd integrate with an email service
+     * Send OTP code via email using Resend HTTP API
      */
     static async sendOTPEmail(email: string, code: string): Promise<{ success: boolean; error?: string }> {
         try {
@@ -141,12 +102,13 @@ export class AuthService {
                 console.log(`${'='.repeat(50)}\n`);
             }
 
-            // Production: Send Real Email
-            const transporter = this.getTransporter();
-            if (transporter) {
-                await transporter.sendMail({
-                    from: process.env.EMAIL_FROM || '"Family Assets Support" <noreply@familyassets.com>',
-                    to: email,
+            // Production: Send via Resend HTTP API
+            if (process.env.RESEND_API_KEY) {
+                const resend = new Resend(process.env.RESEND_API_KEY);
+
+                await resend.emails.send({
+                    from: process.env.EMAIL_FROM || 'Family Assets <onboarding@resend.dev>',
+                    to: [email],
                     subject: '🔐 Your 2FA Verification Code',
                     html: `
                         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -160,15 +122,14 @@ export class AuthService {
                         </div>
                     `,
                 });
-                console.log('✅ Email sent successfully via SMTP');
+                console.log('✅ Email sent successfully via Resend');
             } else {
-                console.warn('⚠️ SMTP credentials missing or invalid. OTP email NOT sent.');
+                console.warn('⚠️ RESEND_API_KEY missing. OTP email NOT sent.');
             }
 
             return { success: true };
         } catch (error) {
             console.error('Error sending OTP email:', error);
-            // Don't leak exact error to client, but log it
             return { success: false, error: 'Failed to send verification code' };
         }
     }

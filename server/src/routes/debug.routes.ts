@@ -1,7 +1,6 @@
 
 import { Router } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { AuthService } from '../services/auth.service.js'; // Import AuthService
 
 const router = Router();
 const prisma = new PrismaClient();
@@ -33,27 +32,18 @@ router.get('/db-schema', async (req, res) => {
     }
 });
 
-router.get('/smtp', async (req, res) => {
+router.get('/email', async (req, res) => {
     try {
-        const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com (default)';
-        const smtpPort = process.env.SMTP_PORT || '465 (default)';
-        const smtpUser = process.env.SMTP_USER ? '***' : 'MISSING';
-        const smtpPass = process.env.SMTP_PASS ? '***' : 'MISSING';
-        const smtpSecure = process.env.SMTP_SECURE;
-
-        console.log('🔍 Manual SMTP Debug Verification Triggered');
-        const isVerified = await AuthService.verifySMTPConnection();
+        const resendKey = process.env.RESEND_API_KEY ? '***SET***' : 'MISSING';
+        const emailFrom = process.env.EMAIL_FROM || 'Family Assets <onboarding@resend.dev> (default)';
 
         res.json({
-            status: isVerified ? 'success' : 'failed',
+            status: resendKey !== 'MISSING' ? 'configured' : 'not_configured',
             config: {
-                host: smtpHost,
-                port: smtpPort,
-                user: smtpUser,
-                pass: smtpPass,
-                secure: smtpSecure
+                resend_api_key: resendKey,
+                email_from: emailFrom
             },
-            message: isVerified ? '✅ Connection Successful' : '❌ Connection Failed (Check Server Logs for Details)'
+            message: resendKey !== 'MISSING' ? '✅ Resend API Key is set' : '❌ RESEND_API_KEY is missing'
         });
     } catch (error) {
         res.status(500).json({ error: String(error) });
