@@ -8,24 +8,26 @@ export class AuthService {
 
     private static getTransporter() {
         if (!this.transporter && process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+            const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+            const port = parseInt(process.env.SMTP_PORT || '465'); // Default to 465 (SSL)
+            const secure = process.env.SMTP_SECURE === 'true' || port === 465; // True for 465
+            const user = process.env.SMTP_USER;
+            const pass = process.env.SMTP_PASS;
+
+            console.log(`🔌 Initializing SMTP with: Host=${host}, Port=${port}, Secure=${secure}, User=${user ? '***' : 'Missing'}`);
+
             this.transporter = nodemailer.createTransport({
-                host: process.env.SMTP_HOST || 'smtp.gmail.com',
-                port: 587, // Force 587 for STARTTLS (best for Render)
-                secure: false, // Must be false for port 587
-                requireTLS: true, // Force TLS
-                auth: {
-                    user: process.env.SMTP_USER,
-                    pass: process.env.SMTP_PASS,
-                },
-                tls: {
-                    ciphers: 'SSLv3' // Compatibility setting
-                },
-                // Robustness & Logging
+                host,
+                port,
+                secure,
+                auth: { user, pass },
+                // Robustness
                 connectionTimeout: 20000,
                 greetingTimeout: 20000,
+                socketTimeout: 20000,
                 family: 4,     // Force IPv4
-                logger: true,  // Log SMTP traffic to console
-                debug: true    // Include debug info in logs
+                logger: true,
+                debug: true
             } as any);
         }
         return this.transporter;
