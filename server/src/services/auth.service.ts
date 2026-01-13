@@ -9,19 +9,18 @@ export class AuthService {
     private static getTransporter() {
         if (!this.transporter && process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
             this.transporter = nodemailer.createTransport({
-                host: process.env.SMTP_HOST,
-                port: parseInt(process.env.SMTP_PORT || '587'),
-                secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+                // Optimized Gmail Configuration
+                service: 'gmail', // Automatically sets host/port/secure
                 auth: {
                     user: process.env.SMTP_USER,
                     pass: process.env.SMTP_PASS,
                 },
-                // Add timeouts to fail faster and provide better errors
-                connectionTimeout: 10000,
-                greetingTimeout: 10000,
-                socketTimeout: 10000,
-                // FORCE IPv4 to avoid IPv6 connection issues on Render
-                family: 4
+                // Robustness & Logging
+                connectionTimeout: 15000,
+                greetingTimeout: 15000,
+                family: 4,     // Force IPv4
+                logger: true,  // Log SMTP traffic to console
+                debug: true    // Include debug info in logs
             } as any);
         }
         return this.transporter;
