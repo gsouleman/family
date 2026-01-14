@@ -106,7 +106,11 @@ export class AuthService {
             if (process.env.RESEND_API_KEY) {
                 const resend = new Resend(process.env.RESEND_API_KEY);
 
-                await resend.emails.send({
+                console.log(`🔑 Using Resend API Key: ${process.env.RESEND_API_KEY.substring(0, 10)}...`);
+                console.log(`📤 Sending from: ${process.env.EMAIL_FROM || 'Family Assets <onboarding@resend.dev>'}`);
+                console.log(`📬 Sending to: ${email}`);
+
+                const response = await resend.emails.send({
                     from: process.env.EMAIL_FROM || 'Family Assets <onboarding@resend.dev>',
                     to: [email],
                     subject: '🔐 Your 2FA Verification Code',
@@ -122,9 +126,18 @@ export class AuthService {
                         </div>
                     `,
                 });
-                console.log('✅ Email sent successfully via Resend');
+
+                console.log('📊 Resend API Response:', JSON.stringify(response, null, 2));
+
+                if (response.error) {
+                    console.error('❌ Resend API Error:', response.error);
+                    return { success: false, error: `Resend error: ${response.error.message}` };
+                }
+
+                console.log(`✅ Email sent successfully via Resend. ID: ${response.data?.id}`);
             } else {
                 console.warn('⚠️ RESEND_API_KEY missing. OTP email NOT sent.');
+                return { success: false, error: 'RESEND_API_KEY not configured' };
             }
 
             return { success: true };
