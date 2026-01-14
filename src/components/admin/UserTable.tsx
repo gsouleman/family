@@ -8,7 +8,6 @@ interface User {
     email: string;
     full_name: string;
     role: 'admin' | 'user' | 'guest';
-    account_type: 'family' | 'personal';
     status: 'active' | 'disabled';
     created_at: string;
 }
@@ -81,7 +80,6 @@ const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
                         <tr>
                             <th className="p-3 font-medium">User</th>
                             <th className="p-3 font-medium">Role</th>
-                            <th className="p-3 font-medium">Type</th>
                             <th className="p-3 font-medium">Status</th>
                             <th className="p-3 font-medium">Joined</th>
                             <th className="p-3 text-right font-medium">Actions</th>
@@ -102,9 +100,6 @@ const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
                                         }`}>
                                         {u.role || 'user'}
                                     </span>
-                                </td>
-                                <td className="p-3">
-                                    <span className="capitalize text-gray-600 text-xs">{u.account_type || '-'}</span>
                                 </td>
                                 <td className="p-3">
                                     <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${u.status === 'active' || !u.status ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-500'

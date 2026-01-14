@@ -10,7 +10,7 @@ interface AuthContextType {
   isAdmin: boolean;
   mustChangePassword: boolean;
   branding: string;
-  signUp: (email: string, password: string, fullName: string, accountType: 'personal' | 'family') => Promise<{ error: Error | null }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null, needs2FA?: boolean, method?: string, userId?: string }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: Error | null }>;
@@ -159,7 +159,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsAdmin(isSuperAdmin || user.user_metadata?.role === 'admin');
   };
 
-  const signUp = async (email: string, password: string, fullName: string, accountType: 'personal' | 'family') => {
+  const signUp = async (email: string, password: string, fullName: string) => {
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -167,7 +167,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         options: {
           data: {
             full_name: fullName,
-            account_type: accountType,
             role: 'user', // Default role
           },
         },
@@ -181,7 +180,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: data.user.id,
           email: email,
           full_name: fullName,
-          account_type: accountType,
           role: 'user', // Default
           status: 'active',
           created_at: new Date().toISOString(),

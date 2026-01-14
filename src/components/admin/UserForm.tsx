@@ -16,8 +16,6 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState<'guest' | 'user' | 'admin'>('user');
-
-    const [accountType, setAccountType] = useState<'family' | 'personal'>('family');
     const [phone, setPhone] = useState('');
     const [is2FAEnabled, setIs2FAEnabled] = useState(false);
     const [twoFactorMethod, setTwoFactorMethod] = useState<string>('email');
@@ -31,8 +29,6 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
             setFullName(editingUser.full_name || '');
             setEmail(editingUser.email || '');
             setRole(editingUser.role || 'user');
-            // Ensure exact match or fallback, handling mixed case just in case
-            setAccountType((editingUser.account_type?.toLowerCase() as any) || 'family');
             setPhone(editingUser.phone || '');
             setIs2FAEnabled(editingUser.is_2fa_enabled || false);
             setTwoFactorMethod(editingUser.two_factor_method || 'email');
@@ -43,7 +39,6 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
             setEmail('');
             setPassword('');
             setRole('user');
-            setAccountType('family');
             setPhone('');
             setIs2FAEnabled(false);
             setTwoFactorMethod('email');
@@ -79,8 +74,6 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                 await api.updateUser(editingUser.id, {
                     full_name: fullName,
                     role: role,
-
-                    account_type: accountType,
                     phone: phone || null,
                     is_2fa_enabled: is2FAEnabled,
                     two_factor_method: twoFactorMethod
@@ -106,8 +99,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                     password,
                     options: {
                         data: {
-                            full_name: fullName,
-                            account_type: accountType
+                            full_name: fullName
                         }
                     }
                 });
@@ -128,8 +120,6 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                         email: email,
                         full_name: fullName,
                         role: role,
-
-                        account_type: accountType,
                         phone: phone || null,
                         is_2fa_enabled: is2FAEnabled,
                         two_factor_method: twoFactorMethod,
@@ -243,23 +233,6 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                                         <option value="user">User</option>
                                         <option value="admin">Admin</option>
                                         <option value="guest">Guest</option>
-                                    </select>
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Account Type</label>
-                                <div className="relative">
-                                    <select
-                                        value={accountType}
-                                        onChange={e => setAccountType(e.target.value as any)}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm appearance-none"
-                                    >
-                                        <option value="family">Family</option>
-                                        <option value="personal">Personal</option>
                                     </select>
                                     <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
