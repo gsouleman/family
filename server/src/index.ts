@@ -23,12 +23,14 @@ app.use(express.json());
 
 import { errorHandler } from './middleware/error.middleware.js';
 import { userMiddleware } from './middleware/user.middleware.js';
+import { sessionActivityMiddleware } from './middleware/session.middleware.js';
 
 
 // Apply user middleware essentially globally or to specific routes
 // Auth routes come BEFORE user middleware (they don't need auth)
 app.use('/api/auth', authRoutes);
 app.use(userMiddleware);
+app.use(sessionActivityMiddleware); // Track session activity for auto-logout
 
 app.use('/api/assets', assetRoutes);
 app.use('/api/heirs', heirRoutes);
