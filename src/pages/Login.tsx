@@ -38,7 +38,7 @@ const Login: React.FC = () => {
                 setLoading(false);
             } else {
                 // Success - redirect to dashboard
-                navigate('/');
+                navigate('/dashboard');
             }
         } catch (err: any) {
             setError(err.message || 'Login failed');
@@ -65,7 +65,7 @@ const Login: React.FC = () => {
                     setLoading(false);
                 } else {
                     // Success - redirect to dashboard
-                    navigate('/');
+                    navigate('/dashboard');
                 }
             }
         } catch (err: any) {
