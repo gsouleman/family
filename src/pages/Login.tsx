@@ -57,8 +57,16 @@ const Login: React.FC = () => {
                 setError(verifyError.message);
                 setLoading(false);
             } else {
-                // Success - redirect to dashboard
-                navigate('/');
+                // After successful 2FA verification, sign in to Supabase with the stored password
+                const { error: signInError } = await signIn(email, password);
+
+                if (signInError) {
+                    setError(signInError.message);
+                    setLoading(false);
+                } else {
+                    // Success - redirect to dashboard
+                    navigate('/');
+                }
             }
         } catch (err: any) {
             setError(err.message || '2FA verification failed');
