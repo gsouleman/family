@@ -36,6 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdmin, setIsAdmin] = useState(false);
   const [mustChangePassword, setMustChangePassword] = useState(false);
   const [branding, setBranding] = useState('Family Estate');
+  const [lastActivity, setLastActivity] = useState<number>(Date.now());
 
   useEffect(() => {
     // Get initial session
@@ -64,6 +65,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Activity tracking and auto-logout (10 minutes)
+  useEffect(() => {
+    const INACTIVITY_TIMEOUT = 10 * 60 * 1000; // 10 minutes
+
+    const updateActivity = () => {
+      setLastActivity(Date.now());
+    };
+
+    const checkInactivity = () => {
+      if (user && (Date.now() - lastActivity) > INACTIVITY_TIMEOUT) {
+        console.log('Auto-logout due to inactivity');
+        signOut();
+      }
+    };
+
+    // Track user activity
+    const events = ['mousedown', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(event => window.addEventListener(event, updateActivity));
+
+    // Check inactivity every minute
+    const interval = setInterval(checkInactivity, 60 * 1000);
+
+    return () => {
+      events.forEach(event => window.removeEventListener(event, updateActivity));
+      clearInterval(interval);
+    };
+  }, [user, lastActivity]);
 
   const checkUserRole = async (user: User) => {
     let isSuperAdmin = false;
