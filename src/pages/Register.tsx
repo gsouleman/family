@@ -90,7 +90,7 @@ const Register: React.FC = () => {
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 {/* Logo */}
                 <div className="flex justify-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-[#1a365d] to-[#0f2744] rounded-2xl flex items-center justify-center shadow-lg">
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/90 rounded-2xl flex items-center justify-center shadow-lg">
                         <svg className="w-10 h-10 text-[#d4af37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -101,7 +101,7 @@ const Register: React.FC = () => {
                 </h2>
                 <p className="mt-2 text-center text-sm text-gray-600">
                     Already have an account?{' '}
-                    <Link to="/login" className="font-medium text-[#1a365d] hover:text-[#0f2744]">
+                    <Link to="/login" className="font-medium text-primary hover:text-[#0f2744]">
                         Sign in
                     </Link>
                 </p>
@@ -125,7 +125,7 @@ const Register: React.FC = () => {
                                     required
                                     value={fullName}
                                     onChange={(e) => setFullName(e.target.value)}
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#1a365d] focus:border-[#1a365d] sm:text-sm"
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                                     placeholder="John Doe"
                                 />
                             </div>
@@ -144,7 +144,7 @@ const Register: React.FC = () => {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#1a365d] focus:border-[#1a365d] sm:text-sm"
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                                     placeholder="you@example.com"
                                 />
                             </div>
@@ -163,7 +163,7 @@ const Register: React.FC = () => {
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#1a365d] focus:border-[#1a365d] sm:text-sm"
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -183,7 +183,7 @@ const Register: React.FC = () => {
                                     required
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#1a365d] focus:border-[#1a365d] sm:text-sm"
+                                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                                     placeholder="••••••••"
                                 />
                             </div>
@@ -198,7 +198,7 @@ const Register: React.FC = () => {
                                     type="button"
                                     onClick={() => setAccountType('family')}
                                     className={`py-3 px-4 border-2 rounded-lg text-sm font-medium transition-colors ${accountType === 'family'
-                                            ? 'border-[#1a365d] bg-[#1a365d] text-white'
+                                            ? 'border-primary bg-primary text-white'
                                             : 'border-gray-300 text-gray-700 hover:border-gray-400'
                                         }`}
                                 >
@@ -213,7 +213,7 @@ const Register: React.FC = () => {
                                     type="button"
                                     onClick={() => setAccountType('personal')}
                                     className={`py-3 px-4 border-2 rounded-lg text-sm font-medium transition-colors ${accountType === 'personal'
-                                            ? 'border-[#1a365d] bg-[#1a365d] text-white'
+                                            ? 'border-primary bg-primary text-white'
                                             : 'border-gray-300 text-gray-700 hover:border-gray-400'
                                         }`}
                                 >
@@ -234,11 +234,11 @@ const Register: React.FC = () => {
                                 type="checkbox"
                                 checked={agreeToTerms}
                                 onChange={(e) => setAgreeToTerms(e.target.checked)}
-                                className="h-4 w-4 text-[#1a365d] focus:ring-[#1a365d] border-gray-300 rounded"
+                                className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
                             />
                             <label htmlFor="agreeToTerms" className="ml-2 block text-sm text-gray-900">
                                 I agree to the{' '}
-                                <a href="#" className="text-[#1a365d] hover:text-[#0f2744]">
+                                <a href="#" className="text-primary hover:text-[#0f2744]">
                                     Terms and Conditions
                                 </a>
                             </label>
@@ -248,7 +248,7 @@ const Register: React.FC = () => {
                             <button
                                 type="submit"
                                 disabled={loading || authLoading}
-                                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#1a365d] hover:bg-[#0f2744] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a365d] disabled:opacity-50 transition-colors"
+                                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 transition-colors"
                             >
                                 {loading ? 'Creating account...' : 'Create account'}
                             </button>

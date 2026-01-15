@@ -148,14 +148,14 @@ const LedgerDashboard: React.FC = () => {
                 <div className="print:hidden">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h2 className="text-3xl font-bold text-[#1a365d]">Financial Ledger</h2>
+                            <h2 className="text-3xl font-bold text-primary">Financial Ledger</h2>
                             <p className="text-gray-500">Track incomes, expenses, debts, and receivables.</p>
                         </div>
                         <div className="flex gap-3">
                             <PrintButton title="Print Ledger" sectionId="ledger" />
                             <button
                                 onClick={handleOpenAddModal}
-                                className="px-4 py-2 bg-[#d4af37] text-[#1a365d] rounded-lg font-semibold hover:bg-[#c9a432] transition-colors"
+                                className="px-4 py-2 bg-[#d4af37] text-primary rounded-lg font-semibold hover:bg-[#c9a432] transition-colors"
                             >
                                 + Add Entry
                             </button>
@@ -189,7 +189,7 @@ const LedgerDashboard: React.FC = () => {
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
                                 className={`px-6 py-3 font-medium text-sm capitalize border-b-2 transition-colors whitespace-nowrap ${activeTab === tab
-                                    ? 'border-[#d4af37] text-[#1a365d]'
+                                    ? 'border-[#d4af37] text-primary'
                                     : 'border-transparent text-gray-500 hover:text-gray-700'
                                     }`}
                             >
@@ -285,8 +285,8 @@ const LedgerDashboard: React.FC = () => {
 
                 {/* Print View - Professional Grouped Table View */}
                 <div className="hidden print:block">
-                    <div className="text-center mb-8 border-b-2 border-[#1a365d] pb-4">
-                        <h1 className="text-3xl font-serif text-[#1a365d] mb-2">Financial Ledger Report</h1>
+                    <div className="text-center mb-8 border-b-2 border-primary pb-4">
+                        <h1 className="text-3xl font-serif text-primary mb-2">Financial Ledger Report</h1>
                         <p className="text-gray-600">Generated on {new Date().toLocaleDateString()}</p>
                         <p className="text-xl font-bold text-[#d4af37] mt-2">Net Financial Position: {formatCurrency(totalIncome - totalExpense + totalDebtors - totalCreditors)}</p>
                     </div>
@@ -302,11 +302,11 @@ const LedgerDashboard: React.FC = () => {
 
                             return (
                                 <div key={group.title} className="break-inside-avoid">
-                                    <h3 className="text-xl font-bold text-[#1a365d] border-b border-[#d4af37] mb-4 pb-1">
+                                    <h3 className="text-xl font-bold text-primary border-b border-[#d4af37] mb-4 pb-1">
                                         {group.title}
                                     </h3>
                                     <table className="w-full text-sm text-left">
-                                        <thead className="bg-gray-100 text-[#1a365d] border-b border-gray-300 font-serif">
+                                        <thead className="bg-gray-100 text-primary border-b border-gray-300 font-serif">
                                             <tr>
                                                 <th className="py-2 px-3 font-semibold">Date</th>
                                                 <th className="py-2 px-3 font-semibold">Name/Title</th>
@@ -332,7 +332,7 @@ const LedgerDashboard: React.FC = () => {
                                         <tfoot className="border-t-2 border-gray-300">
                                             <tr>
                                                 <td colSpan={4} className="py-2 px-3 text-right font-bold text-gray-700">Subtotal</td>
-                                                <td className="py-2 px-3 text-right font-bold text-[#1a365d]">{formatCurrency(group.total)}</td>
+                                                <td className="py-2 px-3 text-right font-bold text-primary">{formatCurrency(group.total)}</td>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -351,7 +351,7 @@ const LedgerDashboard: React.FC = () => {
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
                     <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
-                        <h3 className="text-xl font-bold text-[#1a365d] mb-4">
+                        <h3 className="text-xl font-bold text-primary mb-4">
                             {editingEntryId ? 'Edit Ledger Entry' : 'Add Ledger Entry'}
                         </h3>
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -470,7 +470,7 @@ const LedgerDashboard: React.FC = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-[#1a365d] text-white rounded-lg font-medium hover:bg-[#0f2744]"
+                                    className="flex-1 px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary/90"
                                 >
                                     {editingEntryId ? 'Update Entry' : 'Save Entry'}
                                 </button>

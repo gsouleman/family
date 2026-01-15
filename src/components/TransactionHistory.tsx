@@ -87,7 +87,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions, d
           <div className="absolute right-0 top-0 hidden md:block">
             <PrintButton title="Print History" />
           </div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a365d] mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold text-primary mb-4">
             Transaction History
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">

@@ -19,7 +19,7 @@ const Hero: React.FC<HeroProps> = ({
   const { formatCurrency, country } = useCurrency();
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-[#1a365d] via-[#1e4976] to-[#0f2744] text-white">
+    <section className="relative overflow-hidden bg-gradient-to-br from-primary via-[#1e4976] to-primary/90 text-white">
       {/* Geometric Pattern Overlay */}
       <div className="absolute inset-0 opacity-10">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -62,7 +62,7 @@ const Hero: React.FC<HeroProps> = ({
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={onViewAssets}
-                className="px-8 py-4 bg-[#d4af37] hover:bg-[#c9a432] text-[#1a365d] font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-[#d4af37]/30 flex items-center gap-2"
+                className="px-8 py-4 bg-[#d4af37] hover:bg-[#c9a432] text-primary font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-[#d4af37]/30 flex items-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />

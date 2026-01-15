@@ -127,7 +127,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
                                         type="text"
                                         value={fullName}
                                         onChange={(e) => setFullName(e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a365d] focus:border-transparent outline-none transition-all"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                                     />
                                 </div>
                                 <div>
@@ -148,7 +148,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
                                     placeholder="+1234567890"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a365d] focus:border-transparent outline-none transition-all"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                                 />
                                 <p className="text-xs text-gray-500 mt-1">Required for SMS 2FA</p>
                             </div>
@@ -169,18 +169,18 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
                                     <div className="pl-13 animate-fadeIn">
                                         <label className="block text-sm font-medium text-gray-700 mb-2">Preferred Method</label>
                                         <div className="flex gap-4">
-                                            <label className={`flex-1 p-3 border rounded-lg cursor-pointer transition-all ${twoFactorMethod === 'email' ? 'border-[#1a365d] bg-blue-50/50 ring-1 ring-[#1a365d]' : 'border-gray-200 hover:border-gray-300'}`}>
+                                            <label className={`flex-1 p-3 border rounded-lg cursor-pointer transition-all ${twoFactorMethod === 'email' ? 'border-primary bg-blue-50/50 ring-1 ring-primary' : 'border-gray-200 hover:border-gray-300'}`}>
                                                 <div className="flex items-center gap-3">
-                                                    <input type="radio" name="2fa_method" value="email" checked={twoFactorMethod === 'email'} onChange={() => setTwoFactorMethod('email')} className="text-[#1a365d] focus:ring-[#1a365d]" />
+                                                    <input type="radio" name="2fa_method" value="email" checked={twoFactorMethod === 'email'} onChange={() => setTwoFactorMethod('email')} className="text-primary focus:ring-primary" />
                                                     <div>
                                                         <span className="block text-sm font-medium text-gray-900">Email</span>
                                                         <span className="block text-xs text-gray-500">Code sent to {user?.email}</span>
                                                     </div>
                                                 </div>
                                             </label>
-                                            <label className={`flex-1 p-3 border rounded-lg cursor-pointer transition-all ${twoFactorMethod === 'phone' ? 'border-[#1a365d] bg-blue-50/50 ring-1 ring-[#1a365d]' : 'border-gray-200 hover:border-gray-300'}`}>
+                                            <label className={`flex-1 p-3 border rounded-lg cursor-pointer transition-all ${twoFactorMethod === 'phone' ? 'border-primary bg-blue-50/50 ring-1 ring-primary' : 'border-gray-200 hover:border-gray-300'}`}>
                                                 <div className="flex items-center gap-3">
-                                                    <input type="radio" name="2fa_method" value="phone" checked={twoFactorMethod === 'phone'} onChange={() => setTwoFactorMethod('phone')} className="text-[#1a365d] focus:ring-[#1a365d]" />
+                                                    <input type="radio" name="2fa_method" value="phone" checked={twoFactorMethod === 'phone'} onChange={() => setTwoFactorMethod('phone')} className="text-primary focus:ring-primary" />
                                                     <div>
                                                         <span className="block text-sm font-medium text-gray-900">SMS</span>
                                                         <span className="block text-xs text-gray-500">Code sent to phone</span>
@@ -196,7 +196,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
                                 <button type="button" onClick={onClose} disabled={loading} className="px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50">
                                     Cancel
                                 </button>
-                                <button type="submit" disabled={loading} className="px-6 py-2 bg-[#1a365d] hover:bg-[#0f2744] text-white font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50">
+                                <button type="submit" disabled={loading} className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50">
                                     Save Changes
                                 </button>
                             </div>
@@ -214,7 +214,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
                                         type="password"
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a365d] focus:border-transparent outline-none transition-all"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                                         placeholder="Min. 6 characters"
                                     />
                                 </div>
@@ -224,7 +224,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
                                         type="password"
                                         value={confirmPassword}
                                         onChange={(e) => setConfirmPassword(e.target.value)}
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1a365d] focus:border-transparent outline-none transition-all"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
                                         placeholder="Confirm new password"
                                     />
                                 </div>
@@ -233,7 +233,7 @@ const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = ({ isOpen, onC
                                 <button type="button" onClick={onClose} disabled={loading} className="px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50">
                                     Cancel
                                 </button>
-                                <button type="submit" disabled={loading || !newPassword} className="px-6 py-2 bg-[#1a365d] hover:bg-[#0f2744] text-white font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50">
+                                <button type="submit" disabled={loading || !newPassword} className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-medium rounded-lg transition-colors shadow-sm disabled:opacity-50">
                                     Update Password
                                 </button>
                             </div>

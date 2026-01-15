@@ -57,7 +57,7 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({ variant = 'navbar' })
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-[#1a365d] hover:bg-gray-100 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors"
         >
           <span className="text-lg">{country.flag}</span>
           <span className="hidden sm:inline">{country.currency}</span>

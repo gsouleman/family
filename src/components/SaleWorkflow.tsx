@@ -45,7 +45,7 @@ const SaleWorkflow: React.FC<SaleWorkflowProps> = ({ asset, heirs, onClose, onCo
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#1a365d] to-[#0f2744] p-6 text-white">
+        <div className="bg-gradient-to-r from-primary to-primary/90 p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold">Asset Sale & Distribution</h2>
@@ -66,7 +66,7 @@ const SaleWorkflow: React.FC<SaleWorkflowProps> = ({ asset, heirs, onClose, onCo
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold transition-all ${
-                  step >= s ? 'bg-[#d4af37] text-[#1a365d]' : 'bg-white/20 text-white'
+                  step >= s ? 'bg-[#d4af37] text-primary' : 'bg-white/20 text-white'
                 }`}>
                   {step > s ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +100,7 @@ const SaleWorkflow: React.FC<SaleWorkflowProps> = ({ asset, heirs, onClose, onCo
                   <p className="text-gray-500 mt-1">{asset.description}</p>
                   <div className="flex items-center gap-4 mt-3">
                     <span className="text-sm text-gray-500">Current Value:</span>
-                    <span className="text-lg font-bold text-[#1a365d]">{formatCurrency(asset.value)}</span>
+                    <span className="text-lg font-bold text-primary">{formatCurrency(asset.value)}</span>
                   </div>
                 </div>
               </div>
@@ -154,7 +154,7 @@ const SaleWorkflow: React.FC<SaleWorkflowProps> = ({ asset, heirs, onClose, onCo
             <div className="space-y-6">
               <div className="text-center p-4 bg-[#d4af37]/10 rounded-xl border border-[#d4af37]/30">
                 <p className="text-sm text-gray-600">Total Amount to Distribute</p>
-                <p className="text-3xl font-bold text-[#1a365d]">{formatCurrency(price)}</p>
+                <p className="text-3xl font-bold text-primary">{formatCurrency(price)}</p>
               </div>
 
               {/* Distribution List */}
@@ -166,7 +166,7 @@ const SaleWorkflow: React.FC<SaleWorkflowProps> = ({ asset, heirs, onClose, onCo
                     className="flex items-center justify-between p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#1a365d] flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                         {share.heirName.charAt(0)}
                       </div>
                       <div>
@@ -180,7 +180,7 @@ const SaleWorkflow: React.FC<SaleWorkflowProps> = ({ asset, heirs, onClose, onCo
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-[#1a365d]">{formatCurrency(share.shareAmount)}</p>
+                      <p className="text-lg font-bold text-primary">{formatCurrency(share.shareAmount)}</p>
                       <p className="text-sm text-gray-500">{formatPercentage(share.sharePercentage)}</p>
                     </div>
                   </div>
@@ -294,7 +294,7 @@ const SaleWorkflow: React.FC<SaleWorkflowProps> = ({ asset, heirs, onClose, onCo
             <button
               onClick={() => setStep(step + 1)}
               disabled={price <= 0}
-              className="px-8 py-3 bg-[#1a365d] hover:bg-[#0f2744] text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-8 py-3 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Continue
             </button>
@@ -302,11 +302,11 @@ const SaleWorkflow: React.FC<SaleWorkflowProps> = ({ asset, heirs, onClose, onCo
             <button
               onClick={handleConfirmSale}
               disabled={isProcessing}
-              className="px-8 py-3 bg-[#d4af37] hover:bg-[#c9a432] text-[#1a365d] font-semibold rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-8 py-3 bg-[#d4af37] hover:bg-[#c9a432] text-primary font-semibold rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
             >
               {isProcessing ? (
                 <>
-                  <div className="w-5 h-5 border-2 border-[#1a365d] border-t-transparent rounded-full animate-spin"></div>
+                  <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                   Processing...
                 </>
               ) : (

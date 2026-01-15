@@ -62,7 +62,7 @@ const HeirDetailModal: React.FC<HeirDetailModalProps> = ({ heir, allHeirs, total
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="relative bg-gradient-to-br from-[#1a365d] to-[#0f2744] p-8 text-center shrink-0">
+        <div className="relative bg-gradient-to-br from-primary to-primary/90 p-8 text-center shrink-0">
           {/* Close Button */}
           <button
             onClick={onClose}
@@ -80,7 +80,7 @@ const HeirDetailModal: React.FC<HeirDetailModalProps> = ({ heir, allHeirs, total
               alt={heir.name}
               className="w-24 h-24 rounded-full object-cover ring-4 ring-[#d4af37]"
             />
-            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-[#1a365d] flex items-center justify-center">
+            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-primary flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
@@ -195,7 +195,7 @@ const HeirDetailModal: React.FC<HeirDetailModalProps> = ({ heir, allHeirs, total
           {user ? (
             heirShare && (
               <div className="p-4 bg-gradient-to-r from-[#d4af37]/10 to-[#d4af37]/5 rounded-xl border border-[#d4af37]/30">
-                <h3 className="font-semibold text-[#1a365d] mb-4 flex items-center gap-2">
+                <h3 className="font-semibold text-primary mb-4 flex items-center gap-2">
                   <svg className="w-5 h-5 text-[#d4af37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
@@ -208,7 +208,7 @@ const HeirDetailModal: React.FC<HeirDetailModalProps> = ({ heir, allHeirs, total
                     <p className="text-xs text-gray-500 mt-1">Projected Amount</p>
                   </div>
                   <div className="text-center p-3 bg-white rounded-lg">
-                    <p className="text-2xl font-bold text-[#1a365d]">{formatPercentage(heirShare.sharePercentage)}</p>
+                    <p className="text-2xl font-bold text-primary">{formatPercentage(heirShare.sharePercentage)}</p>
                     <p className="text-xs text-gray-500 mt-1">Share Percentage</p>
                   </div>
                 </div>
@@ -216,7 +216,7 @@ const HeirDetailModal: React.FC<HeirDetailModalProps> = ({ heir, allHeirs, total
                 <div className="mt-4 pt-4 border-t border-[#d4af37]/20">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Islamic Share (Faraid)</span>
-                    <span className="font-semibold text-[#1a365d]">{heirShare.shareFraction}</span>
+                    <span className="font-semibold text-primary">{heirShare.shareFraction}</span>
                   </div>
                 </div>
               </div>
@@ -246,7 +246,7 @@ const HeirDetailModal: React.FC<HeirDetailModalProps> = ({ heir, allHeirs, total
               </button>
               <button
                 onClick={handleUpdate}
-                className="flex-1 px-6 py-3 bg-[#1a365d] text-white rounded-xl hover:bg-[#0f2744] transition-colors font-semibold"
+                className="flex-1 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-semibold"
               >
                 Save Changes
               </button>

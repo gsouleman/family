@@ -38,7 +38,7 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
           <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white"></div>
         </div>
         <div className="flex-1 min-w-0">
-          <h4 className="font-semibold text-gray-900 truncate group-hover:text-[#1a365d]">
+          <h4 className="font-semibold text-gray-900 truncate group-hover:text-primary">
             {heir.name}
           </h4>
           <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium mt-1 ${getRelationColor(heir.relation)}`}>
@@ -58,10 +58,10 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
     return (
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-[#1a365d]/10 rounded-lg">
+          <div className="p-2 bg-primary/10 rounded-lg">
             {icon}
           </div>
-          <h3 className="text-lg font-semibold text-[#1a365d]">{title}</h3>
+          <h3 className="text-lg font-semibold text-primary">{title}</h3>
           <span className="px-2 py-0.5 bg-gray-100 rounded-full text-sm text-gray-600">
             {members.length}
           </span>
@@ -85,7 +85,7 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
             <div className="absolute right-0 top-0 hidden md:block">
               <PrintButton title="Print Family Tree" sectionId="family" />
             </div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#1a365d] mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-primary mb-4">
               Family Heirs
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto mb-6">
@@ -94,7 +94,7 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
             {user && (
               <button
                 onClick={() => setShowAddHeir(true)}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-[#d4af37] text-[#1a365d] rounded-xl font-semibold hover:bg-[#c9a432] transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-[#d4af37] text-primary rounded-xl font-semibold hover:bg-[#c9a432] transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -110,7 +110,7 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
             <HeirSection
               title="Grandparents"
               icon={
-                <svg className="w-5 h-5 text-[#1a365d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
               }
@@ -121,7 +121,7 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
             <HeirSection
               title="Parents"
               icon={
-                <svg className="w-5 h-5 text-[#1a365d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               }
@@ -132,7 +132,7 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
             <HeirSection
               title="Spouse"
               icon={
-                <svg className="w-5 h-5 text-[#1a365d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
               }
@@ -143,7 +143,7 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
             <HeirSection
               title="Children"
               icon={
-                <svg className="w-5 h-5 text-[#1a365d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
               }
@@ -154,7 +154,7 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
             <HeirSection
               title="Siblings"
               icon={
-                <svg className="w-5 h-5 text-[#1a365d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
               }
@@ -162,7 +162,7 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
             />
 
             {/* Islamic Inheritance Info */}
-            <div className="mt-8 p-6 bg-gradient-to-r from-[#1a365d] to-[#0f2744] rounded-2xl text-white">
+            <div className="mt-8 p-6 bg-gradient-to-r from-primary to-primary/90 rounded-2xl text-white">
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-[#d4af37]/20 rounded-xl">
                   <svg className="w-8 h-8 text-[#d4af37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,8 +184,8 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
 
         {/* Print View - Professional Table */}
         <div className="hidden print:block">
-          <div className="text-center mb-8 border-b-2 border-[#1a365d] pb-4">
-            <h1 className="text-3xl font-serif text-[#1a365d] mb-2">Family Tree & Heirs</h1>
+          <div className="text-center mb-8 border-b-2 border-primary pb-4">
+            <h1 className="text-3xl font-serif text-primary mb-2">Family Tree & Heirs</h1>
             <p className="text-gray-600">Generated on {new Date().toLocaleDateString()}</p>
           </div>
 
@@ -201,11 +201,11 @@ const FamilyTree: React.FC<FamilyTreeProps> = ({ heirs = [], onSelectHeir }) => 
 
               return (
                 <div key={group.title} className="break-inside-avoid">
-                  <h3 className="text-xl font-bold text-[#1a365d] border-b border-[#d4af37] mb-4 pb-1">
+                  <h3 className="text-xl font-bold text-primary border-b border-[#d4af37] mb-4 pb-1">
                     {group.title}
                   </h3>
                   <table className="w-full text-sm text-left">
-                    <thead className="bg-gray-100 text-[#1a365d] border-b border-gray-300 font-serif">
+                    <thead className="bg-gray-100 text-primary border-b border-gray-300 font-serif">
                       <tr>
                         <th className="py-2 px-3 font-semibold">Name</th>
                         <th className="py-2 px-3 font-semibold">Relation</th>

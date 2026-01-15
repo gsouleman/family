@@ -250,12 +250,12 @@ const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, onClose, onS
           </div>
 
           {/* Inheritance Preview */}
-          <div className="p-4 bg-gradient-to-r from-[#1a365d]/5 to-[#d4af37]/5 rounded-xl border border-[#d4af37]/20">
+          <div className="p-4 bg-gradient-to-r from-primary/5 to-[#d4af37]/5 rounded-xl border border-[#d4af37]/20">
             <div className="flex items-center gap-2 mb-2">
               <svg className="w-5 h-5 text-[#d4af37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="font-semibold text-[#1a365d]">Inheritance Note</span>
+              <span className="font-semibold text-primary">Inheritance Note</span>
             </div>
             <p className="text-sm text-gray-600">
               When this asset is sold, the proceeds will be automatically distributed among eligible heirs
@@ -276,7 +276,7 @@ const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, onClose, onS
               </button>
               <button
                 onClick={handleUpdate}
-                className="flex-1 px-6 py-3 bg-[#1a365d] text-white rounded-xl hover:bg-[#0f2744] transition-colors font-semibold"
+                className="flex-1 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors font-semibold"
               >
                 Save Changes
               </button>
@@ -308,7 +308,7 @@ const AssetDetailModal: React.FC<AssetDetailModalProps> = ({ asset, onClose, onS
               {asset.status === 'active' && (
                 <button
                   onClick={() => onSell(asset)}
-                  className="flex-1 px-6 py-3 bg-[#d4af37] hover:bg-[#c9a432] text-[#1a365d] rounded-xl transition-colors font-semibold flex items-center justify-center gap-2"
+                  className="flex-1 px-6 py-3 bg-[#d4af37] hover:bg-[#c9a432] text-primary rounded-xl transition-colors font-semibold flex items-center justify-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

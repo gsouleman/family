@@ -69,7 +69,7 @@ const UserTable: React.FC<UserTableProps> = ({ onEdit }) => {
         <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
             <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                 <h3 className="font-semibold text-gray-800">System Users ({users.length})</h3>
-                <button onClick={fetchUsers} className="text-sm text-[#1a365d] hover:underline flex items-center gap-1 font-medium">
+                <button onClick={fetchUsers} className="text-sm text-primary hover:underline flex items-center gap-1 font-medium">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                     Refresh
                 </button>

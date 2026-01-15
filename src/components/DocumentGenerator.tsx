@@ -74,7 +74,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
         <div className="relative">
             <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="px-6 py-2 bg-[#d4af37] text-[#1a365d] font-semibold rounded-lg hover:bg-[#c9a432] transition-colors flex items-center gap-2"
+                className="px-6 py-2 bg-[#d4af37] text-primary font-semibold rounded-lg hover:bg-[#c9a432] transition-colors flex items-center gap-2"
             >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -96,7 +96,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                             <button
                                 key={doc.type}
                                 onClick={() => handleSelectType(doc.type)}
-                                className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-[#1a365d] transition-colors"
+                                className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-primary transition-colors"
                             >
                                 {doc.label}
                             </button>
@@ -111,7 +111,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                         <div className="p-8 print:p-0">
                             {/* Header Buttons */}
                             <div className="flex justify-between items-start mb-8 print:hidden">
-                                <h2 className="text-2xl font-bold text-[#1a365d]">Last Will and Testament</h2>
+                                <h2 className="text-2xl font-bold text-primary">Last Will and Testament</h2>
                                 <button
                                     onClick={() => setActiveModal(null)}
                                     className="text-gray-500 hover:text-gray-700"
@@ -236,7 +236,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                             <div className="mt-8 flex justify-end gap-4 print:hidden">
                                 <button
                                     onClick={handlePrint}
-                                    className="px-6 py-2 bg-[#1a365d] text-white rounded-lg hover:bg-[#0f2744] font-medium flex items-center gap-2"
+                                    className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium flex items-center gap-2"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -255,7 +255,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                     {!selectedPerson ? (
                         /* SELECTION VIEW */
                         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 text-center print:hidden">
-                            <h3 className="text-xl font-bold text-[#1a365d] mb-2">
+                            <h3 className="text-xl font-bold text-primary mb-2">
                                 Select {activeModal === 'creditor_certificate' ? 'Creditor' : 'Debtor'}
                             </h3>
                             <p className="text-gray-500 mb-6">
@@ -269,7 +269,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                             onClick={() => setSelectedPerson(person)}
                                             className="w-full p-3 rounded-xl border border-gray-200 hover:border-[#d4af37] hover:bg-[#d4af37]/5 transition-all text-left flex justify-between items-center group"
                                         >
-                                            <span className="font-semibold text-gray-900 group-hover:text-[#1a365d]">{person.title}</span>
+                                            <span className="font-semibold text-gray-900 group-hover:text-primary">{person.title}</span>
                                             <span className="text-sm font-bold text-[#d4af37]">{formatCurrency(person.amount)}</span>
                                         </button>
                                     ))
@@ -290,11 +290,11 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                             <div className="p-8 print:p-0">
                                 {/* Header Buttons */}
                                 <div className="flex justify-between items-start mb-8 print:hidden">
-                                    <h2 className="text-2xl font-bold text-[#1a365d]">Document Preview</h2>
+                                    <h2 className="text-2xl font-bold text-primary">Document Preview</h2>
                                     <div className="flex gap-2">
                                         <button
                                             onClick={() => setSelectedPerson(null)}
-                                            className="text-gray-500 hover:text-[#1a365d] px-3 py-1 rounded hover:bg-gray-100 text-sm"
+                                            className="text-gray-500 hover:text-primary px-3 py-1 rounded hover:bg-gray-100 text-sm"
                                         >
                                             Back
                                         </button>
@@ -310,7 +310,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                 </div>
 
                                 {/* Certificate Content */}
-                                <div className="border-[10px] border-double border-[#1a365d] p-12 print:border-[10px] print:border-[#1a365d] print:p-12 relative overflow-hidden bg-white">
+                                <div className="border-[10px] border-double border-primary p-12 print:border-[10px] print:border-primary print:p-12 relative overflow-hidden bg-white">
                                     {/* Watermark / Background Decoration */}
                                     <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none flex items-center justify-center">
                                         <svg className="w-[500px] h-[500px]" fill="currentColor" viewBox="0 0 24 24">
@@ -320,7 +320,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
 
                                     <div className="text-center relative z-10">
                                         <div className="mb-4">
-                                            <h1 className="text-4xl font-serif font-bold text-[#1a365d] uppercase tracking-widest mb-1">
+                                            <h1 className="text-4xl font-serif font-bold text-primary uppercase tracking-widest mb-1">
                                                 Certificate
                                             </h1>
                                             <p className="text-[#d4af37] font-serif italic text-xl">
@@ -333,7 +333,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                         <div className="font-serif text-gray-800 space-y-8 max-w-2xl mx-auto">
                                             <p className="text-lg italic text-gray-500">This is to certify that</p>
 
-                                            <h2 className="text-3xl font-bold text-[#1a365d] border-b-2 border-gray-200 inline-block pb-2 px-8">
+                                            <h2 className="text-3xl font-bold text-primary border-b-2 border-gray-200 inline-block pb-2 px-8">
                                                 {selectedPerson.title}
                                             </h2>
 
@@ -383,7 +383,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
 
                                         <div className="flex justify-between items-end mt-24">
                                             <div className="text-center w-64">
-                                                <div className="border-b border-gray-400 pb-2 mb-2 font-dancing-script text-2xl text-[#1a365d]">
+                                                <div className="border-b border-gray-400 pb-2 mb-2 font-dancing-script text-2xl text-primary">
                                                     {branding}
                                                 </div>
                                             </div>
@@ -405,7 +405,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                                 <div className="mt-8 flex justify-end gap-4 print:hidden">
                                     <button
                                         onClick={handlePrint}
-                                        className="px-6 py-2 bg-[#1a365d] text-white rounded-lg hover:bg-[#0f2744] font-medium flex items-center gap-2"
+                                        className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 font-medium flex items-center gap-2"
                                     >
                                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -436,7 +436,7 @@ const DocumentGenerator: React.FC<DocumentGeneratorProps> = ({ heirs, activeAsse
                         </p>
                         <button
                             onClick={() => setActiveModal(null)}
-                            className="px-6 py-2 bg-[#1a365d] text-white rounded-lg hover:bg-[#0f2744]"
+                            className="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
                         >
                             Close
                         </button>

@@ -33,7 +33,7 @@ const DistributionDashboard: React.FC<DistributionDashboardProps> = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl lg:text-4xl font-bold text-[#1a365d] mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold text-primary mb-4">
             Distribution Dashboard
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
@@ -45,14 +45,14 @@ const DistributionDashboard: React.FC<DistributionDashboardProps> = ({
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-[#1a365d]/10 rounded-xl">
-                <svg className="w-6 h-6 text-[#1a365d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-3 bg-primary/10 rounded-xl">
+                <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Total Portfolio</p>
-                <p className="text-2xl font-bold text-[#1a365d]">{formatCurrency(totalAssetValue)}</p>
+                <p className="text-2xl font-bold text-primary">{formatCurrency(totalAssetValue)}</p>
               </div>
             </div>
           </div>
@@ -105,7 +105,7 @@ const DistributionDashboard: React.FC<DistributionDashboardProps> = ({
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Projected Shares */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-[#1a365d] to-[#0f2744]">
+              <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-primary to-primary/90">
                 <h3 className="text-xl font-bold text-white">Projected Inheritance</h3>
                 <p className="text-gray-300 text-sm mt-1">Based on current portfolio value</p>
               </div>
@@ -130,7 +130,7 @@ const DistributionDashboard: React.FC<DistributionDashboardProps> = ({
                                 {getRelationLabel(share.relation)}
                               </span>
                             </div>
-                            <span className="font-bold text-[#1a365d]">{formatCurrency(share.shareAmount)}</span>
+                            <span className="font-bold text-primary">{formatCurrency(share.shareAmount)}</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -154,8 +154,8 @@ const DistributionDashboard: React.FC<DistributionDashboardProps> = ({
             {/* Received Distributions */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
               <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-[#d4af37] to-[#c9a432]">
-                <h3 className="text-xl font-bold text-[#1a365d]">Received Distributions</h3>
-                <p className="text-[#1a365d]/70 text-sm mt-1">Amounts already distributed from sales</p>
+                <h3 className="text-xl font-bold text-primary">Received Distributions</h3>
+                <p className="text-primary/70 text-sm mt-1">Amounts already distributed from sales</p>
               </div>
               <div className="p-6">
                 {Object.keys(distributedByHeir).length > 0 ? (
@@ -249,7 +249,7 @@ const DistributionDashboard: React.FC<DistributionDashboardProps> = ({
         {user && distributions.length > 0 && (
           <div className="mt-8 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="p-6 border-b border-gray-100">
-              <h3 className="text-xl font-bold text-[#1a365d]">Recent Distributions</h3>
+              <h3 className="text-xl font-bold text-primary">Recent Distributions</h3>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full">

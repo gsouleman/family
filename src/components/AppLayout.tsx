@@ -134,8 +134,8 @@ const AppLayout: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <span className="text-gray-500 text-sm">Quick Actions:</span>
-              <button onClick={() => requireAuth(() => setShowAddAsset(true), 'Sign in to add assets')} className="px-4 py-2 bg-[#1a365d] hover:bg-[#0f2744] text-white text-sm font-medium rounded-lg">Add Asset</button>
-              <button onClick={() => requireAuth(() => scrollToSection('calculator'), 'Sign in to calculate')} className="px-4 py-2 bg-[#d4af37] hover:bg-[#c9a432] text-[#1a365d] text-sm font-medium rounded-lg">Calculate Inheritance</button>
+              <button onClick={() => requireAuth(() => setShowAddAsset(true), 'Sign in to add assets')} className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-medium rounded-lg">Add Asset</button>
+              <button onClick={() => requireAuth(() => scrollToSection('calculator'), 'Sign in to calculate')} className="px-4 py-2 bg-[#d4af37] hover:bg-[#c9a432] text-primary text-sm font-medium rounded-lg">Calculate Inheritance</button>
             </div>
             <div className="hidden md:flex items-center gap-2 text-sm">
               <span className="text-gray-500">Total Portfolio:</span>
@@ -152,11 +152,11 @@ const AppLayout: React.FC = () => {
       {user ? (
         <InheritanceCalculator heirs={heirs} totalAssetValue={totalAssetValue} activeAssets={assets.filter(a => a.status === 'active')} />
       ) : (
-        <section id="calculator" className="py-16 bg-gradient-to-br from-[#1a365d] to-[#0f2744]">
+        <section id="calculator" className="py-16 bg-gradient-to-br from-primary to-primary/90">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold text-white mb-4">Islamic Inheritance Calculator</h2>
             <p className="text-gray-300 mb-8">Sign in to access the Faraid calculator.</p>
-            <button onClick={() => setShowAuthModal(true)} className="px-8 py-4 bg-[#d4af37] text-[#1a365d] font-semibold rounded-xl">Sign In to Access</button>
+            <button onClick={() => setShowAuthModal(true)} className="px-8 py-4 bg-[#d4af37] text-primary font-semibold rounded-xl">Sign In to Access</button>
           </div>
         </section>
       )}

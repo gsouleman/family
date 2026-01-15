@@ -77,7 +77,7 @@ const AdminLogin: React.FC = () => {
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex justify-center">
                     <div className="w-16 h-16 bg-[#d4af37] rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                        <svg className="w-10 h-10 text-[#1a365d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                         </svg>
                     </div>
@@ -109,7 +109,7 @@ const AdminLogin: React.FC = () => {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#1a365d] focus:border-[#1a365d] sm:text-sm"
+                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                                     />
                                 </div>
                             </div>
@@ -127,7 +127,7 @@ const AdminLogin: React.FC = () => {
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#1a365d] focus:border-[#1a365d] sm:text-sm"
+                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                                     />
                                 </div>
                             </div>
@@ -136,7 +136,7 @@ const AdminLogin: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1a365d] hover:bg-[#0f2744] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a365d] disabled:opacity-50"
+                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
                                 >
                                     {loading ? 'Authenticating...' : 'Sign in'}
                                 </button>
@@ -146,7 +146,7 @@ const AdminLogin: React.FC = () => {
                         <form className="space-y-6" onSubmit={handleVerifyParams}>
                             <div className="text-center mb-6">
                                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 mb-4">
-                                    <svg className="w-6 h-6 text-[#1a365d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                                     </svg>
                                 </div>
@@ -168,7 +168,7 @@ const AdminLogin: React.FC = () => {
                                         required
                                         value={otp}
                                         onChange={(e) => setOtp(e.target.value)}
-                                        className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#1a365d] focus:border-[#1a365d] sm:text-sm text-center text-2xl tracking-widest font-mono"
+                                        className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm text-center text-2xl tracking-widest font-mono"
                                         placeholder="000000"
                                         autoFocus
                                     />
@@ -186,7 +186,7 @@ const AdminLogin: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1a365d] hover:bg-[#0f2744] focus:outline-none disabled:opacity-50"
+                                    className="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none disabled:opacity-50"
                                 >
                                     {loading ? 'Verifying...' : 'Verify'}
                                 </button>

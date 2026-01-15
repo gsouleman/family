@@ -79,7 +79,7 @@ const Login: React.FC = () => {
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 {/* Logo */}
                 <div className="flex justify-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-[#1a365d] to-[#0f2744] rounded-2xl flex items-center justify-center shadow-lg">
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/90 rounded-2xl flex items-center justify-center shadow-lg">
                         <svg className="w-10 h-10 text-[#d4af37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
@@ -92,7 +92,7 @@ const Login: React.FC = () => {
                     {step === 'credentials' ? (
                         <>
                             Or{' '}
-                            <Link to="/register" className="font-medium text-[#1a365d] hover:text-[#0f2744]">
+                            <Link to="/register" className="font-medium text-primary hover:text-[#0f2744]">
                                 create a new account
                             </Link>
                         </>
@@ -121,7 +121,7 @@ const Login: React.FC = () => {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#1a365d] focus:border-[#1a365d] sm:text-sm"
+                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                                         placeholder="you@example.com"
                                     />
                                 </div>
@@ -140,7 +140,7 @@ const Login: React.FC = () => {
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#1a365d] focus:border-[#1a365d] sm:text-sm"
+                                        className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                                         placeholder="••••••••"
                                     />
                                 </div>
@@ -152,7 +152,7 @@ const Login: React.FC = () => {
                                         id="remember-me"
                                         name="remember-me"
                                         type="checkbox"
-                                        className="h-4 w-4 text-[#1a365d] focus:ring-[#1a365d] border-gray-300 rounded"
+                                        className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
                                     />
                                     <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
                                         Remember me
@@ -160,7 +160,7 @@ const Login: React.FC = () => {
                                 </div>
 
                                 <div className="text-sm">
-                                    <Link to="/reset-password" className="font-medium text-[#1a365d] hover:text-[#0f2744]">
+                                    <Link to="/reset-password" className="font-medium text-primary hover:text-[#0f2744]">
                                         Forgot password?
                                     </Link>
                                 </div>
@@ -170,7 +170,7 @@ const Login: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={loading || authLoading}
-                                    className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#1a365d] hover:bg-[#0f2744] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a365d] disabled:opacity-50 transition-colors"
+                                    className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 transition-colors"
                                 >
                                     {loading ? 'Signing in...' : 'Sign in'}
                                 </button>
@@ -180,7 +180,7 @@ const Login: React.FC = () => {
                         <form className="space-y-6" onSubmit={handleVerify2FA}>
                             <div className="text-center mb-6">
                                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 mb-4">
-                                    <svg className="w-6 h-6 text-[#1a365d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                     </svg>
                                 </div>
@@ -200,7 +200,7 @@ const Login: React.FC = () => {
                                     required
                                     value={otp}
                                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                                    className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-[#1a365d] focus:border-[#1a365d] text-center text-2xl tracking-widest font-mono"
+                                    className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary text-center text-2xl tracking-widest font-mono"
                                     placeholder="000000"
                                     maxLength={6}
                                     autoFocus
@@ -218,7 +218,7 @@ const Login: React.FC = () => {
                                 <button
                                     type="submit"
                                     disabled={loading || otp.length !== 6}
-                                    className="flex-1 flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-[#1a365d] hover:bg-[#0f2744] focus:outline-none disabled:opacity-50 transition-colors"
+                                    className="flex-1 flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none disabled:opacity-50 transition-colors"
                                 >
                                     {loading ? 'Verifying...' : 'Verify'}
                                 </button>

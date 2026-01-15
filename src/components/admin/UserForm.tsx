@@ -143,7 +143,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh]">
-                <div className="bg-gradient-to-r from-[#1a365d] to-[#0f2744] px-8 py-6 flex justify-between items-center text-white shrink-0">
+                <div className="bg-gradient-to-r from-primary to-primary/90 px-8 py-6 flex justify-between items-center text-white shrink-0">
                     <div>
                         <h3 className="text-xl font-bold">{editingUser ? 'Edit User Profile' : 'Add New Member'}</h3>
                         <p className="text-blue-200 text-xs mt-1">Manage access and permissions</p>
@@ -164,7 +164,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                                     type="text"
                                     value={fullName}
                                     onChange={e => setFullName(e.target.value)}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm font-medium"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none text-sm font-medium"
                                     placeholder="e.g. John Doe"
                                     required
                                 />
@@ -177,7 +177,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                                         type="email"
                                         value={email}
                                         onChange={e => setEmail(e.target.value)}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm disabled:opacity-60"
+                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none text-sm disabled:opacity-60"
                                         placeholder="john@example.com"
                                         required
                                         disabled={!!editingUser}
@@ -201,7 +201,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                                     type="tel"
                                     value={phone}
                                     onChange={e => setPhone(e.target.value)}
-                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm"
+                                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none text-sm"
                                     placeholder="+1 (555) 000-0000"
                                 />
                                 <p className="text-[10px] text-gray-400 mt-1 ml-1">Required for SMS 2FA</p>
@@ -214,7 +214,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                                         type="password"
                                         value={password}
                                         onChange={e => setPassword(e.target.value)}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm"
+                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none text-sm"
                                         required={!editingUser}
                                         minLength={6}
                                         placeholder="••••••••"
@@ -228,7 +228,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                                     <select
                                         value={role}
                                         onChange={e => setRole(e.target.value as any)}
-                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#1a365d] focus:bg-white transition-all outline-none text-sm appearance-none"
+                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:bg-white transition-all outline-none text-sm appearance-none"
                                     >
                                         <option value="user">User</option>
                                         <option value="admin">Admin</option>
@@ -248,7 +248,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                                     id="is2FAEnabled"
                                     checked={is2FAEnabled}
                                     onChange={(e) => setIs2FAEnabled(e.target.checked)}
-                                    className="w-5 h-5 text-[#1a365d] border-gray-300 rounded focus:ring-[#1a365d] cursor-pointer"
+                                    className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer"
                                 />
                                 <label htmlFor="is2FAEnabled" className="text-sm font-semibold text-gray-800 cursor-pointer select-none">
                                     Enforce 2FA Security
@@ -262,14 +262,14 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                                         <button
                                             type="button"
                                             onClick={() => setTwoFactorMethod('email')}
-                                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold border transition-all ${twoFactorMethod === 'email' ? 'bg-[#1a365d] text-white border-[#1a365d]' : 'bg-white text-gray-600 border-gray-200'}`}
+                                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold border transition-all ${twoFactorMethod === 'email' ? 'bg-primary text-white border-primary' : 'bg-white text-gray-600 border-gray-200'}`}
                                         >
                                             Email
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => setTwoFactorMethod('phone')}
-                                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold border transition-all ${twoFactorMethod === 'phone' ? 'bg-[#1a365d] text-white border-[#1a365d]' : 'bg-white text-gray-600 border-gray-200'}`}
+                                            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold border transition-all ${twoFactorMethod === 'phone' ? 'bg-primary text-white border-primary' : 'bg-white text-gray-600 border-gray-200'}`}
                                         >
                                             SMS (Phone)
                                         </button>
@@ -289,7 +289,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSuccess, editing
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="flex-1 px-6 py-3 bg-[#1a365d] text-white rounded-xl hover:bg-[#0f2744] font-bold shadow-lg shadow-blue-900/10 disabled:opacity-70 transition-all transform active:scale-95"
+                                className="flex-1 px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 font-bold shadow-lg shadow-blue-900/10 disabled:opacity-70 transition-all transform active:scale-95"
                             >
                                 {loading ? 'Saving...' : (editingUser ? 'Save Changes' : 'Create Account')}
                             </button>

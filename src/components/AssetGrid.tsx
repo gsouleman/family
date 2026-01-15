@@ -111,7 +111,7 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSel
             <div className="absolute right-0 top-0 hidden md:block">
               <PrintButton title="Print Assets" sectionId="assets" />
             </div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#1a365d] mb-4">
+            <h2 className="text-3xl lg:text-4xl font-bold text-primary mb-4">
               Family Asset Portfolio
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
@@ -176,7 +176,7 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSel
             {/* Results Summary */}
             <div className="mt-4 pt-4 border-t border-gray-100 flex flex-wrap items-center justify-between gap-4">
               <p className="text-gray-600">
-                Showing <span className="font-semibold text-[#1a365d]">{filteredAndSortedAssets.length}</span> assets
+                Showing <span className="font-semibold text-primary">{filteredAndSortedAssets.length}</span> assets
               </p>
               <p className="text-gray-600">
                 Total Value: <span className="font-bold text-[#d4af37] text-lg">{formatCurrency(totalFilteredValue)}</span>
@@ -191,7 +191,7 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSel
                 key={cat.value}
                 onClick={() => setSelectedCategory(cat.value)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedCategory === cat.value
-                  ? 'bg-[#1a365d] text-white shadow-lg'
+                  ? 'bg-primary text-white shadow-lg'
                   : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                   }`}
               >
@@ -223,7 +223,7 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSel
                 <button
                   onClick={handleSeedData}
                   disabled={isSeeding}
-                  className="px-6 py-2 bg-[#d4af37] hover:bg-[#c9a432] text-[#1a365d] font-semibold rounded-lg transition-colors disabled:opacity-50"
+                  className="px-6 py-2 bg-[#d4af37] hover:bg-[#c9a432] text-primary font-semibold rounded-lg transition-colors disabled:opacity-50"
                 >
                   {isSeeding ? 'Loading Demo Data...' : 'Load Demo Data'}
                 </button>
@@ -234,8 +234,8 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSel
 
         {/* Print Layout - Professional Table View */}
         <div className="hidden print:block">
-          <div className="text-center mb-8 border-b-2 border-[#1a365d] pb-4">
-            <h1 className="text-3xl font-serif text-[#1a365d] mb-2">Family Asset Portfolio</h1>
+          <div className="text-center mb-8 border-b-2 border-primary pb-4">
+            <h1 className="text-3xl font-serif text-primary mb-2">Family Asset Portfolio</h1>
             <p className="text-gray-600">Generated on {new Date().toLocaleDateString()}</p>
             <p className="text-xl font-bold text-[#d4af37] mt-2">Total Portfolio Value: {formatCurrency((assets || []).reduce((sum, a) => sum + a.value, 0))}</p>
           </div>
@@ -247,11 +247,11 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSel
 
               return (
                 <div key={category.value} className="break-inside-avoid">
-                  <h3 className="text-xl font-bold text-[#1a365d] border-b border-[#d4af37] mb-4 pb-1">
+                  <h3 className="text-xl font-bold text-primary border-b border-[#d4af37] mb-4 pb-1">
                     {category.label}
                   </h3>
                   <table className="w-full text-sm text-left">
-                    <thead className="bg-gray-100 text-[#1a365d] border-b border-gray-300 font-serif">
+                    <thead className="bg-gray-100 text-primary border-b border-gray-300 font-serif">
                       <tr>
                         <th className="py-2 px-3 font-semibold">Asset Name</th>
                         <th className="py-2 px-3 font-semibold">Location</th>
@@ -284,7 +284,7 @@ const AssetGrid: React.FC<AssetGridProps> = ({ assets = [], onSelectAsset, onSel
                     <tfoot className="border-t-2 border-gray-300">
                       <tr>
                         <td colSpan={6} className="py-2 px-3 text-right font-bold text-gray-700">Subtotal</td>
-                        <td className="py-2 px-3 text-right font-bold text-[#1a365d]">{formatCurrency(categoryAssets.reduce((sum, a) => sum + a.value, 0))}</td>
+                        <td className="py-2 px-3 text-right font-bold text-primary">{formatCurrency(categoryAssets.reduce((sum, a) => sum + a.value, 0))}</td>
                       </tr>
                     </tfoot>
                   </table>

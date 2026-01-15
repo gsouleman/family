@@ -97,7 +97,7 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ heirs = [], activeAssets 
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-12">
           <div>
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#1a365d] mb-2">
+            <h2 className="text-3xl lg:text-4xl font-bold text-primary mb-2">
               Document Vault
             </h2>
             <p className="text-gray-600">
@@ -109,7 +109,7 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ heirs = [], activeAssets 
               <DocumentGenerator heirs={heirs} activeAssets={activeAssets} />
               <button
                 onClick={() => setShowUploadModal(true)}
-                className="px-6 py-2 bg-[#1a365d] hover:bg-[#0f2744] text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+                className="px-6 py-2 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -127,7 +127,7 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ heirs = [], activeAssets 
               key={type}
               onClick={() => setFilter(type)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === type
-                ? 'bg-[#1a365d] text-white'
+                ? 'bg-primary text-white'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
             >
@@ -155,7 +155,7 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ heirs = [], activeAssets 
                 </span>
               </div>
 
-              <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-[#1a365d] transition-colors">
+              <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                 {doc.name}
               </h3>
 
@@ -275,7 +275,7 @@ const DocumentVault: React.FC<DocumentVaultProps> = ({ heirs = [], activeAssets 
                 <button
                   onClick={handleUpload}
                   disabled={!newDoc.name}
-                  className="flex-1 px-4 py-3 bg-[#1a365d] hover:bg-[#0f2744] text-white rounded-xl transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Upload
                 </button>

@@ -33,7 +33,7 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
   }, {} as Record<string, InheritanceShare[]>);
 
   return (
-    <section id="calculator" className="py-16 bg-gradient-to-br from-[#1a365d] via-[#1e4976] to-[#0f2744]">
+    <section id="calculator" className="py-16 bg-gradient-to-br from-primary via-[#1e4976] to-primary/90">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Screen Header */}
         <div className="text-center mb-12 relative print:hidden">
@@ -140,7 +140,7 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
             <div className="lg:col-span-2">
               <div className="bg-white rounded-2xl p-6 shadow-xl">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-[#1a365d]">Distribution Breakdown</h3>
+                  <h3 className="text-xl font-bold text-primary">Distribution Breakdown</h3>
                   <span className="text-xl font-bold text-[#d4af37]">{formatCurrency(amount)}</span>
                 </div>
 
@@ -204,7 +204,7 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="text-lg font-bold text-[#1a365d]">{formatCurrency(share.shareAmount)}</p>
+                              <p className="text-lg font-bold text-primary">{formatCurrency(share.shareAmount)}</p>
                               <p className="text-sm text-gray-500">{formatPercentage(share.sharePercentage)}</p>
                             </div>
                           </div>
@@ -219,7 +219,7 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-gray-500 text-sm">Total Distributed</p>
-                      <p className="text-xl font-bold text-[#1a365d]">{formatCurrency(totalDistributed)}</p>
+                      <p className="text-xl font-bold text-primary">{formatCurrency(totalDistributed)}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-gray-500 text-sm">Remaining</p>
@@ -231,7 +231,7 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
 
               {/* Pie Chart Visualization */}
               <div className="mt-6 bg-white rounded-2xl p-6 shadow-xl">
-                <h3 className="text-lg font-semibold text-[#1a365d] mb-4">Visual Distribution</h3>
+                <h3 className="text-lg font-semibold text-primary mb-4">Visual Distribution</h3>
                 <div className="flex flex-wrap gap-4 justify-center">
                   {Object.entries(sharesByType).map(([type, typeShares]) => {
                     const totalTypeShare = typeShares.reduce((sum, s) => sum + s.sharePercentage, 0);
@@ -259,7 +259,7 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
                             />
                           </svg>
                           <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="text-lg font-bold text-[#1a365d]">
+                            <span className="text-lg font-bold text-primary">
                               {totalTypeShare.toFixed(0)}%
                             </span>
                           </div>
@@ -281,14 +281,14 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
 
         {/* Print View - Professional Table */}
         <div className="hidden print:block">
-          <div className="text-center mb-8 border-b-2 border-[#1a365d] pb-4">
-            <h1 className="text-3xl font-serif text-[#1a365d] mb-2">Inheritance Calculation Report</h1>
+          <div className="text-center mb-8 border-b-2 border-primary pb-4">
+            <h1 className="text-3xl font-serif text-primary mb-2">Inheritance Calculation Report</h1>
             <p className="text-gray-600">Generated on {new Date().toLocaleDateString()}</p>
             <p className="text-xl font-bold text-[#d4af37] mt-2">Calculated Estate Value: {formatCurrency(amount)}</p>
           </div>
 
           <table className="w-full text-sm text-left">
-            <thead className="bg-gray-100 text-[#1a365d] border-b border-gray-300 font-serif">
+            <thead className="bg-gray-100 text-primary border-b border-gray-300 font-serif">
               <tr>
                 <th className="py-2 px-3 font-semibold">Heir Name</th>
                 <th className="py-2 px-3 font-semibold">Relation</th>
@@ -308,7 +308,7 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
                   </td>
                   <td className="py-2 px-3 text-center text-gray-600 font-mono">{share.shareFraction}</td>
                   <td className="py-2 px-3 text-center text-gray-600">{formatPercentage(share.sharePercentage)}</td>
-                  <td className="py-2 px-3 text-right font-bold text-[#1a365d]">{formatCurrency(share.shareAmount)}</td>
+                  <td className="py-2 px-3 text-right font-bold text-primary">{formatCurrency(share.shareAmount)}</td>
                 </tr>
               ))}
               {shares.length === 0 && (
@@ -322,7 +322,7 @@ const InheritanceCalculator: React.FC<InheritanceCalculatorProps> = ({ heirs = [
             <tfoot className="border-t-2 border-gray-300">
               <tr>
                 <td colSpan={4} className="py-2 px-3 text-right font-bold text-gray-700">Total Distributed</td>
-                <td className="py-2 px-3 text-right font-bold text-[#1a365d]">{formatCurrency(totalDistributed)}</td>
+                <td className="py-2 px-3 text-right font-bold text-primary">{formatCurrency(totalDistributed)}</td>
               </tr>
               {amount - totalDistributed > 0 && (
                 <tr>

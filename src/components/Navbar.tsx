@@ -72,13 +72,13 @@ const Navbar: React.FC<NavbarProps> = ({
       <div className="flex items-center justify-between h-16">
         {/* Logo */}
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="w-10 h-10 bg-gradient-to-br from-[#1a365d] to-[#0f2744] rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/90 rounded-xl flex items-center justify-center">
             <svg className="w-6 h-6 text-[#d4af37]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div>
-            <h1 className="text-lg font-bold text-[#1a365d]">{branding}</h1>
+            <h1 className="text-lg font-bold text-primary">{branding}</h1>
             <p className="text-xs text-gray-500 -mt-0.5">Asset Dashboard</p>
           </div>
         </div>
@@ -103,7 +103,7 @@ const Navbar: React.FC<NavbarProps> = ({
           }, {
             id: 'history',
             label: 'History'
-          }].map(item => <button key={item.id} onClick={() => scrollToSection(item.id)} className="px-4 py-2 text-gray-600 hover:text-[#1a365d] hover:bg-gray-50 rounded-lg transition-colors font-medium">
+          }].map(item => <button key={item.id} onClick={() => scrollToSection(item.id)} className="px-4 py-2 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors font-medium">
             {item.label}
           </button>)}
 
@@ -163,7 +163,7 @@ const Navbar: React.FC<NavbarProps> = ({
           {loading ? <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div> : user ? (/* User Menu */
             <div className="relative">
               <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 p-1.5 hover:bg-gray-100 rounded-xl transition-colors">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#1a365d] to-[#0f2744] rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/90 rounded-full flex items-center justify-center text-white text-sm font-semibold">
                   {getUserInitials()}
                 </div>
                 <span className="hidden sm:block text-sm font-medium text-gray-700 max-w-[120px] truncate">
@@ -218,7 +218,7 @@ const Navbar: React.FC<NavbarProps> = ({
                 </div>
               </div>}
             </div>) : (/* Sign In Button */
-            <button onClick={onOpenAuthModal} className="px-4 py-2 bg-[#1a365d] hover:bg-[#0f2744] text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
+            <button onClick={onOpenAuthModal} className="px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
@@ -254,7 +254,7 @@ const Navbar: React.FC<NavbarProps> = ({
         }, {
           id: 'history',
           label: 'History'
-        }].map(item => <button key={item.id} onClick={() => scrollToSection(item.id)} className="block w-full text-left px-4 py-3 text-gray-600 hover:text-[#1a365d] hover:bg-gray-50 rounded-lg transition-colors font-medium">
+        }].map(item => <button key={item.id} onClick={() => scrollToSection(item.id)} className="block w-full text-left px-4 py-3 text-gray-600 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors font-medium">
           {item.label}
         </button>)}
 

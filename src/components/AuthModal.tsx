@@ -124,7 +124,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden">
         {/* Header */}
-        <div className="relative bg-gradient-to-br from-[#1a365d] to-[#0f2744] p-8 text-center">
+        <div className="relative bg-gradient-to-br from-primary to-primary/90 p-8 text-center">
           {/* Close Button */}
           <button
             onClick={onClose}
@@ -137,7 +137,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
 
           {/* Logo */}
           <div className="w-16 h-16 bg-[#d4af37] rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg className="w-10 h-10 text-[#1a365d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
@@ -212,7 +212,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
                 <button
                   type="button"
                   onClick={() => handleModeChange('reset')}
-                  className="text-sm text-[#1a365d] hover:text-[#d4af37] transition-colors"
+                  className="text-sm text-primary hover:text-[#d4af37] transition-colors"
                 >
                   Forgot password?
                 </button>
@@ -221,7 +221,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-6 py-3 bg-[#1a365d] hover:bg-[#0f2744] text-white rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -255,7 +255,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-6 py-3 bg-[#1a365d] hover:bg-[#0f2744] text-white rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <>
@@ -270,7 +270,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
               <button
                 type="button"
                 onClick={() => handleModeChange('signin')}
-                className="w-full px-6 py-3 text-gray-600 hover:text-[#1a365d] transition-colors font-medium"
+                className="w-full px-6 py-3 text-gray-600 hover:text-primary transition-colors font-medium"
               >
                 Back to Sign In
               </button>
@@ -297,7 +297,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-6 py-3 bg-[#1a365d] hover:bg-[#0f2744] text-white rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? 'Verifying...' : 'Verify Code'}
               </button>
@@ -305,7 +305,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, initialMode = 's
               <button
                 type="button"
                 onClick={() => handleModeChange('signin')}
-                className="w-full px-6 py-3 text-gray-600 hover:text-[#1a365d] transition-colors font-medium"
+                className="w-full px-6 py-3 text-gray-600 hover:text-primary transition-colors font-medium"
               >
                 Back to Sign In
               </button>

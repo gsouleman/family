@@ -42,7 +42,7 @@ const AddHeirModal: React.FC<AddHeirModalProps> = ({ onClose }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden">
                 {/* Header */}
-                <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-[#1a365d] to-[#0f2744]">
+                <div className="p-6 border-b border-gray-100 bg-gradient-to-r from-primary to-primary/90">
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="text-xl font-bold text-white">Add Family Member</h2>
@@ -131,7 +131,7 @@ const AddHeirModal: React.FC<AddHeirModalProps> = ({ onClose }) => {
                     </button>
                     <button
                         onClick={handleSubmit}
-                        className="flex-1 px-6 py-3 bg-[#d4af37] hover:bg-[#c9a432] text-[#1a365d] rounded-xl transition-colors font-semibold"
+                        className="flex-1 px-6 py-3 bg-[#d4af37] hover:bg-[#c9a432] text-primary rounded-xl transition-colors font-semibold"
                     >
                         Add Heir
                     </button>
